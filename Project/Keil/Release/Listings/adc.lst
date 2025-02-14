@@ -1,0 +1,150 @@
+C51 COMPILER V9.60.7.0   ADC                                                               02/14/2025 17:51:38 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Release\Objects\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\adc.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(..
+                    -\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\adc.l
+                    -st) OBJECT(.\Release\Objects\adc.obj)
+
+line level    source
+
+   1          #include "adc.h"
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
+             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+   2          
+   3          void adc_config(void)
+   4          {
+   5   1          // P04 AIN4 检测充电口传过来的ad值
+   6   1          P0_MD1 |= 0x03;        // 模拟模式
+   7   1          P0_AIOEN |= 0x01 << 4; // 使能模拟功能
+   8   1      
+   9   1          // P06 AIN6 检测电池分压后的ad值
+  10   1          P0_MD1 |= 0x03 << 4;   // 模拟模式
+  11   1          P0_AIOEN |= 0x01 << 6; // 使能模拟功能
+  12   1      
+  13   1          AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
+  14   1          AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时�
+             -��芯片需在5V电压供电下)
+  15   1      }
+  16          
+  17          // 切换adc检测的引脚
+  18          void adc_sel_channel(u8 adc_channel)
+  19          {
+  20   1      #if 1 // 可以节省7字节程序空间
+  21   1          // 避免前后切换相同的通道，节省时间：
+  22   1          static u8 last_adc_channel = ADC_CHANNEL_NONE;
+  23   1          if (last_adc_channel == adc_channel)
+  24   1          {
+  25   2              return;
+  26   2          }
+  27   1          last_adc_channel = adc_channel;
+  28   1      #endif // 可以节省7字节程序空间
+  29   1      
+  30   1          // 根据传参，切换成对应的通道
+  31   1          switch (adc_channel)
+  32   1          {
+  33   2          case ADC_CHANNEL_CHARGE:
+  34   2              // P04 AIN4 检测充电口传过来的ad值
+  35   2              ADC_CHS0 = 0x04; // 软件触发，P04通路
+  36   2      
+  37   2              AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+  38   2              AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压
+  39   2              break;
+  40   2      
+  41   2          case ADC_CHANNEL_BAT:
+  42   2              // P06 AIN6 检测电池分压后的ad值
+  43   2              ADC_CHS0 = 0x06; // 软件触发，P06通路
+  44   2      
+  45   2              AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+  46   2              AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压
+  47   2              break;
+  48   2      
+  49   2          case ADC_CHANNEL_KEY_SCAN:
+  50   2              // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
+C51 COMPILER V9.60.7.0   ADC                                                               02/14/2025 17:51:38 PAGE 2   
+
+  51   2              ADC_CHS0 = 0x09; // 软件触发，P11通路
+  52   2      
+  53   2              // 参考电压改为VDD
+  54   2              AIP_CON4 &= ~(0x01 << 4); // 关闭内部参考
+  55   2              AIP_CON3 |= 0x02 << 2;    // 使用VCCA作为参考电压
+  56   2              break;
+  57   2      
+  58   2          case ADC_CHANNEL_MOTOR: // 过流检测通道
+  59   2      
+  60   2              break;
+  61   2      
+  62   2          default:
+  63   2              break;
+  64   2          }
+  65   1      
+  66   1          ADC_CFG0 = 0x14; // 使能A/D转换，使能通道0转换
+  67   1          delay_ms(1);     // 切换adc检测的引脚后，要延时一段时间，等待adc稳定，防止意�
+             -��之外的检测结果
+  68   1      }
+  69          
+  70          // 获取adc单次转换后的值
+  71          u16 adc_get_val_once(void)
+  72          {
+  73   1          u16 g_temp_value = 0;
+  74   1      
+  75   1          ADC_CFG0 |= 0x01; // 触发ADC0转换
+  76   1          while (!(ADC_STA & 0x02))
+  77   1              ;                                          // 等待转换完成
+  78   1          ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+  79   1          g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+  80   1      
+  81   1          return g_temp_value;
+  82   1      }
+  83          
+  84          // 获取adc采集+滤波后的值
+  85          u16 adc_get_val(void)
+  86          {
+  87   1          u8 i = 0; // adc采集次数的计数
+  88   1          u16 g_temp_value = 0;
+  89   1          u32 g_tmpbuff = 0;
+  90   1          u16 g_adcmax = 0;
+  91   1          u16 g_adcmin = 0xFFFF;
+  92   1      
+  93   1          // 采集20次，去掉前两次采样，再去掉一个最大值和一个最小值，再取平均值
+  94   1          for (i = 0; i < 20; i++)
+  95   1          {
+  96   2              // ADC_CFG0 |= 0x01; // 触发ADC0转换
+  97   2              // while (!(ADC_STA & 0x02))
+  98   2              //     ;                                          // 等待转换完成
+  99   2              // ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+ 100   2              // g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+ 101   2      
+ 102   2              g_tmpbuff = adc_get_val_once();
+ 103   2      
+ 104   2              if (i < 2)
+ 105   2                  continue; // 丢弃前两次采样的
+ 106   2              if (g_temp_value > g_adcmax)
+ 107   2                  g_adcmax = g_temp_value; // 最大
+ 108   2              if (g_temp_value < g_adcmin)
+ 109   2                  g_adcmin = g_temp_value; // 最小
+ 110   2              g_tmpbuff += g_temp_value;
+ 111   2          }
+C51 COMPILER V9.60.7.0   ADC                                                               02/14/2025 17:51:38 PAGE 3   
+
+ 112   1          g_tmpbuff -= g_adcmax;           // 去掉一个最大
+ 113   1          g_tmpbuff -= g_adcmin;           // 去掉一个最小
+ 114   1          g_temp_value = (g_tmpbuff >> 4); // 除以16，取平均值
+ 115   1      
+ 116   1          return g_temp_value;
+ 117   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    319    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1      10
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,5 @@
+memset(ibuf, 0);
+read(hex, Demo.hex);
+remap(v_ax, 0, v_lx);
+memmode(obuf, 8, big);
+write(bin, Demo.bin);

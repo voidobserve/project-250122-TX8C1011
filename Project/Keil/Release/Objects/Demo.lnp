@@ -1,0 +1,16 @@
+".\Release\Objects\STARTUP.obj",
+".\Release\Objects\system.obj",
+".\Release\Objects\debug.obj",
+".\Release\Objects\motor.obj",
+".\Release\Objects\tmr1.obj",
+".\Release\Objects\tmr2.obj",
+".\Release\Objects\adc.obj",
+".\Release\Objects\key.obj",
+".\Release\Objects\led.obj",
+".\Release\Objects\charge.obj",
+".\Release\Objects\heating.obj",
+".\Release\Objects\main.obj" 
+TO ".\Release\Objects\Demo" 
+PRINT(".\Release\Listings\Demo.m51") RAMSIZE(256) 
+CODE( 0X8000-0X8FFF )
+XDATA( 0X0300-0X03FF )

@@ -1,0 +1,45 @@
+C51 COMPILER V9.60.7.0   TMR1                                                              02/14/2025 17:51:38 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
+OBJECT MODULE PLACED IN .\Release\Objects\tmr1.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\tmr1.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(.
+                    -.\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\tmr1
+                    -.lst) OBJECT(.\Release\Objects\tmr1.obj)
+
+line level    source
+
+   1          #include "tmr1.h"
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
+             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+   2          
+   3          // 配置1ms定时器
+   4          #define TMR0_CNT_TIME (SYSCLK / 128 / (1000 - 20) - 1) // 计数周期 1KHz(实际上会有误差，这里
+             -要加上补偿)
+   5          
+   6          
+   7          void tmr1_config(void)
+   8          {
+   9   1          __EnableIRQ(TMR0_IRQn); // 使能timer0中断
+  10   1          IE_EA = 1;              // 使能总中断
+  11   1      
+  12   1          TMR0_PRL = TMR0_CNT_TIME;                                                   // 周期值
+  13   1          TMR0_CNTL = 0x00;                                                           // 清除计数值
+  14   1          TMR0_CONH = 0xA0;                                                           // 使能计数中断
+  15   1          TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统时�
+             -�，count模式
+  16   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
