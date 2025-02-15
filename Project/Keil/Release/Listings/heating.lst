@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   HEATING                                                           02/14/2025 17:51:38 PAGE 1   
+C51 COMPILER V9.60.7.0   HEATING                                                           02/15/2025 16:32:47 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE HEATING
@@ -20,106 +20,118 @@ line level    source
    7          volatile u8 cur_ctl_heat_status = 0;
    8          
    9          extern volatile bit flag_ctl_led_blink;
-  10          
-  11          // 初始化控制加热的引脚
-  12          void heating_pin_config(void)
-  13          {
-  14   1          // 配置为输出模式
-  15   1          // 假设是 用 P14 控制加热
-  16   1          P1_MD1 |= 0x01;
-  17   1      }
-  18          
-  19          
-  20          #if 1
-  21          // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
-  22          void fun_ctl_close_heat(void)
-  23          {
-  24   1          cur_ctl_heat_status = 0; // 清零，在定时器中会关闭加热
-  25   1          LED_RED_OFF();           // 关闭红色指示灯
+  10          extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
+  11          
+  12          // 初始化控制加热的引脚
+  13          void heating_pin_config(void)
+  14          {
+  15   1          // 配置为输出模式
+  16   1          // 假设是 用 P14 控制加热
+  17   1          P1_MD1 |= 0x01;
+  18   1          // P14 = 0;
+  19   1      }
+  20          
+  21          #if 1
+  22          // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
+  23          void fun_ctl_close_heat(void)
+  24          {
+  25   1          cur_ctl_heat_status = 0; // 清零，在定时器中会关闭加热
   26   1      
-  27   1          if (0 != cur_motor_status)
-  28   1          {
-  29   2              // 如果电机还在运行，才显示绿灯
-  30   2              // 防止关闭了电机，打开了加热，又关闭加热的情况
-  31   2              LED_GREEN_ON(); // 显示绿灯
-  32   2          }
-  33   1      }
-  34          
-  35          /**
-  36           * @brief 控制加热状态
-  37           *          如果要根据传参来调节挡位，会改变 全局变量 cur_ctl_heat_status 的状态
-  38           *
-  39           * @param adjust_heat_status 要调节到的挡位
-  40           *                          0--根据全局变量 cur_ctl_heat_status 的状态来自动调节
-  41           *                          1--调节为1档
-  42           *                          2--调节为2档
-  43           *                          3--关闭加热
-  44           *                          其他--函数直接返回 （为了节省程序空间，这里没有加）
-  45           */
-  46          void fun_ctl_heat_status(u8 adjust_heat_status)
-  47          {
-  48   1      #if 0  // 可以节省4字节程序空间
+  27   1          // 如果不处于低电量报警状态，低电量报警状态只有红灯闪烁
+  28   1          if (0 == flag_ctl_low_bat_alarm)
+  29   1          {
+  30   2              LED_RED_OFF(); // 关闭红色指示灯
+  31   2      
+  32   2              if (0 != cur_motor_status)
+  33   2              {
+  34   3                  // 如果电机还在运行，才显示绿灯
+  35   3                  // 防止关闭了电机，打开了加热，又关闭加热的情况
+  36   3                  LED_GREEN_ON(); // 显示绿灯
+  37   3              }
+  38   2          }
+  39   1      }
+  40          
+  41          /**
+  42           * @brief 控制加热状态
+  43           *          如果要根据传参来调节挡位，会改变 全局变量 cur_ctl_heat_status 的状态
+  44           *
+  45           * @param adjust_heat_status 要调节到的挡位
+  46           *                          0--根据全局变量 cur_ctl_heat_status 的状态来自动调节
+  47           *                          1--调节为1档
+  48           *                          2--调节为2档
+  49           *                          3--关闭加热
+  50           *                          其他--函数直接返回 （为了节省程序空间，这里没有加）
+  51           */
+C51 COMPILER V9.60.7.0   HEATING                                                           02/15/2025 16:32:47 PAGE 2   
+
+  52          void fun_ctl_heat_status(u8 adjust_heat_status)
+  53          {
+  54   1      #if 0  // 可以节省4字节程序空间
                   if (adjust_heat_status >= 4)
                   {
                       return; // 传参有误，直接返回
-C51 COMPILER V9.60.7.0   HEATING                                                           02/14/2025 17:51:38 PAGE 2   
-
                   }
               #endif // 可以节省4字节程序空间
-  54   1      
-  55   1          flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-  56   1          delay_ms(1);
-  57   1      
-  58   1          if (0 == adjust_heat_status)
-  59   1          {
-  60   2              // 如果是要根据 全局变量 cur_ctl_heat_status 来自动调节
-  61   2              if (0 == cur_ctl_heat_status)
-  62   2              {
-  63   3                  cur_ctl_heat_status = 1;
-  64   3              }
-  65   2              else if (1 == cur_ctl_heat_status)
-  66   2              {
-  67   3                  cur_ctl_heat_status = 2;
-  68   3              }
-  69   2              else if (2 == cur_ctl_heat_status)
-  70   2              {
-  71   3                  // 关闭加热
-  72   3                  fun_ctl_close_heat();
+  60   1      
+  61   1          flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+  62   1      
+  63   1          if (0 == adjust_heat_status)
+  64   1          {
+  65   2              // 如果是要根据 全局变量 cur_ctl_heat_status 来自动调节
+  66   2              if (0 == cur_ctl_heat_status)
+  67   2              {
+  68   3                  cur_ctl_heat_status = 1;
+  69   3              }
+  70   2              else if (1 == cur_ctl_heat_status)
+  71   2              {
+  72   3                  cur_ctl_heat_status = 2;
   73   3              }
-  74   2          }
-  75   1          else
-  76   1          {
-  77   2              // 根据传参来调节当前的加热挡位
-  78   2              if (adjust_heat_status == 3)
-  79   2              {
-  80   3                  // 如果是要关闭加热
-  81   3                  fun_ctl_close_heat();
-  82   3              }
-  83   2              else
+  74   2              else if (2 == cur_ctl_heat_status)
+  75   2              {
+  76   3                  // 关闭加热
+  77   3                  fun_ctl_close_heat();
+  78   3              }
+  79   2          }
+  80   1          else
+  81   1          {
+  82   2              // 根据传参来调节当前的加热挡位
+  83   2              if (adjust_heat_status == 3)
   84   2              {
-  85   3                  cur_ctl_heat_status = adjust_heat_status;
-  86   3              }
-  87   2          }
-  88   1      
-  89   1          // 如果加热没有关闭，开启对应的灯光闪烁效果:
-  90   1          if (0 != cur_ctl_heat_status)
-  91   1          {
-  92   2              LED_GREEN_OFF();
-  93   2              LED_RED_ON();
-  94   2              cur_sel_led = CUR_SEL_LED_RED;
-  95   2              cur_ctl_led_blink_cnt = cur_ctl_heat_status; // 灯光闪烁次数与当前加热的挡位有关
-  96   2              flag_ctl_led_blink = 1;
-  97   2          }
-  98   1      }
-  99          #endif
+  85   3                  // 如果是要关闭加热
+  86   3                  fun_ctl_close_heat();
+  87   3              }
+  88   2              else
+  89   2              {
+  90   3                  cur_ctl_heat_status = adjust_heat_status;
+  91   3              }
+  92   2          }
+  93   1      
+  94   1          // 如果加热没有关闭，开启对应的灯光闪烁效果:
+  95   1          // 如果不处于低电量报警状态，低电量报警状态只有红灯闪烁
+  96   1          if (0 == flag_ctl_low_bat_alarm)
+  97   1          {
+  98   2              if (0 != cur_ctl_heat_status)
+  99   2              {
+ 100   3                  LED_GREEN_OFF();
+ 101   3                  LED_RED_ON();
+ 102   3                  cur_sel_led = CUR_SEL_LED_RED;
+ 103   3                  cur_ctl_led_blink_cnt = cur_ctl_heat_status; // 灯光闪烁次数与当前加热的挡位有�
+             -��
+ 104   3                  flag_ctl_led_blink = 1;
+ 105   3              }
+ 106   2          }
+ 107   1      }
+ 108          #endif
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     90    ----
+   CODE SIZE        =     83    ----
+C51 COMPILER V9.60.7.0   HEATING                                                           02/15/2025 16:32:47 PAGE 3   
+
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      1       1
+   DATA SIZE        =      1    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

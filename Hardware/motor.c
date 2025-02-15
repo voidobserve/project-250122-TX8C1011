@@ -7,10 +7,18 @@
 // 电机相关配置                                    //
 // ===================================================
 
-// 当前电机的挡位,0--初始状态(0%占空比)，1--一档，2--二档，3--三档
+// 当前电机的挡位
+// 0--初始状态(0%占空比)
+// 1--一档
+// 2--二档
+// 3--三档
 volatile u8 cur_motor_status = 0;
 // 记录当前电机的转向，0--初始值，无状态，1--正转，2--反转
 volatile u8 cur_motor_dir = 0;
+
+extern volatile bit flag_tim_scan_maybe_motor_stalling; // 用于给定时器扫描的标志位，可能检测到了电机堵转
+extern volatile bit flag_tim_set_motor_stalling;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
+extern volatile bit flag_ctl_dev_close;                 // 控制标志位，是否要关闭设备
 
 void motor_config(void)
 {
@@ -135,5 +143,36 @@ void alter_motor_speed(u8 adjust_motor_status)
         STMR1_CMPAL = __MOTOR_LEVEL_3 % 256;
         STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
         STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
+    }
+}
+
+// 电机过流检测和相关处理
+void motor_over_current_detect_handle(void)
+{
+    u16 adc_val = 0;
+
+    if (0 == cur_motor_status)
+    {
+        return; // 电机没有运行，函数直接返回
+    }
+
+    adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
+    adc_val = adc_get_val_once();
+
+    if (adc_val >= MOTOR_STALLING_AD_VAL)
+    {
+        // 让定时器进行连续计时
+        flag_tim_scan_maybe_motor_stalling = 1;
+    }
+    else
+    {
+        // 清空对应的标志位，不让定时器进行连续计时
+        flag_tim_scan_maybe_motor_stalling = 0;
+    }
+
+    if (flag_tim_set_motor_stalling)
+    {
+        // 如果确实检测到了电机堵转
+        flag_ctl_dev_close = 1; // 让主循环关闭设备
     }
 }

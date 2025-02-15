@@ -1,0 +1,1 @@
+"..\..\App\charge.c" OPTIMIZE (8,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\charge.lst) OBJECT(.\Release\Objects\charge.obj)

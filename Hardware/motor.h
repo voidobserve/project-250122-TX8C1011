@@ -19,5 +19,6 @@ void motor_pwm_b_disable(void); // 关闭PWM通道B的输出，对应IO输出0�
 void motor_pwm_disable(void);
 
 void alter_motor_speed(u8 adjust_motor_status);
+void motor_over_current_detect_handle(void);
 
 #endif

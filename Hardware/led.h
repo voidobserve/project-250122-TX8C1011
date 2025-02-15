@@ -33,7 +33,7 @@ extern volatile u8 cur_ctl_led_blink_cnt; // 记录当前要控制灯光闪烁�
 
 // 在PCB上，红灯和绿灯都是高电平点亮
 #define LED_RED_PIN P12   // 控制红色LED的引脚
-#define LED_GREEN_PIN P13 // 控制绿色LED的引脚
+#define LED_GREEN_PIN P05 // 控制绿色LED的引脚
 #define LED_RED_ON()         \
     {                        \
         do                   \

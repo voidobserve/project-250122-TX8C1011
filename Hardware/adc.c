@@ -10,6 +10,10 @@ void adc_config(void)
     P0_MD1 |= 0x03 << 4;   // 模拟模式
     P0_AIOEN |= 0x01 << 6; // 使能模拟功能
 
+    // 假设使用 P15 AIN13 检测电机是否堵转
+    P1_MD1 |= 0x3 << 2; // 模拟模式
+    P1_AIOEN |= 0x01 << 5; // 使能模拟功能
+
     AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
     AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
 }
@@ -35,7 +39,7 @@ void adc_sel_channel(u8 adc_channel)
         ADC_CHS0 = 0x04; // 软件触发，P04通路
 
         AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压
+        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
     case ADC_CHANNEL_BAT:
@@ -43,7 +47,7 @@ void adc_sel_channel(u8 adc_channel)
         ADC_CHS0 = 0x06; // 软件触发，P06通路
 
         AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压
+        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
     case ADC_CHANNEL_KEY_SCAN:
@@ -56,7 +60,11 @@ void adc_sel_channel(u8 adc_channel)
         break;
 
     case ADC_CHANNEL_MOTOR: // 过流检测通道
+        // 假设使用 P15 AIN13 来检测电机是否堵转  
+        ADC_CHS0 = 0x0D; // 软件触发，P15通路
 
+        AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
     default:
@@ -85,10 +93,10 @@ u16 adc_get_val_once(void)
 u16 adc_get_val(void)
 {
     u8 i = 0; // adc采集次数的计数
-    u16 g_temp_value = 0;
-    u32 g_tmpbuff = 0;
-    u16 g_adcmax = 0;
-    u16 g_adcmin = 0xFFFF;
+    volatile u16 g_temp_value = 0;
+    volatile u32 g_tmpbuff = 0;
+    volatile u16 g_adcmax = 0;
+    volatile u16 g_adcmin = 0xFFFF;
 
     // 采集20次，去掉前两次采样，再去掉一个最大值和一个最小值，再取平均值
     for (i = 0; i < 20; i++)
@@ -99,7 +107,7 @@ u16 adc_get_val(void)
         // ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
         // g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
 
-        g_tmpbuff = adc_get_val_once();
+        g_temp_value = adc_get_val_once();
 
         if (i < 2)
             continue; // 丢弃前两次采样的
@@ -107,8 +115,10 @@ u16 adc_get_val(void)
             g_adcmax = g_temp_value; // 最大
         if (g_temp_value < g_adcmin)
             g_adcmin = g_temp_value; // 最小
+
         g_tmpbuff += g_temp_value;
     }
+
     g_tmpbuff -= g_adcmax;           // 去掉一个最大
     g_tmpbuff -= g_adcmin;           // 去掉一个最小
     g_temp_value = (g_tmpbuff >> 4); // 除以16，取平均值

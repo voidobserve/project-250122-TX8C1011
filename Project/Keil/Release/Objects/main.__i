@@ -1,0 +1,1 @@
+"..\..\User\main.c" OPTIMIZE (8,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\main.lst) OBJECT(.\Release\Objects\main.obj)

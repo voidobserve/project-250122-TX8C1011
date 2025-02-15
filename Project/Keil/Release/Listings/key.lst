@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   KEY                                                               02/14/2025 17:51:38 PAGE 1   
+C51 COMPILER V9.60.7.0   KEY                                                               02/15/2025 16:32:47 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY
@@ -62,7 +62,7 @@ line level    source
   49          {
   50              KEY_EVENT_NONE = 0,
   51              KEY_EVENT_MODE_CLICK,
-C51 COMPILER V9.60.7.0   KEY                                                               02/14/2025 17:51:38 PAGE 2   
+C51 COMPILER V9.60.7.0   KEY                                                               02/15/2025 16:32:47 PAGE 2   
 
   52              KEY_EVENT_MODE_HOLD,
   53              KEY_EVENT_HEAT_CLICK,
@@ -126,7 +126,7 @@ line level    source
  111   2              // 如果检测到相同的按键按下/松开
  112   2              // 防止计数溢出
  113   2              filter_cnt++;
-C51 COMPILER V9.60.7.0   KEY                                                               02/14/2025 17:51:38 PAGE 3   
+C51 COMPILER V9.60.7.0   KEY                                                               02/15/2025 16:32:47 PAGE 3   
 
  114   2              return;
  115   2          }
@@ -190,7 +190,7 @@ line level    source
  173   5                      }
  174   4                  }
  175   3                  else
-C51 COMPILER V9.60.7.0   KEY                                                               02/14/2025 17:51:38 PAGE 4   
+C51 COMPILER V9.60.7.0   KEY                                                               02/15/2025 16:32:47 PAGE 4   
 
  176   3                  {
  177   4                      // 如果当前设备是关闭的
@@ -254,7 +254,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    234    ----
-C51 COMPILER V9.60.7.0   KEY                                                               02/14/2025 17:51:38 PAGE 5   
+C51 COMPILER V9.60.7.0   KEY                                                               02/15/2025 16:32:47 PAGE 5   
 
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----

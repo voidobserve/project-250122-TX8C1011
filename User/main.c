@@ -18,12 +18,24 @@
 #include "include.h"
 #include "my_config.h"
 
-volatile u8 flag_bat_is_empty; // 标志位，用于检测是否拔出了电池
+volatile bit flag_bat_is_empty = 0; // 标志位，用于检测是否拔出了电池
+volatile bit flag_bat_is_full = 0;  // 电池是否被充满电的标志位
 
 volatile bit flag_is_in_charging = 0;             // 是否处于充电的标志位
 volatile bit flag_tim_scan_maybe_not_charge = 0;  // 用于给定时器扫描的标志位，可能检测到了拔出充电器
 volatile bit flag_tim_scan_maybe_in_charging = 0; // 用于给定时器扫描的标志位，可能检测到了充电器
 volatile bit flag_tim_set_is_in_charging = 0;     // 由定时器置位/复位的，表示是否有插入充电器的标志位
+volatile bit flag_tim_scan_bat_maybe_full = 0;    // 用于给定时器扫描的标志位，可能检测到电池被充满电
+volatile bit flag_tim_set_bat_is_full = 0;        // 由定时器置位/复位的，表示电池是否被充满电的标志位
+
+volatile bit flag_tim_scan_maybe_low_bat = 0; // 用于给定时器扫描的标志位，可能检测到了低电量
+volatile bit flag_tim_set_bat_is_low = 0;     // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
+
+volatile bit flag_tim_scan_maybe_shut_down = 0; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
+volatile bit flag_tim_set_shut_down = 0;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
+
+volatile bit flag_tim_scan_maybe_motor_stalling = 0; // 用于给定时器扫描的标志位，可能检测到了电机堵转
+volatile bit flag_tim_set_motor_stalling = 0;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
 
 volatile bit flag_is_enable_key_scan = 0; // 标志位，是否使能按键扫描(每10ms被定时器置位，在主函数中检测并清零)
 volatile bit flag_is_dev_open = 0;        // 设备是否开机的标志位，0--未开机，1--开机
@@ -32,6 +44,10 @@ volatile bit flag_ctl_led_blink = 0; // 控制标志位，是否控制指示灯闪烁
 volatile bit flag_ctl_turn_dir = 0;  // 控制标志位，是否更换电机的方向
 
 volatile bit flag_ctl_dev_close = 0; // 控制标志位，是否要关闭设备
+
+volatile bit flag_ctl_low_bat_alarm = 0; // 控制标志位，是否使能低电量报警
+
+volatile bit flag_is_disable_to_open = 0; // 标志位，是否不使能开机(低电量不允许开机)
 
 // 控制函数，开机
 void fun_ctl_power_on(void)
@@ -58,7 +74,6 @@ void fun_ctl_power_off(void)
 
     // 关闭灯光闪烁的动画
     flag_ctl_led_blink = 0;
-    delay_ms(1); // 等待定时器处理完相应的变量
     LED_GREEN_OFF();
     LED_RED_OFF();
 
@@ -71,6 +86,21 @@ void fun_ctl_power_off(void)
     cur_motor_status = 0; // 表示电机已经关闭
     cur_motor_dir = 0;    // 清零，回到初始状态
     flag_is_dev_open = 0; // 表示设备已经关闭
+
+    // 关机可能是 充电时进入了关机、低电量进入了关机、手动关机、自动进入了关机
+    // 如果是 充电时进入了关机，不应该清除相应的标志位
+    if (0 == flag_is_in_charging)
+    {
+        // 如果没有在充电，清空跟低电量不开机无关的标志位
+        flag_bat_is_full = 0;
+        flag_tim_scan_maybe_not_charge = 0;
+        flag_tim_scan_maybe_in_charging = 0;
+        flag_tim_scan_bat_maybe_full = 0;
+        flag_tim_scan_maybe_low_bat = 0;
+        flag_tim_scan_maybe_shut_down = 0;
+        flag_is_enable_key_scan = 0;
+        flag_ctl_low_bat_alarm = 0;
+    }
 }
 
 /**
@@ -123,23 +153,27 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
 
     // 每次切换挡位，都让定时器加载动画
     flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-    delay_ms(1);
-    if (0 == cur_ctl_heat_status)
+
+    // 如果不处于低电量报警状态，才使能LED闪烁功能：
+    if (0 == flag_tim_set_bat_is_low)
     {
-        // 如果没有打开加热，让绿灯闪烁
-        LED_RED_OFF();
-        LED_GREEN_ON();
-        cur_sel_led = CUR_SEL_LED_GREEN;
+        if (0 == cur_ctl_heat_status)
+        {
+            // 如果没有打开加热，让绿灯闪烁
+            LED_RED_OFF();
+            LED_GREEN_ON();
+            cur_sel_led = CUR_SEL_LED_GREEN;
+        }
+        else
+        {
+            // 如果打开了加热，让红灯闪烁
+            LED_GREEN_OFF();
+            LED_RED_ON();
+            cur_sel_led = CUR_SEL_LED_RED;
+        }
+        cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
+        flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
     }
-    else
-    {
-        // 如果打开了加热，让红灯闪烁
-        LED_GREEN_OFF();
-        LED_RED_ON();
-        cur_sel_led = CUR_SEL_LED_RED;
-    }
-    cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
-    flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
 }
 
 /**
@@ -158,14 +192,17 @@ void main(void)
 
     // 初始化打印
 #if USE_MY_DEBUG
-    // debug_init();
-    // printf("TXM8C101x_SDK main start\n");
+    debug_init();
+    printf("TXM8C101x_SDK main start\n");
 #endif //  #if USE_MY_DEBUG
 
     // 初始化 检测按键 的引脚：
     // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
     P1_MD0 |= 0x03 << 2;   // 模拟模式
     P1_AIOEN |= 0x01 << 1; // 使能模拟功能
+
+    // 使用 P00 作为 DEBUG 引脚
+    P0_MD0 |= 0x01; // 输出模式
 
     heating_pin_config(); // 加热控制引脚
     led_config();
@@ -180,31 +217,39 @@ void main(void)
     delay_ms(1000);
     LED_GREEN_OFF();
 
-#if 0  // 上电时检测电池是否正确安装:
+#if 0 // 上电时检测电池是否正确安装(测试通过):
     /*
         如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
         检测到的是充电5V升压后的电压
     */
-    PWM2EC = 1; // 打开控制升压电路的pwm
-    T2DATA = 100;
+    tmr2_pwm_enable();    // 打开控制升压电路的pwm
+    TMR2_PWML = 93 % 256; // 调节为约47.6%的占空比
+    TMR2_PWMH = 93 / 256;
     adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
-    for (i = 0; i < 10; i++)          // 每55ms进入一次，循环内每次间隔约4.8ms
+
     {
-        adc_val = adc_get_val();
-        if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+        u8 i = 0;
+        u16 adc_val = 0;
+        for (i = 0; i < 10; i++) // 每55ms进入一次，循环内每次间隔约4.8ms
         {
-            flag_bat_is_empty = 1;
-            flag_bat_is_full = 1;
+            adc_val = adc_get_val();
+            if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+            {
+                flag_bat_is_empty = 1; // 表示电池是空的(电池没有安装)
+            }
         }
     }
 
-    PWM2EC = 0; // 关闭控制升压电路的pwm
-    T2DATA = 0;
-#endif // 上电时检测电池是否正确安装:
+    tmr2_pwm_disable(); // 关闭控制升压电路的PWM
+    TMR2_PWML = 0;      // 0%占空比
+    TMR2_PWMH = 0;
 
+#endif // 上电时检测电池是否正确安装
+  
     while (1)
-    {
-#if 0  // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
+    {   
+
+#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
@@ -216,10 +261,11 @@ void main(void)
         }
 #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
 
+#if 1
         charge_scan_handle();
 
-        if (0 == flag_is_in_charging && /* 不充电时，才对按键做检测和处理 */
-            1)                          /* 不处于低电量不能开机的状态时 */
+        if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
+            0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
         {
             if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
             {
@@ -229,8 +275,13 @@ void main(void)
 
             key_event_handle();
         }
+        else
+        {
+            // flag_is_enable_key_scan = 0; // 直接清空标志位
+        }
+#endif
 
-#if 1 // 电机自动转向
+#if 1  // 电机自动转向
         if (flag_ctl_turn_dir)
         {
             // 如果要切换电机转向
@@ -266,7 +317,12 @@ void main(void)
         }
 #endif // 电机自动转向
 
-#if 1 // 根据控制标志位来控制关机
+#if 1  // 电机过流检测和处理
+
+        motor_over_current_detect_handle(); // 函数内部会检测电机有没有运行
+#endif // 电机过流检测和处理
+
+#if 1  // 根据控制标志位来控制关机
         if (flag_ctl_dev_close)
         {
             // 如果要关闭设备
@@ -296,6 +352,11 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
     {
         TMR0_CONH |= 0x80;
         // 1ms产生一次中断，进入到这里
+
+        if (flag_bat_is_empty)
+        {
+            return; // 如果电池为空，提前退出中断服务函数
+        }
 
         { // 按键扫描
             static volatile u8 key_scan_cnt = 0;
@@ -509,7 +570,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 
             if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
                  0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
-                1                             /* 当前没有在充电 */
+                0 == flag_is_in_charging      /* 当前没有在充电 */
             )
             {
                 shut_down_ms_cnt++;
@@ -551,6 +612,146 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 
         } // 自动换方向
 #endif // 控制电机自动换方向
+
+#if 1 // 检测是否充满电
+
+        { // 检测是否充满电
+            static volatile u16 bat_is_full_ms_cnt = 0;
+            if (flag_is_in_charging)
+            {
+                if (flag_tim_scan_bat_maybe_full)
+                {
+                    // 正在充电，并且有检测到电池满电，进行累计：
+                    bat_is_full_ms_cnt++;
+                    if (bat_is_full_ms_cnt >= 5000) // xx ms
+                    {
+                        bat_is_full_ms_cnt = 0;
+                        flag_tim_set_bat_is_full = 1;
+                    }
+                }
+                else
+                {
+                    // 正在充电，但是没有检测到电池满电：
+                    bat_is_full_ms_cnt = 0;
+                    flag_tim_set_bat_is_full = 0;
+                }
+            }
+        } // 检测是否充满电
+#endif // 检测是否充满电
+
+#if 1 // 检测是否要低电量报警
+
+        {
+            static u16 low_bat_ms_cnt = 0;
+            if (flag_tim_scan_maybe_low_bat)
+            {
+                // 如果可能检测到了低电量，进行连续计时
+                low_bat_ms_cnt++;
+                if (low_bat_ms_cnt >= LOW_BAT_SCAN_TIMES_MS)
+                {
+                    low_bat_ms_cnt = 0;
+                    flag_tim_set_bat_is_low = 1;
+                }
+            }
+            else
+            {
+                // 如果没有检测到低电量
+                low_bat_ms_cnt = 0;
+                flag_tim_set_bat_is_low = 0;
+            }
+        }
+
+        { // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
+
+            static bit __flag_is_in_low_bat_alarm = 0;   // 标志位，是否正在执行低电量报警的功能
+            static u16 __blink_cnt_in_low_bat_alarm = 0; // 低电量报警时，LED闪烁时间计数
+
+            /* 如果使能了低电量报警，并且设备正在运行 */
+            if (flag_ctl_low_bat_alarm &&
+                (0 != cur_motor_status || 0 != cur_ctl_heat_status))
+            {
+                if (0 == __flag_is_in_low_bat_alarm)
+                {
+                    __flag_is_in_low_bat_alarm = 1; // 在该语句块内部，使能低电量报警的功能
+                }
+            }
+            else
+            {
+                __blink_cnt_in_low_bat_alarm = 0;
+                __flag_is_in_low_bat_alarm = 0;
+            }
+
+            if (__flag_is_in_low_bat_alarm)
+            {
+                __blink_cnt_in_low_bat_alarm++;
+                if (__blink_cnt_in_low_bat_alarm <= 300)
+                {
+                    LED_RED_ON();
+                }
+                else if (__blink_cnt_in_low_bat_alarm < 600)
+                {
+                    LED_RED_OFF();
+                }
+                else
+                {
+                    __blink_cnt_in_low_bat_alarm = 0;
+                }
+            }
+        } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
+#endif // 检测是否要低电量报警
+
+#if 1 // 工作时，检测电池电量是否一直低于关机电压
+
+        {
+            static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
+
+            if (flag_tim_scan_maybe_shut_down)
+            {
+                // 如果检测到在工作时，电池电压低于关机电压，进行连续计时
+                __shut_down_cnt++;
+                if (__shut_down_cnt >= SHUT_DOWN_SCAN_TIMES_MS)
+                {
+                    __shut_down_cnt = 0;
+                    flag_tim_set_shut_down = 1;
+                }
+            }
+            else
+            {
+                // 如果在工作时，没有检测到 电池电压低于关机电压
+                __shut_down_cnt = 0;
+                flag_tim_set_shut_down = 0;
+            }
+        }
+#endif // 工作时，检测电池电量是否一直低于关机电压
+
+#if 1 // 电机过流检测，超过10s便认为电机堵转
+
+        {
+            // 检测到电机堵转后，进行连续计时
+            static u16 __detect_motor_stalling_cnt = 0;
+
+            if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
+            {
+                // 如果检测到有电机堵转的情况
+                // P00 = 1;
+
+                __detect_motor_stalling_cnt++;
+                if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
+                {
+                    __detect_motor_stalling_cnt = 0;
+                    flag_tim_set_motor_stalling = 1;
+                }
+            }
+            else
+            {
+                // 如果没有检测到有电机堵转的情况
+                // P00 = 0;
+
+                __detect_motor_stalling_cnt = 0;
+                flag_tim_set_motor_stalling = 0;
+            }
+        }
+#endif // 电机过流检测，超过10s便认为电机堵转
     }
 }
 

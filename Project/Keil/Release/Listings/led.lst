@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LED                                                               02/14/2025 17:51:38 PAGE 1   
+C51 COMPILER V9.60.7.0   LED                                                               02/15/2025 16:32:47 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
@@ -19,13 +19,14 @@ line level    source
    6          void led_config(void)
    7          {
    8   1          // LED引脚配置为输出模式
-   9   1          P1_MD0 |= 0x01 << 4;
-  10   1          P1_MD0 |= 0x01 << 6;
-  11   1      }
+   9   1          P1_MD0 |= 0x01 << 4; // P12
+  10   1          // P1_MD0 |= 0x01 << 6; // P13
+  11   1          P0_MD1 |= 0x01 << 2; // P05
+  12   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     11    ----
+   CODE SIZE        =     13    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
