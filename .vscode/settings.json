@@ -5,6 +5,8 @@
         "tx8c101x.h": "c",
         "adc.h": "c",
         "my_config.h": "c",
-        "debug.h": "c"
+        "debug.h": "c",
+        "uart.h": "c",
+        "low_power.h": "c"
     }
 }

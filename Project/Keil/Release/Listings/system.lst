@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SYSTEM                                                            02/15/2025 16:32:46 PAGE 1   
+C51 COMPILER V9.60.7.0   SYSTEM                                                            02/17/2025 17:05:45 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SYSTEM
@@ -62,7 +62,7 @@ line level    source
   51   1          
   52   1          AIP_CON0   = 0x80 | hrcsc_data;             // 使能 hirc
   53   1          CLK_CON0   = 0x03;                          // 选择 hirc clk
-C51 COMPILER V9.60.7.0   SYSTEM                                                            02/15/2025 16:32:46 PAGE 2   
+C51 COMPILER V9.60.7.0   SYSTEM                                                            02/17/2025 17:05:45 PAGE 2   
 
   54   1          CLK_CON2   = 0x00;                          // 系统时钟不分频
   55   1          CLK_CON6   = 0x1F;                          // FLASH烧写时钟32分频：1M

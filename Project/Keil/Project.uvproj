@@ -426,6 +426,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\led.c</FilePath>
             </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Hardware\uart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -440,6 +445,16 @@
               <FileName>heating.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\App\heating.c</FilePath>
+            </File>
+            <File>
+              <FileName>speech_process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\speech_process.c</FilePath>
+            </File>
+            <File>
+              <FileName>low_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\low_power.c</FilePath>
             </File>
           </Files>
         </Group>

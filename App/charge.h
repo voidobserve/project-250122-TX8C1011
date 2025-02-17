@@ -44,6 +44,9 @@
 
 #endif
 
+// 快满电时对应的电压ad值，现在使用8.1V
+#define ADCVAL_NEAR_FULL_CHAGE (3430)
+
 void charge_scan_handle(void);
 
 #endif // 

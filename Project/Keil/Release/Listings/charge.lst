@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 1   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CHARGE
@@ -62,7 +62,7 @@ line level    source
   43   1          u16 tmp_bat_val = 0;             // 存放检测到的电池电压+计算的压差对应的adc值
   44   1          static u8 over_charging_cnt = 0; // 存放过充计数
   45   1      
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 2   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 2   
 
   46   1          adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
   47   1          adc_bat_val = adc_get_val_once(); // 更新电池对应的ad值
@@ -126,7 +126,7 @@ line level    source
  101   3                  // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清零）
  102   3                  LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
  103   3                  LED_GREEN_ON(); // 充满电时，让绿灯常亮
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 3   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 3   
 
  104   3              }
  105   2      #endif // 检测在充电时，电池是否充满电，并做相应的处理
@@ -190,7 +190,7 @@ line level    source
  158   3                  {
  159   4                      // 如果电池电压 小于等于 低电量报警对应的电压
  160   4                      flag_tim_scan_maybe_low_bat = 1;
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 4   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 4   
 
  161   4                      flag_tim_scan_maybe_shut_down = 0; // 当前电池电压正处于 关机电压 ~ 低电量
              -之间，还没到要关机的情况
@@ -254,7 +254,7 @@ line level    source
  216   1          {
  217   2              u16 max_pwm_val = 0;  // 临时存放最大占空比对应的值
  218   2              u16 last_pwm_val = 0; // 记录之前的pwm占空比的值
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 5   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 5   
 
  219   2              u16 tmp_val = 0;      // 临时存放需要调节的占空比对应的值
  220   2              static u16 tmp_val_l[8] = {0};
@@ -318,7 +318,7 @@ line level    source
  274   2      
  275   2              //     if (i == (ARRAY_SIZE(bat_val_fix_table) - 1))
  276   2              //     {
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 6   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 6   
 
  277   2              //         tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + TMP_BAT_VAL_FI
              -X;
@@ -382,7 +382,7 @@ line level    source
  326   2              tmp_val >>= 3;
  327   2      
  328   2              if (tmp_val > last_pwm_val)
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/15/2025 16:32:47 PAGE 7   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/17/2025 17:05:46 PAGE 7   
 
  329   2              {
  330   3                  last_pwm_val = last_pwm_val + 1;

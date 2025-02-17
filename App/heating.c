@@ -59,6 +59,7 @@ void fun_ctl_heat_status(u8 adjust_heat_status)
 #endif // 可以节省4字节程序空间
 
     flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+    delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量
 
     if (0 == adjust_heat_status)
     {

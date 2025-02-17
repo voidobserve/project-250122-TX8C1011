@@ -1,0 +1,1 @@
+"..\..\App\low_power.c" OPTIMIZE (8,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\low_power.lst) OBJECT(.\Release\Objects\low_power.obj)

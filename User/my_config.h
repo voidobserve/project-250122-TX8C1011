@@ -12,6 +12,7 @@
 #include "adc.h"
 #include "tmr1.h"
 #include "tmr2.h"
+#include "uart.h"
 
 #include "motor.h"
 #include "key.h"
@@ -19,8 +20,12 @@
 
 #include "heating.h"
 #include "charge.h"
+#include "speech_process.h"
+#include "low_power.h"
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
+
+#define FORMAT_HEAD (0xA5) // 串口接收控制命令的格式头
 
 /*
     电池电量检测脚外部是 1M上拉，330K下拉，
@@ -41,5 +46,8 @@
 #define MOTOR_STALLING_AD_VAL (2048) // 
 // 电机堵转的连续扫描时间，单位：ms
 #define MOTOR_STALLING_SCAN_TIMES_MS (10000) 
+
+// 关闭按摩指令后，无操作自动关机的时，单位：ms
+#define NO_OPERATION_SHUT_DOWN_TIMES_MS (120000) 
 
 #endif

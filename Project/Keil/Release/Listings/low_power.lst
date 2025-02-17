@@ -1,0 +1,85 @@
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/17/2025 17:51:45 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LOW_POWER
+OBJECT MODULE PLACED IN .\Release\Objects\low_power.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\App\low_power.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(.
+                    -.\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\low_
+                    -power.lst) OBJECT(.\Release\Objects\low_power.obj)
+
+line level    source
+
+   1          #include "low_power.h"
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
+             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+   2          
+   3          void low_power(void)
+   4          {
+   5   1          u8 p0_md0_sta;
+   6   1          u8 p0_md1_sta;
+   7   1          u8 p1_md0_sta;
+   8   1          u8 p1_md1_sta; 
+   9   1          
+  10   1          p0_md0_sta = P0_MD0;
+  11   1          p0_md1_sta = P0_MD1;
+  12   1          p1_md0_sta = P1_MD0;
+  13   1          p1_md1_sta = P1_MD1;
+  14   1          
+  15   1          // 低功耗下不需要的IO设置成模拟输入
+  16   1          P0_MD0 = 0xFF;
+  17   1          P0_MD1 = 0xFF;
+  18   1          P1_MD0 = 0xFF;
+  19   1          P1_MD1 = 0xFF;
+  20   1          
+  21   1          // 配置P14 低功耗唤醒IO
+  22   1          P1_MD1    &= ~0x03;
+  23   1          P1_MD1    |=  0x02;
+  24   1          P1_AF1    |=  0x03;
+  25   1          P1_PD     |=  0x10;     // P14下拉
+  26   1          
+  27   1          WKUP_CON0  = 0x01;      // 使能通道0，上升沿唤醒
+  28   1          WKPND      = 0xFF;      // 唤醒前清除pending
+  29   1          LP_CON    |= 0x40;      // 唤醒后Goon
+  30   1          // 关闭ADC,DACMP等模拟模块
+  31   1          // ....
+  32   1          
+  33   1          __ENTER_SLEEP_MODE;     // 进入SLEEP
+  34   1          __SLEEP_AFTER_WAKE_UP;  // SLEEP唤醒后
+  35   1      
+  36   1          // 恢复IO的功能
+  37   1          P0_MD0 = p0_md0_sta;
+  38   1          P0_MD1 = p0_md1_sta;
+  39   1          P1_MD0 = p1_md0_sta;
+  40   1          P1_MD1 = p1_md1_sta;
+  41   1          
+  42   1          // user_printf("Sleep out\n");
+  43   1      
+  44   1          // 重新初始化
+  45   1          // user_init();
+  46   1      
+  47   1      
+  48   1          // 如果一直按着开机/模式按键，返回
+  49   1      
+  50   1      
+  51   1          // 配置1s的定时器，用于唤醒，
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/17/2025 17:51:45 PAGE 2   
+
+  52   1          // 唤醒后，如果没有按下 开机/模式按键，或是没有在充电，回到低功耗
+  53   1      
+  54   1          
+  55   1      
+  56   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    153    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

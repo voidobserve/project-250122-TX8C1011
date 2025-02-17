@@ -7,8 +7,11 @@
 ".\Release\Objects\adc.obj",
 ".\Release\Objects\key.obj",
 ".\Release\Objects\led.obj",
+".\Release\Objects\uart.obj",
 ".\Release\Objects\charge.obj",
 ".\Release\Objects\heating.obj",
+".\Release\Objects\speech_process.obj",
+".\Release\Objects\low_power.obj",
 ".\Release\Objects\main.obj" 
 TO ".\Release\Objects\Demo" 
 PRINT(".\Release\Listings\Demo.m51") RAMSIZE(256) 

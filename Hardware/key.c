@@ -59,8 +59,10 @@ const u8 key_id_table[] = {
     AD_KEY_VAL_HEAT,
 }; // 各个按键以中间值作为分隔，从小到大排列
 
-extern volatile bit flag_is_dev_open;
+// extern volatile bit flag_is_dev_open;
 extern volatile bit flag_is_in_charging;
+
+extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 
 extern void fun_ctl_motor_status(u8 adjust_motor_status);
 extern void fun_ctl_power_on(void);
@@ -82,9 +84,6 @@ void key_scan_10ms_isr(void)
     volatile u8 adc_val = 0;
 
     adc_sel_channel(ADC_CHANNEL_KEY_SCAN);
-    // adc_val = adc_get_val_once();
-    // adc_val >>= 4;
-
     adc_val = adc_get_val_once() >> 4;
 
     for (i = 0; i < ARRAY_SIZE(key_id_table); i++) // 获取对应的按键id
@@ -157,7 +156,9 @@ void key_scan_10ms_isr(void)
 
         if (KEY_ID_MODE == cur_key_id)
         {
-            if (flag_is_dev_open)
+            // if (flag_is_dev_open)
+            // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
+            if (cur_motor_status || cur_ctl_heat_status)
             {
                 if (press_cnt >= 200) // 2000ms
                 {
@@ -196,14 +197,18 @@ void key_scan_10ms_isr(void)
 
 // 按键事件处理
 void key_event_handle(void)
-{ 
-    if (flag_is_dev_open)
+{
+    // if (flag_is_dev_open)
+    // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
+    if (cur_motor_status || cur_ctl_heat_status)
     {
         // 如果设备正在运行
         if (KEY_EVENT_MODE_HOLD == key_event)
         {
             // 关机：
             fun_ctl_power_off();
+            SPEECH_POWER_DISABLE();
+            flag_is_enter_low_power = 1; // 允许进入低功耗
         }
         else if (KEY_EVENT_MODE_CLICK == key_event)
         {
@@ -224,10 +229,12 @@ void key_event_handle(void)
         if (KEY_EVENT_MODE_HOLD == key_event && /* 长按了 开关/模式按键 */
             0 == flag_is_in_charging)           /* 当前没有在充电 */
         {
-            fun_ctl_power_on(); // 函数内部会将 flag_is_dev_open 置一
+            // fun_ctl_power_on(); // 函数内部会将 flag_is_dev_open 置一
+            fun_ctl_power_on();
+            SPEECH_POWER_ENABLE();
         }
     }
- 
+
     // 处理完成后，清除按键事件
     key_event = KEY_EVENT_NONE;
 }

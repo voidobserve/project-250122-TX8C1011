@@ -1,0 +1,119 @@
+C51 COMPILER V9.60.7.0   UART                                                              02/17/2025 17:05:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\Release\Objects\uart.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\uart.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(.
+                    -.\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\uart
+                    -.lst) OBJECT(.\Release\Objects\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
+             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+   2          
+   3          #include <stdio.h>
+   4          
+   5          #define USER_UART_BAUD ((SYSCLK - 115200UL) / (115200UL))
+   6          
+   7          extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
+   8          
+   9          void uart1_config(void)
+  10          {
+  11   1          // P00 RX
+  12   1          P0_MD0 &= ~0x03;
+  13   1          P0_MD0 |= 0x02; // 多功能IO模式
+  14   1          P0_AF0 &= ~0x03;
+  15   1          P0_AF0 |= 0x01; // P00 复用为 UART1_RX
+  16   1      
+  17   1          __EnableIRQ(UART1_IRQn); // 打开UART模块中断
+  18   1          IE_EA = 1;               // 打开总中断
+  19   1      
+  20   1          UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
+  21   1          UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
+  22   1          UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
+  23   1          UART1_CON |= 0x02;                          // 接收模式
+  24   1      }
+  25          
+  26          // 定义串口接收的状态机
+  27          // 表示串口已经接收了什么类型的数据
+  28          enum
+  29          {
+  30              RECV_NONE = 0,
+  31              RECV_HEAD,
+  32              RECV_CTL,
+  33              RECV_TAIL,
+  34          };
+  35          volatile u8 cur_recv_status = RECV_NONE;
+  36          
+  37           
+  38          static volatile u8 recv_data = 0; // 串口接收数据缓冲区，只在当前文件内使用
+  39          volatile u8 recv_ctl = 0;         // 存放接收完成的控制命令
+  40          void UART1_IRQHandler(void) interrupt UART1_IRQn
+  41          {
+  42   1      // RX接收完成中断
+  43   1      #if 0
+                  if (UART1_STA & 0x20)
+                  {
+                      // uart_data = UART1_DATA;
+                      // printf("%d\n",uart_data); 
+                      // _flag_is_recved_data = 1;
+                  }
+                  UART1_STA |= 0x08; // 清中断请求标志位
+              #endif
+C51 COMPILER V9.60.7.0   UART                                                              02/17/2025 17:05:46 PAGE 2   
+
+  52   1      
+  53   1          if (UART1_STA & 0x20)
+  54   1          {
+  55   2              if (RECV_NONE == cur_recv_status)
+  56   2              {
+  57   3                  // 如果当前什么都没有接收，准备接收到来的格式头
+  58   3                  if (FORMAT_HEAD == UART1_DATA)
+  59   3                  {
+  60   4                      cur_recv_status = RECV_HEAD;
+  61   4                  }
+  62   3              }
+  63   2              else if (RECV_HEAD == cur_recv_status)
+  64   2              {
+  65   3                  // 如果已经接收了格式头
+  66   3                  recv_data = UART1_DATA;
+  67   3                  cur_recv_status = RECV_CTL; // 表示已经接收了控制命令
+  68   3              }
+  69   2              else if (RECV_CTL == cur_recv_status)
+  70   2              {
+  71   3                  // 如果已经接收了格式头和控制命令，开始计算校验
+  72   3                  // 校验 == (格式头 + 控制命令) & 0xFF
+  73   3                  if (((FORMAT_HEAD + recv_data) & 0xFF) == UART1_DATA)
+  74   3                  {
+  75   4                      // 给对应的标志位置一，让主循环来扫描并处理对应的控制命令
+  76   4                      // 将控制命令存放到另外的变量中，不占用串口接收的缓冲
+  77   4                      recv_ctl = recv_data;
+  78   4                      flag_is_recv_ctl = 1;
+  79   4                  }
+  80   3                  else
+  81   3                  {
+  82   4                      // 校验不通过
+  83   4                      // flag_is_recv_ctl = 0; // 好像可以不加这一句
+  84   4                  }
+  85   3      
+  86   3                  cur_recv_status = RECV_NONE;
+  87   3              }
+  88   2          }
+  89   1          UART1_STA |= 0x08; // 清中断请求标志位
+  90   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    103    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

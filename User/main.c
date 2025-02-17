@@ -38,7 +38,7 @@ volatile bit flag_tim_scan_maybe_motor_stalling = 0; // 用于给定时器扫描的标志位
 volatile bit flag_tim_set_motor_stalling = 0;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
 
 volatile bit flag_is_enable_key_scan = 0; // 标志位，是否使能按键扫描(每10ms被定时器置位，在主函数中检测并清零)
-volatile bit flag_is_dev_open = 0;        // 设备是否开机的标志位，0--未开机，1--开机
+// volatile bit flag_is_dev_open = 0;        // （只在长按开机、关机时使用）设备是否开机的标志位，0--未开机，1--开机
 
 volatile bit flag_ctl_led_blink = 0; // 控制标志位，是否控制指示灯闪烁
 volatile bit flag_ctl_turn_dir = 0;  // 控制标志位，是否更换电机的方向
@@ -49,6 +49,25 @@ volatile bit flag_ctl_low_bat_alarm = 0; // 控制标志位，是否使能低电量报警
 
 volatile bit flag_is_disable_to_open = 0; // 标志位，是否不使能开机(低电量不允许开机)
 
+volatile bit flag_is_recv_ctl = 0; // 标志位，是否接收了控制命令
+/*
+    标志位，是否通过语音来切换方向.
+    用在定时器中断中，判断自动换方向，如果这个标志位置一，
+    会清除当前自动换方向的计时，重新开始自动换方向的计时,
+    定时器清除计时后，会给这个标志位清零
+*/
+volatile bit flag_is_turn_dir_by_speech = 0;
+
+/*
+    标志位，是否接收到了新的语音信息/有新的按键操作
+    用在定时器中断，在通过语音关闭设备后，一段时间无操作而彻底关机
+    如果这个标志位置一，在定时器内会清除自动彻底关机的倒计时，
+    定时器在清除计时后，会给这个标志位清零
+*/
+volatile bit flag_is_new_operation = 0;
+
+volatile bit flag_is_enter_low_power = 0; // 标志位，是否要进入低功耗
+
 // 控制函数，开机
 void fun_ctl_power_on(void)
 {
@@ -58,7 +77,7 @@ void fun_ctl_power_on(void)
 
     cur_motor_dir = 1;    // 表示当前电机在正转
     cur_motor_status = 2; // 更新电机挡位状态
-    flag_is_dev_open = 1; // 表示设备已经开启
+    // flag_is_dev_open = 1; // 表示设备已经开启
 
     // 让绿灯闪烁
     LED_GREEN_ON();
@@ -74,6 +93,7 @@ void fun_ctl_power_off(void)
 
     // 关闭灯光闪烁的动画
     flag_ctl_led_blink = 0;
+    delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
     LED_GREEN_OFF();
     LED_RED_OFF();
 
@@ -85,7 +105,7 @@ void fun_ctl_power_off(void)
 
     cur_motor_status = 0; // 表示电机已经关闭
     cur_motor_dir = 0;    // 清零，回到初始状态
-    flag_is_dev_open = 0; // 表示设备已经关闭
+    // flag_is_dev_open = 0; // 表示设备已经关闭
 
     // 关机可能是 充电时进入了关机、低电量进入了关机、手动关机、自动进入了关机
     // 如果是 充电时进入了关机，不应该清除相应的标志位
@@ -153,6 +173,7 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
 
     // 每次切换挡位，都让定时器加载动画
     flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+    delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
 
     // 如果不处于低电量报警状态，才使能LED闪烁功能：
     if (0 == flag_tim_set_bat_is_low)
@@ -171,23 +192,20 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
             LED_RED_ON();
             cur_sel_led = CUR_SEL_LED_RED;
         }
+
         cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
         flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
     }
 }
 
-/**
- * @brief  Main program.
- * @param  None
- * @retval None
- */
 void main(void)
 {
     system_init();
 
     // 关闭HCK和HDA的调试功能
     WDT_KEY = 0x55; // 解除写保护
-    IO_MAP |= 0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
+    // IO_MAP |= 0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
+    IO_MAP &= ~0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
     WDT_KEY = 0xBB;
 
     // 初始化打印
@@ -201,16 +219,20 @@ void main(void)
     P1_MD0 |= 0x03 << 2;   // 模拟模式
     P1_AIOEN |= 0x01 << 1; // 使能模拟功能
 
-    // 使用 P00 作为 DEBUG 引脚
-    P0_MD0 |= 0x01; // 输出模式
+    // // 使用 P00 作为 DEBUG 引脚
+    // P0_MD0 |= 0x01; // 输出模式
 
-    heating_pin_config(); // 加热控制引脚
+    heating_pin_config();    // 加热控制引脚
+    speech_ctl_pin_config(); // 控制语音IC电源的引脚
     led_config();
+
     tmr1_config();     // 1ms定时器
     tmr2_pwm_config(); // 控制升压的PWM
 
     adc_config();
     motor_config(); // 控制电机的两路PWM
+
+    uart1_config();
 
     // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
     LED_GREEN_ON();
@@ -245,9 +267,9 @@ void main(void)
     TMR2_PWMH = 0;
 
 #endif // 上电时检测电池是否正确安装
-  
+
     while (1)
-    {   
+    {
 
 #if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
         if (flag_bat_is_empty)
@@ -275,13 +297,11 @@ void main(void)
 
             key_event_handle();
         }
-        else
-        {
-            // flag_is_enable_key_scan = 0; // 直接清空标志位
-        }
+
+        speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
 #endif
 
-#if 1  // 电机自动转向
+#if 1 // 电机自动转向
         if (flag_ctl_turn_dir)
         {
             // 如果要切换电机转向
@@ -317,31 +337,38 @@ void main(void)
         }
 #endif // 电机自动转向
 
-#if 1  // 电机过流检测和处理
+#if 1 // 电机过流检测和处理
 
         motor_over_current_detect_handle(); // 函数内部会检测电机有没有运行
+
 #endif // 电机过流检测和处理
 
-#if 1  // 根据控制标志位来控制关机
+#if 1 // 根据控制标志位来控制关机
         if (flag_ctl_dev_close)
         {
             // 如果要关闭设备
             flag_ctl_dev_close = 0;
+
+            if (flag_is_in_charging)
+            {
+                // 如果正在充电，直接关闭语音IC的电源
+                SPEECH_POWER_DISABLE();
+            }
+
             fun_ctl_power_off();
         }
 #endif // 根据控制标志位来控制关机
 
-#if 0 // 检测设备状态，确认设备是否已经开机，并更新相应标志位
-    // （好像可以不用加，自动关机检测那里已经包含了 检测电机和加热的状态）
+#if 0  // 低功耗
 
-        // if ((0 != cur_motor_status) || /* 如果电机未关闭 */
-        //     (0 != cur_ctl_heat_status) /* 如果加热未关闭 */
-        // )
-        // {
-        //     flag_is_dev_open = 1; // 表示设备开机
-        // }
-
-#endif
+        {
+            if (flag_is_enter_low_power)
+            {
+                flag_is_enter_low_power = 0;
+                low_power();
+            }
+        }
+#endif // 低功耗
 
     } // while (1)
 }
@@ -587,14 +614,15 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 自动关机
 #endif // 控制自动关机
 
-#if 1     // 控制电机自动换方向
+#if 1 // 控制电机自动换方向
+
         { // 自动换方向
 
             static volatile u16 turn_dir_ms_cnt = 0; // 控制在运行时每 xx min切换一次转向的计时变量
 
-            if ((0 != cur_motor_status) && /* 如果电机不是关闭的 */
-                1                          /* 如果没有通过语音调节过方向 */
-            )
+            if ((0 != cur_motor_status) &&       /* 如果电机不是关闭的 */
+                0 == flag_is_turn_dir_by_speech) /* 如果没有通过语音调节过方向 */
+
             {
                 turn_dir_ms_cnt++;
                 if (turn_dir_ms_cnt >= 60000) // xx ms 后，换方向
@@ -608,6 +636,11 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             else
             {
                 turn_dir_ms_cnt = 0;
+
+                if (flag_is_turn_dir_by_speech)
+                {
+                    flag_is_turn_dir_by_speech = 0; // 已经清除自动换方向的计时，便清除该标志位
+                }
             }
 
         } // 自动换方向
@@ -635,6 +668,11 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                     bat_is_full_ms_cnt = 0;
                     flag_tim_set_bat_is_full = 0;
                 }
+            }
+            else
+            {
+                // 如果没有在充电
+                
             }
         } // 检测是否充满电
 #endif // 检测是否充满电
@@ -733,7 +771,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
             {
                 // 如果检测到有电机堵转的情况
-                // P00 = 1;
+                // P00 = 1; // 方便测试过流检测时间
 
                 __detect_motor_stalling_cnt++;
                 if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
@@ -745,13 +783,38 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             else
             {
                 // 如果没有检测到有电机堵转的情况
-                // P00 = 0;
+                // P00 = 0; // 方便测试过流检测时间
 
                 __detect_motor_stalling_cnt = 0;
                 flag_tim_set_motor_stalling = 0;
             }
         }
 #endif // 电机过流检测，超过10s便认为电机堵转
+
+#if 1 // 控制语音IC关机后，无操作而关机
+
+        {
+            static u32 no_operation_shut_down_cnt = 0; // 无操作自动关机的计时
+
+            if (0 == flag_is_new_operation && /* 如果没有新的操作 */
+                0 == cur_motor_status &&      /* 如果电机关闭 */
+                0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
+                0 == flag_is_enter_low_power) /* 如果没有使能进入低功耗 */
+            {
+                no_operation_shut_down_cnt++;
+                if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
+                {
+                    no_operation_shut_down_cnt = 0;
+                    flag_is_enter_low_power = 1;
+                }
+            }
+            else
+            {
+                no_operation_shut_down_cnt = 0;
+                flag_is_new_operation = 0;
+            }
+        }
+#endif // 控制语音IC关机后，无操作而关机
     }
 }
 

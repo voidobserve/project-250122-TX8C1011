@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/15/2025 16:32:46 PAGE 1   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/17/2025 17:05:45 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   47   1          motor_pwm_disable();
   48   1      }
   49          
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/15/2025 16:32:46 PAGE 2   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/17/2025 17:05:45 PAGE 2   
 
   50          // void motor_pwm_enable(void)
   51          // {
@@ -126,7 +126,7 @@ line level    source
  109           *          0 -- 关闭电机 0%占空比
  110           *          1 -- 一档 86.8% 占空比
  111           *          2 -- 二档 92.8% 占空比
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/15/2025 16:32:46 PAGE 3   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/17/2025 17:05:45 PAGE 3   
 
  112           *          3 -- 三档 100% 占空比
  113           *          其余参数值不做处理
@@ -190,7 +190,7 @@ line level    source
  171   2          }
  172   1      
  173   1          if (flag_tim_set_motor_stalling)
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/15/2025 16:32:46 PAGE 4   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/17/2025 17:05:45 PAGE 4   
 
  174   1          {
  175   2              // 如果确实检测到了电机堵转
