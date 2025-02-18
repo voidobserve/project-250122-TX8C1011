@@ -6,37 +6,6 @@
 #define KEY_FILTER_TIMES (3) // 按键消抖次数 (消抖时间 == 消抖次数 * 按键扫描时间)
 volatile u8 key_event;       // 存放按键事件的变量
 
-/*
-    检测ad按键，使用VDD作为参考电压
-    10K上拉连接到VDD
-    开关和模式按键使用2.2R下拉，加热按键使用10K下拉
-    那么开关和模式按键按下时，对应的电压是
-    2.2R / (10K + 2.2R) * VDD,约为 0.0002 VDD
-    加热按键按下时，对应的电压
-    10K / (10K + 10K) * VDD == 0.5 VDD
-
-    VDD对应的ad值为4096，那么
-    开关和模式按键对应的ad值  0.8192
-    加热按键对应的ad值       2048
-    没有按键按下时，对应的ad值 4096
-    取 ad值>>4 的中间值作为划分
-
-    0.8192 / 16 == 0.0512
-    2048 / 16 == 128
-    4096 / 16 == 256
-    (128 - 0.0512) / 2 ,约为64
-    (256 - 128) / 2，约为64
-    那么检测到 ad值>>4 小于 64 + 0 时，认为是 开关/模式按键按下
-    检测到 ad值>>4 大于 64 且小于 64 + 128时，认为是 加热按键按下
-    检测到 ad值>>4 大于 64 + 128 时，认为 没有按键按下
-*/
-#define AD_KEY_VAL_NONE 255 // 表示没有按键按下
-
-#define AD_KEY_VAL_MODE (64)       // 开关/模式按键
-#define AD_KEY_VAL_HEAT (64 + 128) // 加热按键
-
-// 定义按键的id，与 key_id_table[]中的顺序有关
-// 目前除了KEY_ID_NONE, KEY_ID_MODE对应数组的第0个，KEY_ID_HEAT对应数组的第二个
 enum
 {
     KEY_ID_NONE = 0,
@@ -53,13 +22,6 @@ enum
     KEY_EVENT_HEAT_CLICK,
 };
 
-// 存放按键
-const u8 key_id_table[] = {
-    AD_KEY_VAL_MODE,
-    AD_KEY_VAL_HEAT,
-}; // 各个按键以中间值作为分隔，从小到大排列
-
-// extern volatile bit flag_is_dev_open;
 extern volatile bit flag_is_in_charging;
 
 extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
@@ -68,6 +30,13 @@ extern void fun_ctl_motor_status(u8 adjust_motor_status);
 extern void fun_ctl_power_on(void);
 extern void fun_ctl_power_off(void);
 extern void fun_ctl_heat_status(u8 adjust_heat_status);
+
+void key_config(void)
+{
+    // 上拉：
+    P0_PU |= 0x01 << 7;
+    P1_PU |= 0x01;
+}
 
 // ad按键扫描检测函数，需要放到周期为10ms的循环内执行
 void key_scan_10ms_isr(void)
@@ -83,18 +52,35 @@ void key_scan_10ms_isr(void)
 
     volatile u8 adc_val = 0;
 
-    adc_sel_channel(ADC_CHANNEL_KEY_SCAN);
-    adc_val = adc_get_val_once() >> 4;
-
-    for (i = 0; i < ARRAY_SIZE(key_id_table); i++) // 获取对应的按键id
+#ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
+    if (0 == P10) // 开关/模式 按键 优先级要高于 加热 按键
     {
-        if (adc_val < key_id_table[i])
-        {
-            // 由于第0个表示KEY_ID_NONE,这里要赋值有效的键值，需要加上1
-            cur_key_id = i + 1;
-            break;
-        }
+        cur_key_id = KEY_ID_MODE;
     }
+    else if (0 == P07)
+    {
+        cur_key_id = KEY_ID_HEAT;
+    }
+    else
+    {
+        cur_key_id = KEY_ID_NONE;
+    }
+#endif
+
+#ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
+    if (0 == P07) // 开关/模式 按键 优先级要高于 加热 按键
+    {
+        cur_key_id = KEY_ID_MODE;
+    }
+    else if (0 == P10)
+    {
+        cur_key_id = KEY_ID_HEAT;
+    }
+    else
+    {
+        cur_key_id = KEY_ID_NONE;
+    }
+#endif
 
     // 消抖/滤波
     if (cur_key_id != filter_key_id)
@@ -156,6 +142,7 @@ void key_scan_10ms_isr(void)
 
         if (KEY_ID_MODE == cur_key_id)
         {
+#if USE_MOTOR
             // if (flag_is_dev_open)
             // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
             if (cur_motor_status || cur_ctl_heat_status)
@@ -189,6 +176,7 @@ void key_scan_10ms_isr(void)
                     }
                 }
             }
+#endif
         }
     }
 
@@ -198,6 +186,7 @@ void key_scan_10ms_isr(void)
 // 按键事件处理
 void key_event_handle(void)
 {
+#if USE_MOTOR
     // if (flag_is_dev_open)
     // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
     if (cur_motor_status || cur_ctl_heat_status)
@@ -207,7 +196,7 @@ void key_event_handle(void)
         {
             // 关机：
             fun_ctl_power_off();
-            SPEECH_POWER_DISABLE();
+            // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源
             flag_is_enter_low_power = 1; // 允许进入低功耗
         }
         else if (KEY_EVENT_MODE_CLICK == key_event)
@@ -234,6 +223,7 @@ void key_event_handle(void)
             SPEECH_POWER_ENABLE();
         }
     }
+#endif
 
     // 处理完成后，清除按键事件
     key_event = KEY_EVENT_NONE;

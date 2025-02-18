@@ -7,6 +7,10 @@
         "my_config.h": "c",
         "debug.h": "c",
         "uart.h": "c",
-        "low_power.h": "c"
+        "low_power.h": "c",
+        "led.h": "c",
+        "speech_process.h": "c",
+        "key.h": "c",
+        "motor.h": "c"
     }
 }

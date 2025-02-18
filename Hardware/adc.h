@@ -10,7 +10,7 @@ enum
     ADC_CHANNEL_BAT,      // 检测电池分压后的电压
     ADC_CHANNEL_CHARGE,   // 检测是否有充电
     ADC_CHANNEL_MOTOR,    // 检测电机是否堵转 
-    ADC_CHANNEL_KEY_SCAN, // 测试用， 检测ad按键
+    // ADC_CHANNEL_KEY_SCAN, // 测试用， 检测ad按键
 };
 
 void adc_config(void);

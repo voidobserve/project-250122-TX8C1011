@@ -13,12 +13,11 @@ extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低
 void heating_pin_config(void)
 {
     // 配置为输出模式
-    // 假设是 用 P14 控制加热
+    //  用 P14 控制加热
     P1_MD1 |= 0x01;
-    // P14 = 0;
 }
 
-#if 1
+#if 0
 // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
 void fun_ctl_close_heat(void)
 {
@@ -59,7 +58,7 @@ void fun_ctl_heat_status(u8 adjust_heat_status)
 #endif // 可以节省4字节程序空间
 
     flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-    delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量
+    delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
 
     if (0 == adjust_heat_status)
     {

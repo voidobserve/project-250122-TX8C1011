@@ -1,9 +1,9 @@
-C51 COMPILER V9.60.7.0   TMR1                                                              02/17/2025 17:05:45 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR1                                                              02/18/2025 17:34:21 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
 OBJECT MODULE PLACED IN .\Release\Objects\tmr1.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\tmr1.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(.
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\tmr1.c OPTIMIZE(9,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(.
                     -.\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\tmr1
                     -.lst) OBJECT(.\Release\Objects\tmr1.obj)
 
@@ -12,6 +12,8 @@ line level    source
    1          #include "tmr1.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-À’–¿-∞¥ƒ¶“«”Ô“ÙøÓ-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
+*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
    3          // ÈÖçÁΩÆ1msÂÆöÊó∂Âô®
    4          #define TMR0_CNT_TIME (SYSCLK / 128 / (1000 - 20) - 1) // ËÆ°Êï∞Âë®Êúü 1KHz(ÂÆûÈôÖ‰∏ä‰ºöÊúâËØØÂ∑ÆÔºåËøôÈáå
@@ -42,4 +44,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)

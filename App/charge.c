@@ -6,12 +6,16 @@
 #endif
 
 extern volatile bit flag_is_in_charging;
-extern volatile bit flag_bat_is_full;   // 电池是否被充满电的标志位
-extern volatile bit flag_ctl_dev_close; // 控制标志位，是否要关闭设备
+extern volatile bit flag_bat_is_full;      // 电池是否被充满电的标志位
+extern volatile bit flag_bat_is_near_full; // 标志位，表示电池是否快充满电
+extern volatile bit flag_ctl_dev_close;    // 控制标志位，是否要关闭设备
 
 extern volatile bit flag_tim_scan_maybe_not_charge;
 extern volatile bit flag_tim_scan_maybe_in_charging;
 extern volatile bit flag_tim_set_is_in_charging;
+
+extern volatile bit flag_tim_scan_bat_maybe_near_full; // 用于给定时器扫描的标志位，可能检测到电池快被充满电
+extern volatile bit flag_tim_set_bat_is_near_full;     // 由定时器置位/复位的，表示电池是否快被充满电的标志位
 
 extern volatile bit flag_tim_scan_bat_maybe_full; // 用于给定时器扫描的标志位，可能检测到电池被充满电
 extern volatile bit flag_tim_set_bat_is_full;     // 由定时器置位/复位的，表示电池是否被充满电的标志位
@@ -27,6 +31,8 @@ extern volatile bit flag_tim_set_shut_down;        // 由定时器置位/复位�
 
 extern volatile bit flag_is_disable_to_open; // 标志位，是否不使能开机(低电量不允许开机)
 
+extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
+
 // 充电扫描与检测
 /**
  * @brief    充电、电池的扫描和相关处理
@@ -37,7 +43,7 @@ extern volatile bit flag_is_disable_to_open; // 标志位，是否不使能开�
  */
 void charge_scan_handle(void)
 {
-    u8 i = 0;                        // 循环计数值
+
     u16 adc_bat_val = 0;             // 存放检测到的电池电压的adc值
     u16 adc_charging_val = 0;        // 存放检测到的充电电压的adc值
     u16 tmp_bat_val = 0;             // 存放检测到的电池电压+计算的压差对应的adc值
@@ -49,6 +55,9 @@ void charge_scan_handle(void)
     adc_sel_channel(ADC_CHANNEL_CHARGE);   // 切换到检测充电的电压检测引脚(检测到的充电电压 == USB-C口电压 / 2)
     adc_charging_val = adc_get_val_once(); // 更新当前检测到的充电电压对应的ad值
 
+    printf("");
+
+    // 低电量不允许开机
     if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
     {
         flag_is_disable_to_open = 1;
@@ -60,48 +69,67 @@ void charge_scan_handle(void)
 
     if (flag_is_in_charging)
     {
-        // 如果正在充电，清除不充电时使用到的标志位和变量
-        flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电量
-        flag_ctl_low_bat_alarm = 0;      // 关闭低电量报警
 
         // 如果正在充电，检测电池是否充满电
 #if 1 // 检测在充电时，电池是否充满电，并做相应的处理
 
-        // 如果检测到充满电（可能触发了电池保护板的过充保护），直接输出0%的PWM
-        if (adc_bat_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+        if (0 == flag_bat_is_full)
         {
-            // 如果检测到的ad值比 满电的ad值 还要多
-            // PWM占空比设置为0，让占空比重新开始递增，电流从零开始逐渐增大
-            TMR2_PWML = 0; // 占空比 0%
-            TMR2_PWMH = 0;
-            over_charging_cnt++;              // 过充检测计数加一
-            flag_tim_scan_bat_maybe_full = 1; // (可以不用给这个标志位置一，这里只是测试时使用)
-        }
-        else if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
-        {
-            // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
-            flag_tim_scan_bat_maybe_full = 1;
-        }
-        else
-        {
-            // 如果检测到的ad值小于满电阈值
-            // 清空对应的标志位，让定时器不检测是否满电
-            flag_tim_scan_bat_maybe_full = 0;
-        }
+            // 如果正在充电，且电池未充满电，检测电视是否快充满电 或是 电池充满电
 
-        // 如果定时器检测了一段时间(5s)，都是充满电的状态，或着是累计有过充，说明电池充满电
-        if (flag_tim_set_bat_is_full || (over_charging_cnt >= 8))
-        // if (flag_tim_set_bat_is_full) // 测试时使用到的条件
-        {
-            over_charging_cnt = 0;
-            flag_bat_is_full = 1; // 表示电池被充满电
-            tmr2_pwm_disable();   // 关闭控制升压电路的pwm
-            TMR2_PWML = 0;        // 占空比 0%
-            TMR2_PWMH = 0;
-            // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清零）
-            LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
-            LED_GREEN_ON(); // 充满电时，让绿灯常亮
-        }
+            // 如果检测到充满电（可能触发了电池保护板的过充保护），直接输出0%的PWM
+            if (adc_bat_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+            {
+                // 如果检测到的ad值比 满电的ad值 还要多
+                // PWM占空比设置为0，让占空比重新开始递增，电流从零开始逐渐增大
+                TMR2_PWML = 0; // 占空比 0%
+                TMR2_PWMH = 0;
+                over_charging_cnt++; // 过充检测计数加一
+                // flag_tim_scan_bat_maybe_full = 1; // (可以不用给这个标志位置一，这里只是测试时使用)
+            }
+            else if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
+            {
+                // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
+                flag_tim_scan_bat_maybe_full = 1;
+            }
+            else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
+            {
+                // 如果电池快充满电
+                flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
+            }
+            else
+            {
+                // 如果检测到的ad值小于满电阈值
+                // 清空对应的标志位，让定时器不检测是否满电
+                flag_tim_scan_bat_maybe_full = 0;
+                flag_tim_scan_bat_maybe_near_full = 0;
+            }
+
+            if (flag_tim_set_bat_is_near_full && 0 == flag_bat_is_near_full)
+            {
+                // 如果电池接近满电，关闭充电时的呼吸灯，点亮绿灯，但是不关闭控制充电的PWM
+                flag_bat_is_near_full = 1;
+                delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
+                LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
+                LED_GREEN_ON(); // 充满电时，让绿灯常亮
+            }
+
+            if (flag_tim_set_bat_is_full || (over_charging_cnt >= 8))
+            // if (flag_tim_set_bat_is_full) // 测试时使用到的条件
+            {
+                // 如果定时器检测了一段时间(5s)，都是充满电的状态，或着是累计有过充，说明电池充满电
+                over_charging_cnt = 0; // 清除过充计数
+                flag_bat_is_full = 1;  // 表示电池被充满电
+                tmr2_pwm_disable();    // 关闭控制升压电路的pwm
+                TMR2_PWML = 0;         // 占空比 0%
+                TMR2_PWMH = 0;
+                // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清零）
+                delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
+                LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
+                LED_GREEN_ON(); // 充满电时，让绿灯常亮
+            }
+        } // if (0 == flag_bat_is_full)
+
 #endif // 检测在充电时，电池是否充满电，并做相应的处理
 
 #if 1 // (这个功能要放在该语句块的最后)检测在充电时，是否拔出了充电线，并做相应的处理
@@ -121,10 +149,20 @@ void charge_scan_handle(void)
             // 如果在充电时，检测到拔出了充电线
             flag_is_in_charging = 0;
 
-            tmr2_pwm_disable(); // 关闭PWM输出
+            // 清空充电时使用的标志位和变量：
+            flag_tim_scan_bat_maybe_full = 0;
+            flag_tim_scan_bat_maybe_near_full = 0;
+            // flag_tim_set_bat_is_full = 0; // 可以不用清零这个变量，定时器后续会自动清零
+            flag_bat_is_near_full = 0;
+            flag_bat_is_full = 0;
+            over_charging_cnt = 0; // 清除过充计数
+
+            tmr2_pwm_disable(); // 关闭控制充电的PWM输出
 
             LED_GREEN_OFF();
             LED_RED_OFF();
+
+            delay_ms(1); // 等待定时器清空相应的变量和标志位
 
 #if USE_MY_DEBUG
             printf("uncharging\n");
@@ -137,11 +175,8 @@ void charge_scan_handle(void)
     } // if (flag_is_in_charging)
     else // 如果不在充电
     {
-        // 清空充电时使用的标志位和变量：
-        flag_tim_set_bat_is_full = 0;
-        over_charging_cnt = 0; // 清除过充计数
 
-#if 1 // 在设备工作时，检测是否处于低电量，并进行相应处理
+#if 0  // 在设备工作时，检测是否处于低电量，并进行相应处理
 
         if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
         {
@@ -171,6 +206,8 @@ void charge_scan_handle(void)
             if (flag_tim_set_shut_down)
             {
                 flag_ctl_dev_close = 1;
+                // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源
+                flag_is_enter_low_power = 1; // 允许进入低功耗
             }
             else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
             // if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm) // 还没有添加低电量关机功能时，用于测试低电量报警的功能
@@ -200,27 +237,34 @@ void charge_scan_handle(void)
             // 确认是插入充电线后，无论处于什么状态，都变为关机状态
             flag_is_in_charging = 1;
 
+            // 清空不充电时使用的变量和标志位
+            flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电量
+            flag_ctl_low_bat_alarm = 0;      // 关闭低电量报警
+
 #if USE_MY_DEBUG
             printf("charging\n");
 #endif // #if USE_MY_DEBUG
 
             tmr2_pwm_enable(); // 使能PWM输出
 
-            flag_ctl_dev_close = 1; // 控制标志位置一，让主函数扫描到，并关机
+            flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+            flag_is_enter_low_power = 0; // 不进入低功耗
         }
 #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
     }
 
     // 充电电流控制
+    // if (flag_is_in_charging && 0 == flag_bat_is_full)
     if (flag_is_in_charging)
     {
+        u8 i = 0;             // 循环计数值
         u16 max_pwm_val = 0;  // 临时存放最大占空比对应的值
         u16 last_pwm_val = 0; // 记录之前的pwm占空比的值
         u16 tmp_val = 0;      // 临时存放需要调节的占空比对应的值
         static u16 tmp_val_l[8] = {0};
         static u8 tmp_val_cnt = 0;
 
-        last_pwm_val = TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
+        last_pwm_val = (u16)TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
         max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的值
         // printf("max_pwm_val %lu\n", max_pwm_val);
 
@@ -263,6 +307,7 @@ void charge_scan_handle(void)
         }
 
         tmp_bat_val += 95; //
+        // tmp_bat_val += 1195;
 
         // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)
         // {

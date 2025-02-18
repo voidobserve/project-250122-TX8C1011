@@ -18,15 +18,18 @@
 #include "include.h"
 #include "my_config.h"
 
-volatile bit flag_bat_is_empty = 0; // 标志位，用于检测是否拔出了电池
-volatile bit flag_bat_is_full = 0;  // 电池是否被充满电的标志位
+volatile bit flag_bat_is_empty = 0;     // 标志位，用于检测是否拔出了电池
+volatile bit flag_bat_is_near_full = 0; // 标志位，表示电池是否快充满电
+volatile bit flag_bat_is_full = 0;      // 电池是否被充满电的标志位
 
-volatile bit flag_is_in_charging = 0;             // 是否处于充电的标志位
-volatile bit flag_tim_scan_maybe_not_charge = 0;  // 用于给定时器扫描的标志位，可能检测到了拔出充电器
-volatile bit flag_tim_scan_maybe_in_charging = 0; // 用于给定时器扫描的标志位，可能检测到了充电器
-volatile bit flag_tim_set_is_in_charging = 0;     // 由定时器置位/复位的，表示是否有插入充电器的标志位
-volatile bit flag_tim_scan_bat_maybe_full = 0;    // 用于给定时器扫描的标志位，可能检测到电池被充满电
-volatile bit flag_tim_set_bat_is_full = 0;        // 由定时器置位/复位的，表示电池是否被充满电的标志位
+volatile bit flag_is_in_charging = 0;               // 是否处于充电的标志位
+volatile bit flag_tim_scan_maybe_not_charge = 0;    // 用于给定时器扫描的标志位，可能检测到了拔出充电器
+volatile bit flag_tim_scan_maybe_in_charging = 0;   // 用于给定时器扫描的标志位，可能检测到了充电器
+volatile bit flag_tim_set_is_in_charging = 0;       // 由定时器置位/复位的，表示是否有插入充电器的标志位
+volatile bit flag_tim_scan_bat_maybe_full = 0;      // 用于给定时器扫描的标志位，可能检测到电池被充满电
+volatile bit flag_tim_set_bat_is_full = 0;          // 由定时器置位/复位的，表示电池是否被充满电的标志位
+volatile bit flag_tim_scan_bat_maybe_near_full = 0; // 用于给定时器扫描的标志位，可能检测到电池快被充满电
+volatile bit flag_tim_set_bat_is_near_full = 0;     // 由定时器置位/复位的，表示电池是否快被充满电的标志位
 
 volatile bit flag_tim_scan_maybe_low_bat = 0; // 用于给定时器扫描的标志位，可能检测到了低电量
 volatile bit flag_tim_set_bat_is_low = 0;     // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
@@ -71,19 +74,23 @@ volatile bit flag_is_enter_low_power = 0; // 标志位，是否要进入低功耗
 // 控制函数，开机
 void fun_ctl_power_on(void)
 {
+#if USE_MOTOR
     alter_motor_speed(2); // 开机后，电机进入二档
 
     motor_pwm_b_enable(); // 电机正向转动
 
     cur_motor_dir = 1;    // 表示当前电机在正转
     cur_motor_status = 2; // 更新电机挡位状态
-    // flag_is_dev_open = 1; // 表示设备已经开启
+
+#endif
 
     // 让绿灯闪烁
     LED_GREEN_ON();
     cur_sel_led = CUR_SEL_LED_GREEN;
+#if USE_MOTOR
     cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
-    flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
+#endif
+    flag_ctl_led_blink = 1; // 打开LED闪烁的功能
 }
 
 // 控制函数，关机
@@ -100,12 +107,13 @@ void fun_ctl_power_off(void)
     // 关闭加热
     cur_ctl_heat_status = 0;
 
+#if USE_MOTOR
     // 关闭PWM输出：
     motor_pwm_disable();
 
     cur_motor_status = 0; // 表示电机已经关闭
     cur_motor_dir = 0;    // 清零，回到初始状态
-    // flag_is_dev_open = 0; // 表示设备已经关闭
+#endif
 
     // 关机可能是 充电时进入了关机、低电量进入了关机、手动关机、自动进入了关机
     // 如果是 充电时进入了关机，不应该清除相应的标志位
@@ -123,6 +131,7 @@ void fun_ctl_power_off(void)
     }
 }
 
+#if USE_MOTOR
 /**
  * @brief 控制电机挡位
  *           如果要根据传参来调节挡位，会改变 全局变量 cur_motor_status 的状态
@@ -173,7 +182,7 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
 
     // 每次切换挡位，都让定时器加载动画
     flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-    delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
+    delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
 
     // 如果不处于低电量报警状态，才使能LED闪烁功能：
     if (0 == flag_tim_set_bat_is_low)
@@ -197,14 +206,14 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
         flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
     }
 }
+#endif
 
 void main(void)
 {
     system_init();
 
     // 关闭HCK和HDA的调试功能
-    WDT_KEY = 0x55; // 解除写保护
-    // IO_MAP |= 0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
+    WDT_KEY = 0x55;  // 解除写保护
     IO_MAP &= ~0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
     WDT_KEY = 0xBB;
 
@@ -214,14 +223,7 @@ void main(void)
     printf("TXM8C101x_SDK main start\n");
 #endif //  #if USE_MY_DEBUG
 
-    // 初始化 检测按键 的引脚：
-    // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
-    P1_MD0 |= 0x03 << 2;   // 模拟模式
-    P1_AIOEN |= 0x01 << 1; // 使能模拟功能
-
-    // // 使用 P00 作为 DEBUG 引脚
-    // P0_MD0 |= 0x01; // 输出模式
-
+    key_config();
     heating_pin_config();    // 加热控制引脚
     speech_ctl_pin_config(); // 控制语音IC电源的引脚
     led_config();
@@ -230,9 +232,15 @@ void main(void)
     tmr2_pwm_config(); // 控制升压的PWM
 
     adc_config();
+#if USE_MOTOR
     motor_config(); // 控制电机的两路PWM
+#endif
 
     uart1_config();
+
+    // 不使用的引脚配置为输出，输出低电平
+    P1_MD1 |= 0x01 << 2;
+    P15 = 0;
 
     // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
     LED_GREEN_ON();
@@ -271,7 +279,7 @@ void main(void)
     while (1)
     {
 
-#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
+#if 0 // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
@@ -286,8 +294,12 @@ void main(void)
 #if 1
         charge_scan_handle();
 
-        if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
-            0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
+        // if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
+        //     0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
+
+        if (0 == flag_is_in_charging)
+        //  &&   /* 不充电时，才对按键做检测和处理 */
+        // 0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
         {
             if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
             {
@@ -298,10 +310,10 @@ void main(void)
             key_event_handle();
         }
 
-        speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
+        // speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
 #endif
 
-#if 1 // 电机自动转向
+#if 0  // 电机自动转向
         if (flag_ctl_turn_dir)
         {
             // 如果要切换电机转向
@@ -337,13 +349,13 @@ void main(void)
         }
 #endif // 电机自动转向
 
-#if 1 // 电机过流检测和处理
+#if 0 // 电机过流检测和处理
 
         motor_over_current_detect_handle(); // 函数内部会检测电机有没有运行
 
 #endif // 电机过流检测和处理
 
-#if 1 // 根据控制标志位来控制关机
+#if 0  // 根据控制标志位来控制关机
         if (flag_ctl_dev_close)
         {
             // 如果要关闭设备
@@ -365,6 +377,8 @@ void main(void)
             if (flag_is_enter_low_power)
             {
                 flag_is_enter_low_power = 0;
+
+                SPEECH_POWER_DISABLE(); // 关闭语音IC的电源
                 low_power();
             }
         }
@@ -441,7 +455,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 检测是否拔出/插入充电器
 #endif // 检测是否拔出/插入充电器
 
-#if 1 // 控制灯光闪烁的效果
+#if 0  // 控制灯光闪烁的效果
 
         { // 控制灯光闪烁的效果
 
@@ -553,7 +567,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 控制灯光闪烁的效果
 #endif // 控制灯光闪烁的效果
 
-#if 1 // 控制加热
+#if 0  // 控制加热
 
         { // 控制加热
             static volatile u8 __ctl_heat_ms_cnt = 0;
@@ -590,7 +604,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 控制加热
 #endif // 控制加热
 
-#if 1 // 控制自动关机
+#if 0  // 控制自动关机
 
         { // 自动关机
             static volatile u32 shut_down_ms_cnt = 0;
@@ -614,7 +628,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 自动关机
 #endif // 控制自动关机
 
-#if 1 // 控制电机自动换方向
+#if 0  // 控制电机自动换方向
 
         { // 自动换方向
 
@@ -646,11 +660,42 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 自动换方向
 #endif // 控制电机自动换方向
 
-#if 1 // 检测是否充满电
+#if 0 // 检测是否快充满电
+
+        {
+            static volatile u16 bat_is_near_full_ms_cnt = 0;
+            // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_near_full ，
+            //  |-- 可以不加这个判断条件：
+            // if (flag_is_in_charging)
+            {
+                if (flag_tim_scan_bat_maybe_near_full)
+                {
+                    // 正在充电，且检测到快充满电，进行计时
+                    bat_is_near_full_ms_cnt++;
+                    if (bat_is_near_full_ms_cnt >= 5000) // xx ms
+                    {
+                        bat_is_near_full_ms_cnt = 0;
+                        flag_bat_is_near_full = 1;
+                    }
+                }
+                else
+                {
+                    // 正在充电，但是有一次没有检测到快充满电，清除计时和标志位
+                    bat_is_near_full_ms_cnt = 0;
+                    flag_tim_set_bat_is_near_full = 0;
+                }
+            }
+        }
+
+#endif // 检测是否快充满电
+
+#if 0  // 检测是否充满电
 
         { // 检测是否充满电
             static volatile u16 bat_is_full_ms_cnt = 0;
-            if (flag_is_in_charging)
+            // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_full ，
+            //  |-- 可以不加这个判断条件：
+            // if (flag_is_in_charging)
             {
                 if (flag_tim_scan_bat_maybe_full)
                 {
@@ -669,15 +714,10 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                     flag_tim_set_bat_is_full = 0;
                 }
             }
-            else
-            {
-                // 如果没有在充电
-                
-            }
         } // 检测是否充满电
 #endif // 检测是否充满电
 
-#if 1 // 检测是否要低电量报警
+#if 0  // 检测是否要低电量报警
 
         {
             static u16 low_bat_ms_cnt = 0;
@@ -738,7 +778,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
 #endif // 检测是否要低电量报警
 
-#if 1 // 工作时，检测电池电量是否一直低于关机电压
+#if 0  // 工作时，检测电池电量是否一直低于关机电压
 
         {
             static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
@@ -762,7 +802,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         }
 #endif // 工作时，检测电池电量是否一直低于关机电压
 
-#if 1 // 电机过流检测，超过10s便认为电机堵转
+#if 0  // 电机过流检测，超过10s便认为电机堵转
 
         {
             // 检测到电机堵转后，进行连续计时
@@ -791,7 +831,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         }
 #endif // 电机过流检测，超过10s便认为电机堵转
 
-#if 1 // 控制语音IC关机后，无操作而关机
+#if 0  // 控制语音IC关机后，无操作而关机
 
         {
             static u32 no_operation_shut_down_cnt = 0; // 无操作自动关机的计时
@@ -815,6 +855,71 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             }
         }
 #endif // 控制语音IC关机后，无操作而关机
+
+#if 1 // 控制呼吸灯效果
+
+        {
+            // 0 -- 初始状态
+            // 1 -- 刚进入呼吸灯状态
+            // 2 -- 从亮到灭
+            // 3 -- 从灭到亮
+            static u8 cur_breathing_status = 0;
+            static u16 pwm_duty = 0;
+
+            if (flag_is_in_charging &&
+                (0 == flag_bat_is_near_full) &&
+                (0 == flag_bat_is_full))
+            {
+                if (0 == cur_breathing_status)
+                {
+                    cur_breathing_status = 1;
+                }
+            }
+            else
+            {
+                cur_breathing_status = 0;
+                pwm_duty = 0;
+            }
+
+            if (1 == cur_breathing_status)
+            {
+                pwm_duty = (STMR2_PRE + 1);
+                cur_breathing_status = 2;
+                LED_RED_ON();
+            }
+            else if (2 == cur_breathing_status)
+            {
+                if (pwm_duty > 0)
+                {
+                    pwm_duty--;
+                }
+                else
+                {
+                    cur_breathing_status = 3;
+                    pwm_duty = 0;
+                }
+
+                STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
+                STMR2_CMPAL = (pwm_duty) % 256;
+            }
+            else if (3 == cur_breathing_status)
+            {
+                if (pwm_duty < (STMR2_PRE + 1))
+                {
+                    pwm_duty++;
+                }
+                else
+                {
+                    cur_breathing_status = 2;
+                    pwm_duty = (STMR2_PRE + 1);
+                }
+
+                STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
+                STMR2_CMPAL = (pwm_duty) % 256;
+            }
+        }
+
+#endif // 控制呼吸灯效果
     }
 }
 

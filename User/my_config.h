@@ -3,7 +3,7 @@
 
 #include "include.h"
 
-#define USE_MY_DEBUG 0
+#define USE_MY_DEBUG 1
 
 #if USE_MY_DEBUG
 #include <stdio.h>
@@ -23,8 +23,40 @@
 #include "speech_process.h"
 #include "low_power.h"
 
+#define USE_MOTOR 0
+
+
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
+// ===================================================
+// 按键相关配置                                      //
+// ===================================================
+// 选择使用哪个引脚检测 开关/模式 按键，哪个引脚检测 加热 按键
+#if 0
+// 使用第 10 脚检测 开关/模式按键
+// 使用第 07 脚检测 加热按键
+#define USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT 
+#else
+// 使用第 07 脚检测 加热按键
+// 使用第 10 脚检测 开关/模式按键
+#define USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT 
+#endif // 选择使用哪个引脚检测 开关/模式 按键，哪个引脚检测 加热 按键
+
+// ===================================================
+// LED相关配置                                      //
+// ===================================================
+// 选择使用哪个引脚驱动红灯，哪个引脚驱动绿灯
+#if 1
+// 使用P13驱动红灯，P12驱动绿灯
+#define USE_P13_RLED_USE_P12_GLED
+#else
+// 使用P12驱动红灯，P13驱动绿灯
+#define USE_P12_RLED_USE_P13_GLED
+#endif // 选择使用哪个引脚驱动红灯，哪个引脚驱动绿灯
+
+// ===================================================
+// 串口接收相关配置                                   //
+// ===================================================
 #define FORMAT_HEAD (0xA5) // 串口接收控制命令的格式头
 
 /*
@@ -43,11 +75,11 @@
 #define SHUT_DOWN_SCAN_TIMES_MS (1000)
 
 // 电机堵转时，对应的ad值
-#define MOTOR_STALLING_AD_VAL (2048) // 
+#define MOTOR_STALLING_AD_VAL (2048) //
 // 电机堵转的连续扫描时间，单位：ms
-#define MOTOR_STALLING_SCAN_TIMES_MS (10000) 
+#define MOTOR_STALLING_SCAN_TIMES_MS (10000)
 
 // 关闭按摩指令后，无操作自动关机的时，单位：ms
-#define NO_OPERATION_SHUT_DOWN_TIMES_MS (120000) 
+#define NO_OPERATION_SHUT_DOWN_TIMES_MS (120000)
 
 #endif

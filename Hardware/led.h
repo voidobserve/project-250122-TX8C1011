@@ -3,9 +3,7 @@
 
 #include "my_config.h"
 
-// ===================================================
-// LED相关配置(灯光闪烁)                              //
-// ===================================================
+#define STMR2_PRE (SYSCLK / 1 / (15992) - 1) // 值 约为2000
 
 /*
     配置灯光闪烁时，需要先 确保熄灭了不闪烁的LED，
@@ -31,38 +29,42 @@ enum
 };
 extern volatile u8 cur_ctl_led_blink_cnt; // 记录当前要控制灯光闪烁的次数
 
+void led_config(void);
+void led_red_on(void);
+void led_red_off(void);
+void led_green_on(void);
+void led_green_off(void);
+
 // 在PCB上，红灯和绿灯都是高电平点亮
-#define LED_RED_PIN P12   // 控制红色LED的引脚
-#define LED_GREEN_PIN P05 // 控制绿色LED的引脚
-#define LED_RED_ON()         \
-    {                        \
-        do                   \
-        {                    \
-            LED_RED_PIN = 1; \
-        } while (0);         \
+// #define LED_RED_PIN P12   // 控制红色LED的引脚
+// #define LED_GREEN_PIN P05 // 控制绿色LED的引脚
+#define LED_RED_ON()      \
+    {                     \
+        do                \
+        {                 \
+            led_red_on(); \
+        } while (0);      \
     }
 #define LED_RED_OFF()        \
     {                        \
         do                   \
         {                    \
-            LED_RED_PIN = 0; \
+            led_red_off(); \
         } while (0);         \
     }
 #define LED_GREEN_ON()         \
     {                          \
         do                     \
         {                      \
-            LED_GREEN_PIN = 1; \
+            led_green_on(); \
         } while (0);           \
     }
 #define LED_GREEN_OFF()        \
     {                          \
         do                     \
         {                      \
-            LED_GREEN_PIN = 0; \
+            led_green_off(); \
         } while (0);           \
     }
-
-void led_config(void);
 
 #endif

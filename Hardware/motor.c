@@ -1,5 +1,7 @@
 #include "motor.h"
 
+#if USE_MOTOR
+
 // 20KHz
 #define STMR1_PRE (SYSCLK / 1 / (20000 - 100) - 1) // 值 == 1608
 
@@ -19,6 +21,7 @@ volatile u8 cur_motor_dir = 0;
 extern volatile bit flag_tim_scan_maybe_motor_stalling; // 用于给定时器扫描的标志位，可能检测到了电机堵转
 extern volatile bit flag_tim_set_motor_stalling;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
 extern volatile bit flag_ctl_dev_close;                 // 控制标志位，是否要关闭设备
+extern volatile bit flag_is_enter_low_power ; // 标志位，是否要进入低功耗
 
 void motor_config(void)
 {
@@ -34,11 +37,11 @@ void motor_config(void)
     STMR1_FCONR = 0x00;          // 选择系统时钟，0分频
     STMR1_PRH = STMR1_PRE / 256; // 周期值
     STMR1_PRL = STMR1_PRE % 256;
-    STMR1_CMPAH = STMR1_PRE / 2 / 256;
-    STMR1_CMPAL = STMR1_PRE / 2 % 256;
-    STMR1_CMPBH = STMR1_PRE / 4 / 256;
-    STMR1_CMPBL = STMR1_PRE / 4 % 256;
-
+    // 占空比，默认为0
+    // STMR1_CMPAH = STMR1_PRE / 2 / 256;
+    // STMR1_CMPAL = STMR1_PRE / 2 % 256;
+    // STMR1_CMPBH = STMR1_PRE / 4 / 256;
+    // STMR1_CMPBL = STMR1_PRE / 4 % 256; 
     STMR1_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
     STMR1_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
     STMR1_CR |= 0x01;    // 使能高级定时器
@@ -174,5 +177,8 @@ void motor_over_current_detect_handle(void)
     {
         // 如果确实检测到了电机堵转
         flag_ctl_dev_close = 1; // 让主循环关闭设备
+        flag_is_enter_low_power = 1; // 允许进入低功耗
     }
 }
+
+#endif

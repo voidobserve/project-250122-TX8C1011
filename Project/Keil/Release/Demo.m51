@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    02/17/2025  17:51:46  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    02/18/2025  17:34:26  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -32,11 +32,15 @@ INPUT MODULES INCLUDED:
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LMUL)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULDIV)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?SLCMP)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULCMP)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULSHR)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CCASE)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LIMUL)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (PRINTF)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CLDOPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CSTPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?PLDIIDATA)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CCASE)
 
 
 LINK MAP OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
@@ -48,167 +52,155 @@ LINK MAP OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
             DATA    0008H     0012H     UNIT         ?DT?CHARGE
-            DATA    001AH     0003H     UNIT         ?DT?UART
-            DATA    001DH     0002H     UNIT         ?DT?MOTOR
-            DATA    001FH     0001H     UNIT         ?DT?ADC
-            BIT     0020H.0   0003H.1   UNIT         ?BI?MAIN
-            BIT     0023H.1   0000H.1   UNIT         ?BI?KEY
-                    0023H.2   0000H.6                *** GAP ***
-            DATA    0024H     001CH     UNIT         ?DT?MAIN
-            DATA    0040H     000DH     UNIT         _DATA_GROUP_
-            DATA    004DH     000AH     UNIT         ?DT?ADC_GET_VAL?ADC
-            DATA    0057H     0007H     UNIT         ?DT?KEY
-            DATA    005EH     0002H     UNIT         ?DT?LED
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 2
+            DATA    001AH     0006H     UNIT         ?DT?MAIN
+            BIT     0020H.0   0003H.3   UNIT         ?BI?MAIN
+            BIT     0023H.3   0001H.1   UNIT         _BIT_GROUP_
+            BIT     0024H.4   0000H.1   UNIT         ?BI?KEY
+                    0024H.5   0000H.3                *** GAP ***
+            DATA    0025H     0024H     UNIT         _DATA_GROUP_
+            DATA    0049H     0005H     UNIT         ?DT?KEY
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 2
 
 
-            DATA    0060H     0001H     UNIT         ?DT?HEATING
-            IDATA   0061H     0001H     UNIT         ?STACK
+            DATA    004EH     0003H     UNIT         ?DT?UART
+            DATA    0051H     0002H     UNIT         ?DT?LED
+            DATA    0053H     0001H     UNIT         ?DT?ADC
+            DATA    0054H     0001H     UNIT         ?DT?HEATING
+            IDATA   0055H     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
                     0000H     8000H                  *** GAP ***
             CODE    8000H     0003H     ABSOLUTE     
-            CODE    8003H     0007H     UNIT         ?PR?HEATING_PIN_CONFIG?HEATING
-            CODE    800AH     0001H     UNIT         ?PR?SPEECH_CTL_PIN_CONFIG?SPEECH_PROCESS
-                    800BH     0001H                  *** GAP ***
+            CODE    8003H     0009H     UNIT         ?PR?FUN_CTL_POWER_ON?MAIN
             CODE    800CH     0003H     ABSOLUTE     
             CODE    800FH     0018H     UNIT         ?PR?_DELAY_MS?DEBUG
             CODE    8027H     0003H     ABSOLUTE     
-            CODE    802AH     0325H     UNIT         ?PR?TMR0_IRQHANDLER?MAIN
-            CODE    834FH     028EH     UNIT         ?PR?CHARGE_SCAN_HANDLE?CHARGE
-            CODE    85DDH     01AAH     UNIT         ?C?LIB_CODE
-            CODE    8787H     00C3H     UNIT         ?PR?ADC_GET_VAL?ADC
-            CODE    884AH     00BBH     UNIT         ?PR?KEY_SCAN_10MS_ISR?KEY
-            CODE    8905H     00B4H     UNIT         ?PR?SPEECH_SCAN_PROCESS?SPEECH_PROCESS
-            CODE    89B9H     00B2H     UNIT         ?C_INITSEG
-            CODE    8A6BH     009CH     UNIT         ?PR?MAIN?MAIN
-            CODE    8B07H     0099H     UNIT         ?PR?LOW_POWER?LOW_POWER
-            CODE    8BA0H     008CH     UNIT         ?C_C51STARTUP
-            CODE    8C2CH     004EH     UNIT         ?PR?_FUN_CTL_MOTOR_STATUS?MAIN
-            CODE    8C7AH     004AH     UNIT         ?PR?_FUN_CTL_HEAT_STATUS?HEATING
-            CODE    8CC4H     0049H     UNIT         ?PR?SYSTEM_INIT?SYSTEM
-            CODE    8D0DH     0049H     UNIT         ?PR?_ADC_SEL_CHANNEL?ADC
-            CODE    8D56H     0041H     UNIT         ?PR?UART1_IRQHANDLER?UART
-            CODE    8D97H     003FH     UNIT         ?PR?KEY_EVENT_HANDLE?KEY
-            CODE    8DD6H     0033H     UNIT         ?PR?_ALTER_MOTOR_SPEED?MOTOR
-            CODE    8E09H     0031H     UNIT         ?PR?ADC_CONFIG?ADC
-            CODE    8E3AH     002CH     UNIT         ?PR?FUN_CTL_POWER_OFF?MAIN
-            CODE    8E66H     0027H     UNIT         ?PR?MOTOR_CONFIG?MOTOR
-            CODE    8E8DH     0026H     UNIT         ?PR?UART1_CONFIG?UART
-            CODE    8EB3H     0020H     UNIT         ?PR?MOTOR_OVER_CURRENT_DETECT_HANDLE?MOTOR
-            CODE    8ED3H     001EH     UNIT         ?PR?ADC_GET_VAL_ONCE?ADC
-            CODE    8EF1H     001AH     UNIT         ?PR?TMR2_PWM_CONFIG?TMR2
-            CODE    8F0BH     0019H     UNIT         ?PR?FUN_CTL_POWER_ON?MAIN
-            CODE    8F24H     0014H     UNIT         ?PR?MOTOR_PWM_A_ENABLE?MOTOR
-            CODE    8F38H     0014H     UNIT         ?PR?MOTOR_PWM_B_ENABLE?MOTOR
-            CODE    8F4CH     0012H     UNIT         ?PR?MOTOR_PWM_DISABLE?MOTOR
-            CODE    8F5EH     0012H     UNIT         ?PR?TMR1_CONFIG?TMR1
-            CODE    8F70H     0010H     UNIT         ?PR?TMR2_PWM_DISABLE?TMR2
-            CODE    8F80H     000FH     UNIT         ?PR?FUN_CTL_CLOSE_HEAT?HEATING
-            CODE    8F8FH     000EH     UNIT         ?PR?TMR2_PWM_ENABLE?TMR2
-            CODE    8F9DH     000DH     UNIT         ?PR?MOTOR_PWM_A_DISABLE?MOTOR
-            CODE    8FAAH     000DH     UNIT         ?PR?MOTOR_PWM_B_DISABLE?MOTOR
-            CODE    8FB7H     000DH     UNIT         ?PR?LED_CONFIG?LED
-            CODE    8FC4H     000BH     UNIT         ?PR?_DELAY?DEBUG
+            CODE    802AH     035CH     UNIT         ?PR?PRINTF?PRINTF
+            CODE    8386H     028EH     UNIT         ?PR?CHARGE_SCAN_HANDLE?CHARGE
+            CODE    8614H     01FCH     UNIT         ?C?LIB_CODE
+            CODE    8810H     0111H     UNIT         ?PR?TMR0_IRQHANDLER?MAIN
+            CODE    8921H     00B0H     UNIT         ?PR?MAIN?MAIN
+            CODE    89D1H     0099H     UNIT         ?PR?LOW_POWER?LOW_POWER
+            CODE    8A6AH     008CH     UNIT         ?C_C51STARTUP
+            CODE    8AF6H     0088H     UNIT         ?PR?ADC_GET_VAL?ADC
+            CODE    8B7EH     0082H     UNIT         ?C_INITSEG
+            CODE    8C00H     0078H     UNIT         ?PR?KEY_SCAN_10MS_ISR?KEY
+            CODE    8C78H     0049H     UNIT         ?PR?SYSTEM_INIT?SYSTEM
+            CODE    8CC1H     0041H     UNIT         ?PR?UART1_IRQHANDLER?UART
+            CODE    8D02H     0031H     UNIT         ?PR?ADC_CONFIG?ADC
+            CODE    8D33H     002AH     UNIT         ?PR?_ADC_SEL_CHANNEL?ADC
+            CODE    8D5DH     0026H     UNIT         ?PR?UART1_CONFIG?UART
+            CODE    8D83H     0026H     UNIT         ?PR?FUN_CTL_POWER_OFF?MAIN
+            CODE    8DA9H     0022H     UNIT         ?PR?DEBUG_INIT?DEBUG
+            CODE    8DCBH     001FH     UNIT         ?PR?ADC
+            CODE    8DEAH     001EH     UNIT         ?PR?ADC_GET_VAL_ONCE?ADC
+            CODE    8E08H     001AH     UNIT         ?PR?TMR2_PWM_CONFIG?TMR2
+            CODE    8E22H     001AH     UNIT         ?CO?MAIN
+            CODE    8E3CH     0019H     UNIT         ?PR?LED_CONFIG?LED
+            CODE    8E55H     0017H     UNIT         ?PR?LED_RED_ON?LED
+            CODE    8E6CH     0017H     UNIT         ?PR?LED_GREEN_ON?LED
+            CODE    8E83H     0016H     UNIT         ?CO?CHARGE
+            CODE    8E99H     0012H     UNIT         ?PR?TMR1_CONFIG?TMR1
+            CODE    8EABH     0010H     UNIT         ?PR?TMR2_PWM_DISABLE?TMR2
+            CODE    8EBBH     000EH     UNIT         ?PR?TMR2_PWM_ENABLE?TMR2
+            CODE    8EC9H     000DH     UNIT         ?PR?_DEBUG_PUTCHAR?DEBUG
+            CODE    8ED6H     000DH     UNIT         ?PR?KEY_CONFIG?KEY
+            CODE    8EE3H     000DH     UNIT         ?PR?LED_RED_OFF?LED
+            CODE    8EF0H     000DH     UNIT         ?PR?LED_GREEN_OFF?LED
+            CODE    8EFDH     000CH     UNIT         ?PR?CHARGE
+            CODE    8F09H     000BH     UNIT         ?PR?_DELAY?DEBUG
+            CODE    8F14H     0007H     UNIT         ?PR?HEATING_PIN_CONFIG?HEATING
+            CODE    8F1BH     0007H     UNIT         ?PR?SPEECH_CTL_PIN_CONFIG?SPEECH_PROCESS
+            CODE    8F22H     0005H     UNIT         ?PR?_PUTCHAR?DEBUG
+            CODE    8F27H     0004H     UNIT         ?PR?KEY_EVENT_HANDLE?KEY
 
 
 
 OVERLAY MAP OF MODULE:   .\Release\Objects\Demo (?C_STARTUP)
 
 
-SEGMENT                                            DATA_GROUP 
-  +--> CALLED SEGMENT                            START    LENGTH
-----------------------------------------------------------------
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 3
 
 
-?C_C51STARTUP                                    -----    -----
+SEGMENT                                             BIT_GROUP          DATA_GROUP 
+  +--> CALLED SEGMENT                            START    LENGTH     START    LENGTH
+------------------------------------------------------------------------------------
+?C_C51STARTUP                                    -----    -----      -----    -----
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
 
-?PR?MAIN?MAIN                                    -----    -----
+?PR?MAIN?MAIN                                    -----    -----      0025H    0003H
   +--> ?PR?SYSTEM_INIT?SYSTEM
+  +--> ?PR?DEBUG_INIT?DEBUG
+  +--> ?CO?MAIN
+  +--> ?PR?PRINTF?PRINTF
+  +--> ?PR?KEY_CONFIG?KEY
   +--> ?PR?HEATING_PIN_CONFIG?HEATING
   +--> ?PR?SPEECH_CTL_PIN_CONFIG?SPEECH_PROCESS
   +--> ?PR?LED_CONFIG?LED
   +--> ?PR?TMR1_CONFIG?TMR1
   +--> ?PR?TMR2_PWM_CONFIG?TMR2
   +--> ?PR?ADC_CONFIG?ADC
-  +--> ?PR?MOTOR_CONFIG?MOTOR
   +--> ?PR?UART1_CONFIG?UART
+  +--> ?PR?LED_GREEN_ON?LED
   +--> ?PR?_DELAY_MS?DEBUG
+  +--> ?PR?LED_GREEN_OFF?LED
+  +--> ?PR?TMR2_PWM_ENABLE?TMR2
+  +--> ?PR?_ADC_SEL_CHANNEL?ADC
+  +--> ?PR?ADC_GET_VAL?ADC
+  +--> ?PR?TMR2_PWM_DISABLE?TMR2
+  +--> ?PR?LED_RED_ON?LED
+  +--> ?PR?LED_RED_OFF?LED
   +--> ?PR?CHARGE_SCAN_HANDLE?CHARGE
   +--> ?PR?KEY_SCAN_10MS_ISR?KEY
   +--> ?PR?KEY_EVENT_HANDLE?KEY
-  +--> ?PR?SPEECH_SCAN_PROCESS?SPEECH_PROCESS
-  +--> ?PR?MOTOR_PWM_B_DISABLE?MOTOR
-  +--> ?PR?MOTOR_PWM_A_ENABLE?MOTOR
-  +--> ?PR?MOTOR_PWM_A_DISABLE?MOTOR
-  +--> ?PR?MOTOR_PWM_B_ENABLE?MOTOR
-  +--> ?PR?MOTOR_OVER_CURRENT_DETECT_HANDLE?...
-  +--> ?PR?FUN_CTL_POWER_OFF?MAIN
 
-?PR?SYSTEM_INIT?SYSTEM                           -----    -----
+?PR?SYSTEM_INIT?SYSTEM                           -----    -----      -----    -----
   +--> ?PR?_DELAY_MS?DEBUG
 
-?PR?_DELAY_MS?DEBUG                              -----    -----
+?PR?_DELAY_MS?DEBUG                              -----    -----      -----    -----
   +--> ?PR?_DELAY?DEBUG
 
-?PR?TMR2_PWM_CONFIG?TMR2                         -----    -----
+?PR?DEBUG_INIT?DEBUG                             -----    -----      0028H    0001H
+
+?PR?PRINTF?PRINTF                                0023H.3  0001H.1    0035H    0014H
+  +--> ?PR?_PUTCHAR?DEBUG
+
+?PR?_PUTCHAR?DEBUG                               -----    -----      -----    -----
+  +--> ?PR?_DEBUG_PUTCHAR?DEBUG
+
+?PR?TMR2_PWM_CONFIG?TMR2                         -----    -----      -----    -----
   +--> ?PR?TMR2_PWM_DISABLE?TMR2
 
-?PR?MOTOR_CONFIG?MOTOR                           -----    -----
-  +--> ?PR?MOTOR_PWM_DISABLE?MOTOR
+?PR?_ADC_SEL_CHANNEL?ADC                         -----    -----      -----    -----
+  +--> ?PR?_DELAY_MS?DEBUG
 
-?PR?CHARGE_SCAN_HANDLE?CHARGE                    0040H    000DH
+?PR?ADC_GET_VAL?ADC                              -----    -----      0028H    000AH
+  +--> ?PR?ADC_GET_VAL_ONCE?ADC
+  +--> ?PR?ADC
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 4
+
+
+?PR?CHARGE_SCAN_HANDLE?CHARGE                    -----    -----      0028H    000DH
   +--> ?PR?_ADC_SEL_CHANNEL?ADC
   +--> ?PR?ADC_GET_VAL_ONCE?ADC
   +--> ?PR?TMR2_PWM_DISABLE?TMR2
+  +--> ?PR?LED_GREEN_OFF?LED
+  +--> ?PR?LED_RED_OFF?LED
+  +--> ?PR?_DELAY_MS?DEBUG
+  +--> ?CO?CHARGE
+  +--> ?PR?PRINTF?PRINTF
   +--> ?PR?TMR2_PWM_ENABLE?TMR2
+  +--> ?PR?CHARGE
+  +--> ?PR?LED_GREEN_ON?LED
 
-?PR?_ADC_SEL_CHANNEL?ADC                         -----    -----
-  +--> ?PR?_DELAY_MS?DEBUG
+?PR?KEY_SCAN_10MS_ISR?KEY                        -----    -----      0028H    0003H
 
-?PR?KEY_SCAN_10MS_ISR?KEY                        0040H    0002H
-  +--> ?PR?_ADC_SEL_CHANNEL?ADC
-  +--> ?PR?ADC_GET_VAL_ONCE?ADC
+*** NEW ROOT ***************************************************
 
-?PR?KEY_EVENT_HANDLE?KEY                         -----    -----
-  +--> ?PR?FUN_CTL_POWER_OFF?MAIN
-  +--> ?PR?_FUN_CTL_MOTOR_STATUS?MAIN
-  +--> ?PR?_FUN_CTL_HEAT_STATUS?HEATING
-  +--> ?PR?FUN_CTL_POWER_ON?MAIN
-
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 4
-
-
-?PR?FUN_CTL_POWER_OFF?MAIN                       -----    -----
-  +--> ?PR?_DELAY_MS?DEBUG
-  +--> ?PR?MOTOR_PWM_DISABLE?MOTOR
-
-?PR?_FUN_CTL_MOTOR_STATUS?MAIN                   -----    -----
-  +--> ?PR?_ALTER_MOTOR_SPEED?MOTOR
-  +--> ?PR?_DELAY_MS?DEBUG
-
-?PR?_FUN_CTL_HEAT_STATUS?HEATING                 0041H    0001H
-  +--> ?PR?_DELAY_MS?DEBUG
-  +--> ?PR?FUN_CTL_CLOSE_HEAT?HEATING
-
-?PR?FUN_CTL_POWER_ON?MAIN                        -----    -----
-  +--> ?PR?_ALTER_MOTOR_SPEED?MOTOR
-  +--> ?PR?MOTOR_PWM_B_ENABLE?MOTOR
-
-?PR?SPEECH_SCAN_PROCESS?SPEECH_PROCESS           0040H    0001H
-  +--> ?PR?_ALTER_MOTOR_SPEED?MOTOR
-  +--> ?PR?MOTOR_PWM_B_ENABLE?MOTOR
-  +--> ?PR?_DELAY_MS?DEBUG
-  +--> ?PR?FUN_CTL_CLOSE_HEAT?HEATING
-  +--> ?PR?_FUN_CTL_MOTOR_STATUS?MAIN
-  +--> ?PR?_FUN_CTL_HEAT_STATUS?HEATING
-
-?PR?MOTOR_OVER_CURRENT_DETECT_HANDLE?...         -----    -----
-  +--> ?PR?_ADC_SEL_CHANNEL?ADC
-  +--> ?PR?ADC_GET_VAL_ONCE?ADC
+?PR?TMR0_IRQHANDLER?MAIN                         -----    -----      -----    -----
+  +--> ?PR?LED_RED_ON?LED
 
 
 
@@ -218,8 +210,8 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:8BA0H         SEGMENT       ?C_C51STARTUP
-  I:0061H         SEGMENT       ?STACK
+  C:8A6AH         SEGMENT       ?C_C51STARTUP
+  I:0055H         SEGMENT       ?STACK
   C:8000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -228,7 +220,7 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:8BA3H         SYMBOL        IDATALOOP
+  C:8A6DH         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -237,69 +229,77 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:8BA0H         SYMBOL        STARTUP1
+  C:8A6AH         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 5
-
-
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0300H         SYMBOL        XDATASTART
   C:8000H         LINE#         126
-  C:8BA0H         LINE#         133
-  C:8BA2H         LINE#         134
-  C:8BA3H         LINE#         135
-  C:8BA4H         LINE#         136
-  C:8BA6H         LINE#         185
-  C:8BA9H         LINE#         196
+  C:8A6AH         LINE#         133
+  C:8A6CH         LINE#         134
+  C:8A6DH         LINE#         135
+  C:8A6EH         LINE#         136
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 5
+
+
+  C:8A70H         LINE#         185
+  C:8A73H         LINE#         196
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        SYSTEM
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:00AAH         PUBLIC        FLASH_TRIM
   D:00AEH         PUBLIC        WDT_KEY
-  C:8CC4H         PUBLIC        system_init
+  C:8C78H         PUBLIC        system_init
   D:00A3H         PUBLIC        FLASH_TIM0
   D:00A4H         PUBLIC        FLASH_TIM1
   -------         PROC          SYSTEM_INIT
   -------         DO            
   D:0007H         SYMBOL        hrcsc_data
   -------         ENDDO         
-  C:8CC4H         LINE#         42
-  C:8CC4H         LINE#         43
-  C:8CC4H         LINE#         44
-  C:8CCBH         LINE#         46
-  C:8CCEH         LINE#         48
-  C:8CD1H         LINE#         49
-  C:8CD4H         LINE#         50
-  C:8CD7H         LINE#         52
-  C:8CDCH         LINE#         53
-  C:8CE1H         LINE#         54
-  C:8CE5H         LINE#         55
-  C:8CEAH         LINE#         57
-  C:8CF1H         LINE#         59
-  C:8D0CH         LINE#         62
+  C:8C78H         LINE#         42
+  C:8C78H         LINE#         43
+  C:8C78H         LINE#         44
+  C:8C7FH         LINE#         46
+  C:8C82H         LINE#         48
+  C:8C85H         LINE#         49
+  C:8C88H         LINE#         50
+  C:8C8BH         LINE#         52
+  C:8C90H         LINE#         53
+  C:8C95H         LINE#         54
+  C:8C99H         LINE#         55
+  C:8C9EH         LINE#         57
+  C:8CA5H         LINE#         59
+  C:8CC0H         LINE#         62
   -------         ENDPROC       SYSTEM_INIT
   -------         ENDMOD        SYSTEM
 
   -------         MODULE        DEBUG
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:8FC4H         PUBLIC        _delay
+  C:8F09H         PUBLIC        _delay
+  D:00F8H         PUBLIC        UART0_BAUD0
+  D:00F9H         PUBLIC        UART0_BAUD1
+  C:8DA9H         PUBLIC        debug_init
+  D:00F6H         PUBLIC        UART0_CON
+  D:00F7H         PUBLIC        UART0_STA
   C:800FH         PUBLIC        _delay_ms
+  C:8EC9H         PUBLIC        _debug_putchar
+  D:00FAH         PUBLIC        UART0_DATA
+  C:8F22H         PUBLIC        _putchar
   -------         PROC          _DELAY
   D:0006H         SYMBOL        cnt
-  C:8FC4H         LINE#         38
-  C:8FC4H         LINE#         39
-  C:8FC4H         LINE#         40
-  C:8FCEH         LINE#         41
-  C:8FCEH         LINE#         42
-  C:8FCEH         LINE#         43
+  C:8F09H         LINE#         38
+  C:8F09H         LINE#         39
+  C:8F09H         LINE#         40
+  C:8F13H         LINE#         41
+  C:8F13H         LINE#         42
+  C:8F13H         LINE#         43
   -------         ENDPROC       _DELAY
   -------         PROC          _DELAY_MS
   D:0002H         SYMBOL        ms
   C:800FH         LINE#         50
   C:8013H         LINE#         51
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 6
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 6
 
 
   C:8013H         LINE#         52
@@ -308,153 +308,41 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   C:8024H         LINE#         55
   C:8026H         LINE#         56
   -------         ENDPROC       _DELAY_MS
+  -------         PROC          _DEBUG_PUTCHAR
+  D:0007H         SYMBOL        uart_data
+  C:8EC9H         LINE#         64
+  C:8EC9H         LINE#         65
+  C:8EC9H         LINE#         66
+  C:8ECEH         LINE#         68
+  C:8ED0H         LINE#         69
+  C:8ED5H         LINE#         71
+  -------         ENDPROC       _DEBUG_PUTCHAR
+  -------         PROC          _PUTCHAR
+  D:0006H         SYMBOL        c
+  C:8F22H         LINE#         74
+  C:8F24H         LINE#         75
+  C:8F24H         LINE#         76
+  -------         ENDPROC       _PUTCHAR
+  -------         PROC          DEBUG_INIT
+  -------         DO            
+  D:0028H         SYMBOL        i
+  -------         ENDDO         
+  C:8DA9H         LINE#         85
+  C:8DA9H         LINE#         86
+  C:8DA9H         LINE#         87
+  C:8DACH         LINE#         90
+  C:8DB2H         LINE#         91
+  C:8DB6H         LINE#         92
+  C:8DBCH         LINE#         94
+  C:8DC1H         LINE#         97
+  C:8DC4H         LINE#         98
+  C:8DC7H         LINE#         99
+  C:8DCAH         LINE#         100
+  -------         ENDPROC       DEBUG_INIT
   -------         ENDMOD        DEBUG
 
   -------         MODULE        MOTOR
   C:0000H         SYMBOL        _ICE_DUMMY_
-  D:001DH         PUBLIC        cur_motor_dir
-  C:8E66H         PUBLIC        motor_config
-  D:00D7H         PUBLIC        STMR1_PCONRA
-  D:00D8H         PUBLIC        STMR1_PCONRB
-  C:8F4CH         PUBLIC        motor_pwm_disable
-  C:8DD6H         PUBLIC        _alter_motor_speed
-  B:0080H.2       PUBLIC        P02
-  B:0080H.3       PUBLIC        P03
-  D:00CDH         PUBLIC        STMR1_CMPAH
-  D:00CBH         PUBLIC        STMR1_PRH
-  D:00CFH         PUBLIC        STMR1_CMPBH
-  D:00CCH         PUBLIC        STMR1_CMPAL
-  D:00CAH         PUBLIC        STMR1_PRL
-  D:00CEH         PUBLIC        STMR1_CMPBL
-  D:00D2H         PUBLIC        STMR1_FCONR
-  C:8F9DH         PUBLIC        motor_pwm_a_disable
-  C:8FAAH         PUBLIC        motor_pwm_b_disable
-  D:001EH         PUBLIC        cur_motor_status
-  C:8EB3H         PUBLIC        motor_over_current_detect_handle
-  D:00D1H         PUBLIC        STMR1_CR
-  C:8F24H         PUBLIC        motor_pwm_a_enable
-  C:8F38H         PUBLIC        motor_pwm_b_enable
-  -------         PROC          MOTOR_CONFIG
-  C:8E66H         LINE#         23
-  C:8E66H         LINE#         24
-  C:8E66H         LINE#         31
-  C:8E6CH         LINE#         34
-  C:8E6FH         LINE#         35
-  C:8E72H         LINE#         36
-  C:8E75H         LINE#         37
-  C:8E78H         LINE#         38
-  C:8E7BH         LINE#         39
-  C:8E7EH         LINE#         40
-  C:8E81H         LINE#         42
-  C:8E84H         LINE#         43
-  C:8E87H         LINE#         44
-  C:8E8AH         LINE#         47
-  -------         ENDPROC       MOTOR_CONFIG
-  -------         PROC          MOTOR_PWM_A_ENABLE
-  C:8F24H         LINE#         59
-  C:8F24H         LINE#         60
-  C:8F24H         LINE#         62
-  C:8F2AH         LINE#         63
-  C:8F2EH         LINE#         64
-  C:8F34H         LINE#         65
-  C:8F37H         LINE#         66
-  -------         ENDPROC       MOTOR_PWM_A_ENABLE
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 7
-
-
-  -------         PROC          MOTOR_PWM_B_ENABLE
-  C:8F38H         LINE#         68
-  C:8F38H         LINE#         69
-  C:8F38H         LINE#         71
-  C:8F3EH         LINE#         72
-  C:8F42H         LINE#         73
-  C:8F48H         LINE#         74
-  C:8F4BH         LINE#         75
-  -------         ENDPROC       MOTOR_PWM_B_ENABLE
-  -------         PROC          MOTOR_PWM_A_DISABLE
-  C:8F9DH         LINE#         78
-  C:8F9DH         LINE#         79
-  C:8F9DH         LINE#         81
-  C:8FA3H         LINE#         82
-  C:8FA7H         LINE#         83
-  C:8FA9H         LINE#         84
-  -------         ENDPROC       MOTOR_PWM_A_DISABLE
-  -------         PROC          MOTOR_PWM_B_DISABLE
-  C:8FAAH         LINE#         87
-  C:8FAAH         LINE#         88
-  C:8FAAH         LINE#         90
-  C:8FB0H         LINE#         91
-  C:8FB4H         LINE#         92
-  C:8FB6H         LINE#         93
-  -------         ENDPROC       MOTOR_PWM_B_DISABLE
-  -------         PROC          MOTOR_PWM_DISABLE
-  C:8F4CH         LINE#         95
-  C:8F4CH         LINE#         96
-  C:8F4CH         LINE#         97
-  C:8F4FH         LINE#         99
-  C:8F55H         LINE#         100
-  C:8F59H         LINE#         101
-  C:8F5BH         LINE#         102
-  C:8F5DH         LINE#         103
-  -------         ENDPROC       MOTOR_PWM_DISABLE
-  -------         PROC          _ALTER_MOTOR_SPEED
-  D:0007H         SYMBOL        adjust_motor_status
-  C:8DD6H         LINE#         119
-  C:8DD6H         LINE#         120
-  C:8DD6H         LINE#         121
-  C:8DD9H         LINE#         122
-  C:8DD9H         LINE#         125
-  C:8DD9H         LINE#         126
-  C:8DDCH         LINE#         127
-  C:8DDCH         LINE#         128
-  C:8DDFH         LINE#         129
-  C:8DE2H         LINE#         130
-  C:8DE5H         LINE#         131
-  C:8DE8H         LINE#         132
-  C:8DE9H         LINE#         133
-  C:8DECH         LINE#         134
-  C:8DECH         LINE#         135
-  C:8DEFH         LINE#         136
-  C:8DF2H         LINE#         137
-  C:8DF5H         LINE#         138
-  C:8DF8H         LINE#         139
-  C:8DF9H         LINE#         140
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 8
-
-
-  C:8DFCH         LINE#         141
-  C:8DFCH         LINE#         142
-  C:8DFFH         LINE#         143
-  C:8E02H         LINE#         144
-  C:8E05H         LINE#         145
-  C:8E08H         LINE#         146
-  C:8E08H         LINE#         147
-  -------         ENDPROC       _ALTER_MOTOR_SPEED
-  -------         PROC          MOTOR_OVER_CURRENT_DETECT_HANDLE
-  -------         DO            
-  D:0006H         SYMBOL        adc_val
-  -------         ENDDO         
-  C:8EB3H         LINE#         150
-  C:8EB3H         LINE#         151
-  C:8EB3H         LINE#         152
-  C:8EB5H         LINE#         154
-  C:8EB9H         LINE#         155
-  C:8EB9H         LINE#         157
-  C:8EB9H         LINE#         159
-  C:8EBEH         LINE#         160
-  C:8EC1H         LINE#         162
-  C:8EC7H         LINE#         163
-  C:8EC7H         LINE#         165
-  C:8EC9H         LINE#         166
-  C:8ECBH         LINE#         168
-  C:8ECBH         LINE#         170
-  C:8ECDH         LINE#         171
-  C:8ECDH         LINE#         173
-  C:8ED0H         LINE#         174
-  C:8ED0H         LINE#         176
-  C:8ED2H         LINE#         177
-  C:8ED2H         LINE#         178
-  -------         ENDPROC       MOTOR_OVER_CURRENT_DETECT_HANDLE
   -------         ENDMOD        MOTOR
 
   -------         MODULE        TMR1
@@ -464,29 +352,29 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   D:0088H         PUBLIC        TMR0_CONL
   D:008AH         PUBLIC        TMR0_CNTL
   D:00A9H         PUBLIC        IE1
-  C:8F5EH         PUBLIC        tmr1_config
+  C:8E99H         PUBLIC        tmr1_config
   D:008CH         PUBLIC        TMR0_PRL
   B:00A8H.7       PUBLIC        IE_EA
   -------         PROC          TMR1_CONFIG
-  C:8F5EH         LINE#         7
-  C:8F5EH         LINE#         8
-  C:8F5EH         LINE#         9
-  C:8F61H         LINE#         10
-  C:8F63H         LINE#         12
-  C:8F66H         LINE#         13
-  C:8F69H         LINE#         14
-  C:8F6CH         LINE#         15
-  C:8F6FH         LINE#         16
+  C:8E99H         LINE#         7
+  C:8E99H         LINE#         8
+  C:8E99H         LINE#         9
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 7
+
+
+  C:8E9CH         LINE#         10
+  C:8E9EH         LINE#         12
+  C:8EA1H         LINE#         13
+  C:8EA4H         LINE#         14
+  C:8EA7H         LINE#         15
+  C:8EAAH         LINE#         16
   -------         ENDPROC       TMR1_CONFIG
   -------         ENDMOD        TMR1
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 9
-
-
 
   -------         MODULE        TMR2
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:8F8FH         PUBLIC        tmr2_pwm_enable
-  C:8EF1H         PUBLIC        tmr2_pwm_config
+  C:8EBBH         PUBLIC        tmr2_pwm_enable
+  C:8E08H         PUBLIC        tmr2_pwm_config
   B:0080H.1       PUBLIC        P01
   D:00C0H         PUBLIC        TMR2_CONL
   D:00C3H         PUBLIC        TMR2_CNTH
@@ -495,772 +383,610 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   D:00C6H         PUBLIC        TMR2_PWML
   D:00C5H         PUBLIC        TMR2_PRH
   D:00C4H         PUBLIC        TMR2_PRL
-  C:8F70H         PUBLIC        tmr2_pwm_disable
+  C:8EABH         PUBLIC        tmr2_pwm_disable
   -------         PROC          TMR2_PWM_CONFIG
-  C:8EF1H         LINE#         5
-  C:8EF1H         LINE#         6
-  C:8EF1H         LINE#         12
-  C:8EF7H         LINE#         14
-  C:8EFAH         LINE#         15
-  C:8EFDH         LINE#         16
-  C:8EFFH         LINE#         17
-  C:8F01H         LINE#         18
-  C:8F03H         LINE#         19
-  C:8F05H         LINE#         20
-  C:8F08H         LINE#         23
+  C:8E08H         LINE#         6
+  C:8E08H         LINE#         7
+  C:8E08H         LINE#         13
+  C:8E0EH         LINE#         15
+  C:8E11H         LINE#         16
+  C:8E14H         LINE#         17
+  C:8E16H         LINE#         18
+  C:8E18H         LINE#         19
+  C:8E1AH         LINE#         20
+  C:8E1CH         LINE#         21
+  C:8E1FH         LINE#         24
   -------         ENDPROC       TMR2_PWM_CONFIG
   -------         PROC          TMR2_PWM_ENABLE
-  C:8F8FH         LINE#         26
-  C:8F8FH         LINE#         27
-  C:8F8FH         LINE#         29
-  C:8F95H         LINE#         30
-  C:8F99H         LINE#         32
-  C:8F9CH         LINE#         33
+  C:8EBBH         LINE#         27
+  C:8EBBH         LINE#         28
+  C:8EBBH         LINE#         30
+  C:8EC1H         LINE#         31
+  C:8EC5H         LINE#         33
+  C:8EC8H         LINE#         34
   -------         ENDPROC       TMR2_PWM_ENABLE
   -------         PROC          TMR2_PWM_DISABLE
-  C:8F70H         LINE#         35
-  C:8F70H         LINE#         36
-  C:8F70H         LINE#         37
-  C:8F73H         LINE#         38
-  C:8F79H         LINE#         39
-  C:8F7DH         LINE#         40
-  C:8F7FH         LINE#         41
+  C:8EABH         LINE#         36
+  C:8EABH         LINE#         37
+  C:8EABH         LINE#         38
+  C:8EAEH         LINE#         39
+  C:8EB4H         LINE#         40
+  C:8EB8H         LINE#         41
+  C:8EBAH         LINE#         42
   -------         ENDPROC       TMR2_PWM_DISABLE
   -------         ENDMOD        TMR2
 
   -------         MODULE        ADC
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:8E09H         PUBLIC        adc_config
-  C:8D0DH         PUBLIC        _adc_sel_channel
+  C:8D02H         PUBLIC        adc_config
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 8
+
+
+  C:8D33H         PUBLIC        _adc_sel_channel
   D:0093H         PUBLIC        ADC_STA
   D:0091H         PUBLIC        ADC_CFG0
   D:0098H         PUBLIC        ADC_CHS0
   D:0094H         PUBLIC        ADC_DATAH0
   D:0095H         PUBLIC        ADC_DATAL0
-  C:8787H         PUBLIC        adc_get_val
-  C:8ED3H         PUBLIC        adc_get_val_once
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 10
-
-
+  C:8AF6H         PUBLIC        adc_get_val
+  C:8DEAH         PUBLIC        adc_get_val_once
+  C:8DCBH         SYMBOL        Com0013
+  C:8DCBH         SYMBOL        L?0020
+  C:8DE1H         SYMBOL        L?0021
+  -------         PROC          COM0013
+  -------         ENDPROC       COM0013
   -------         PROC          ADC_CONFIG
-  C:8E09H         LINE#         3
-  C:8E09H         LINE#         4
-  C:8E09H         LINE#         6
-  C:8E0FH         LINE#         7
-  C:8E15H         LINE#         10
-  C:8E1BH         LINE#         11
-  C:8E21H         LINE#         14
-  C:8E27H         LINE#         15
-  C:8E2DH         LINE#         17
-  C:8E33H         LINE#         18
-  C:8E39H         LINE#         19
+  C:8D02H         LINE#         3
+  C:8D02H         LINE#         4
+  C:8D02H         LINE#         6
+  C:8D08H         LINE#         7
+  C:8D0EH         LINE#         10
+  C:8D14H         LINE#         11
+  C:8D1AH         LINE#         14
+  C:8D20H         LINE#         15
+  C:8D26H         LINE#         17
+  C:8D2CH         LINE#         18
+  C:8D32H         LINE#         19
   -------         ENDPROC       ADC_CONFIG
   -------         PROC          _ADC_SEL_CHANNEL
   D:0007H         SYMBOL        adc_channel
   -------         DO            
-  D:001FH         SYMBOL        last_adc_channel
+  D:0053H         SYMBOL        last_adc_channel
   -------         ENDDO         
-  C:8D0DH         LINE#         22
-  C:8D0DH         LINE#         23
-  C:8D0DH         LINE#         27
-  C:8D12H         LINE#         28
-  C:8D12H         LINE#         30
-  C:8D12H         LINE#         31
-  C:8D14H         LINE#         35
-  C:8D23H         LINE#         36
-  C:8D23H         LINE#         37
-  C:8D23H         LINE#         39
-  C:8D26H         LINE#         41
-  C:8D26H         LINE#         42
-  C:8D26H         LINE#         43
-  C:8D28H         LINE#         45
-  C:8D28H         LINE#         47
-  C:8D2BH         LINE#         49
-  C:8D2BH         LINE#         50
-  C:8D2BH         LINE#         51
-  C:8D2DH         LINE#         53
-  C:8D2DH         LINE#         55
-  C:8D30H         LINE#         58
-  C:8D36H         LINE#         59
-  C:8D3BH         LINE#         60
-  C:8D3DH         LINE#         62
-  C:8D3DH         LINE#         64
-  C:8D40H         LINE#         66
-  C:8D46H         LINE#         67
-  C:8D4BH         LINE#         68
-  C:8D4BH         LINE#         70
-  C:8D4BH         LINE#         71
-  C:8D4BH         LINE#         72
-  C:8D4BH         LINE#         74
-  C:8D4EH         LINE#         75
-  C:8D55H         LINE#         76
+  C:8D33H         LINE#         22
+  C:8D33H         LINE#         23
+  C:8D33H         LINE#         27
+  C:8D38H         LINE#         28
+  C:8D38H         LINE#         30
+  C:8D38H         LINE#         31
+  C:8D3AH         LINE#         35
+  C:8D45H         LINE#         36
+  C:8D45H         LINE#         37
+  C:8D45H         LINE#         39
+  C:8D48H         LINE#         43
+  C:8D4AH         LINE#         45
+  C:8D4AH         LINE#         47
+  C:8D4DH         LINE#         51
+  C:8D4FH         LINE#         62
+  C:8D4FH         LINE#         64
+  C:8D52H         LINE#         68
+  C:8D52H         LINE#         70
+  C:8D52H         LINE#         71
+  C:8D52H         LINE#         72
+  C:8D52H         LINE#         74
+  C:8D55H         LINE#         75
+  C:8D5CH         LINE#         76
   -------         ENDPROC       _ADC_SEL_CHANNEL
   -------         PROC          ADC_GET_VAL_ONCE
   -------         DO            
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 9
+
+
   D:0006H         SYMBOL        g_temp_value
   -------         ENDDO         
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 11
-
-
-  C:8ED3H         LINE#         79
-  C:8ED3H         LINE#         80
-  C:8ED3H         LINE#         81
-  C:8ED6H         LINE#         83
-  C:8ED9H         LINE#         84
-  C:8EDEH         LINE#         86
-  C:8EE1H         LINE#         87
-  C:8EF0H         LINE#         89
-  C:8EF0H         LINE#         90
+  C:8DEAH         LINE#         79
+  C:8DEAH         LINE#         80
+  C:8DEAH         LINE#         81
+  C:8DEDH         LINE#         83
+  C:8DF0H         LINE#         84
+  C:8DF5H         LINE#         86
+  C:8DF8H         LINE#         87
+  C:8E07H         LINE#         89
+  C:8E07H         LINE#         90
   -------         ENDPROC       ADC_GET_VAL_ONCE
   -------         PROC          ADC_GET_VAL
   -------         DO            
   D:0003H         SYMBOL        i
-  D:004DH         SYMBOL        g_temp_value
-  D:004FH         SYMBOL        g_tmpbuff
-  D:0053H         SYMBOL        g_adcmax
-  D:0055H         SYMBOL        g_adcmin
+  D:0028H         SYMBOL        g_temp_value
+  D:002AH         SYMBOL        g_tmpbuff
+  D:002EH         SYMBOL        g_adcmax
+  D:0030H         SYMBOL        g_adcmin
   -------         ENDDO         
-  C:8787H         LINE#         93
-  C:8787H         LINE#         94
-  C:8787H         LINE#         95
-  C:8789H         LINE#         96
-  C:878DH         LINE#         97
-  C:8795H         LINE#         98
-  C:8799H         LINE#         99
-  C:879FH         LINE#         102
-  C:879FH         LINE#         103
-  C:879FH         LINE#         110
-  C:87A6H         LINE#         112
-  C:87ACH         LINE#         113
-  C:87ACH         LINE#         114
-  C:87B7H         LINE#         115
-  C:87BDH         LINE#         116
-  C:87C8H         LINE#         117
-  C:87CEH         LINE#         119
-  C:87ECH         LINE#         120
-  C:87F0H         LINE#         122
-  C:8812H         LINE#         123
-  C:8834H         LINE#         124
-  C:8845H         LINE#         126
-  C:8849H         LINE#         127
+  C:8AF6H         LINE#         93
+  C:8AF6H         LINE#         94
+  C:8AF6H         LINE#         95
+  C:8AF8H         LINE#         96
+  C:8AFCH         LINE#         97
+  C:8B04H         LINE#         98
+  C:8B08H         LINE#         99
+  C:8B0EH         LINE#         102
+  C:8B0EH         LINE#         103
+  C:8B0EH         LINE#         110
+  C:8B15H         LINE#         112
+  C:8B1BH         LINE#         113
+  C:8B1BH         LINE#         114
+  C:8B26H         LINE#         115
+  C:8B2CH         LINE#         116
+  C:8B37H         LINE#         117
+  C:8B3DH         LINE#         119
+  C:8B56H         LINE#         120
+  C:8B5AH         LINE#         122
+  C:8B61H         LINE#         123
+  C:8B68H         LINE#         124
+  C:8B79H         LINE#         126
+  C:8B7DH         LINE#         127
   -------         ENDPROC       ADC_GET_VAL
   -------         ENDMOD        ADC
 
   -------         MODULE        KEY
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:8D97H         PUBLIC        key_event_handle
-  C:884AH         PUBLIC        key_scan_10ms_isr
+  C:8F27H         PUBLIC        key_event_handle
+  C:8ED6H         PUBLIC        key_config
+  C:8C00H         PUBLIC        key_scan_10ms_isr
+  B:0090H.0       PUBLIC        P10
   B:0080H.7       PUBLIC        P07
-  D:005BH         PUBLIC        key_event
-  D:005CH         PUBLIC        key_id_table
+  D:004DH         PUBLIC        key_event
+  -------         PROC          KEY_CONFIG
+  C:8ED6H         LINE#         34
+  C:8ED6H         LINE#         35
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 10
+
+
+  C:8ED6H         LINE#         37
+  C:8EDCH         LINE#         38
+  C:8EE2H         LINE#         39
+  -------         ENDPROC       KEY_CONFIG
   -------         PROC          KEY_SCAN_10MS_ISR
   -------         DO            
-  D:0007H         SYMBOL        i
-  D:0057H         SYMBOL        last_key_id
-  D:0058H         SYMBOL        press_cnt
-  D:0059H         SYMBOL        filter_cnt
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 12
-
-
-  D:005AH         SYMBOL        filter_key_id
-  D:0040H         SYMBOL        cur_key_id
-  B:0023H.1       SYMBOL        flag_is_key_mode_hold
-  D:0041H         SYMBOL        adc_val
+  D:0028H         SYMBOL        i
+  D:0049H         SYMBOL        last_key_id
+  D:004AH         SYMBOL        press_cnt
+  D:004BH         SYMBOL        filter_cnt
+  D:004CH         SYMBOL        filter_key_id
+  D:0029H         SYMBOL        cur_key_id
+  B:0024H.4       SYMBOL        flag_is_key_mode_hold
+  D:002AH         SYMBOL        adc_val
   -------         ENDDO         
-  C:884AH         LINE#         73
-  C:884AH         LINE#         74
-  C:884AH         LINE#         75
-  C:884BH         LINE#         80
-  C:884DH         LINE#         84
-  C:884FH         LINE#         86
-  C:8854H         LINE#         87
-  C:8864H         LINE#         89
-  C:8866H         LINE#         90
-  C:8866H         LINE#         91
-  C:8872H         LINE#         92
-  C:8872H         LINE#         94
-  C:8876H         LINE#         95
-  C:8878H         LINE#         96
-  C:8878H         LINE#         97
-  C:887CH         LINE#         100
-  C:8882H         LINE#         101
-  C:8882H         LINE#         103
-  C:8885H         LINE#         104
-  C:8889H         LINE#         106
-  C:8889H         LINE#         108
-  C:8890H         LINE#         109
-  C:8890H         LINE#         112
-  C:8893H         LINE#         114
-  C:8893H         LINE#         117
-  C:8899H         LINE#         118
-  C:8899H         LINE#         119
-  C:889DH         LINE#         120
-  C:889DH         LINE#         122
-  C:889FH         LINE#         123
-  C:88A1H         LINE#         124
-  C:88A5H         LINE#         125
-  C:88A5H         LINE#         127
-  C:88ACH         LINE#         128
-  C:88ACH         LINE#         130
-  C:88B1H         LINE#         131
-  C:88B1H         LINE#         133
-  C:88B4H         LINE#         134
-  C:88B6H         LINE#         135
-  C:88BCH         LINE#         136
-  C:88BCH         LINE#         138
-  C:88BFH         LINE#         139
-  C:88BFH         LINE#         140
-  C:88C1H         LINE#         142
-  C:88C1H         LINE#         144
-  C:88C7H         LINE#         145
-  C:88C7H         LINE#         146
-  C:88C9H         LINE#         147
-  C:88C9H         LINE#         148
-  C:88C9H         LINE#         149
-  C:88C9H         LINE#         150
-  C:88CBH         LINE#         151
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 13
+  C:8C00H         LINE#         42
+  C:8C00H         LINE#         43
+  C:8C00H         LINE#         44
+  C:8C03H         LINE#         49
+  C:8C05H         LINE#         53
+  C:8C07H         LINE#         71
+  C:8C0AH         LINE#         72
+  C:8C0AH         LINE#         73
+  C:8C0DH         LINE#         74
+  C:8C0FH         LINE#         75
+  C:8C12H         LINE#         76
+  C:8C12H         LINE#         77
+  C:8C15H         LINE#         78
+  C:8C17H         LINE#         80
+  C:8C17H         LINE#         81
+  C:8C1AH         LINE#         82
+  C:8C1AH         LINE#         86
+  C:8C20H         LINE#         87
+  C:8C20H         LINE#         89
+  C:8C23H         LINE#         90
+  C:8C27H         LINE#         92
+  C:8C27H         LINE#         94
+  C:8C2EH         LINE#         95
+  C:8C2EH         LINE#         98
+  C:8C31H         LINE#         100
+  C:8C31H         LINE#         103
+  C:8C37H         LINE#         104
+  C:8C37H         LINE#         105
+  C:8C3BH         LINE#         106
+  C:8C3BH         LINE#         108
+  C:8C3DH         LINE#         109
+  C:8C3FH         LINE#         110
+  C:8C43H         LINE#         111
+  C:8C43H         LINE#         113
+  C:8C4AH         LINE#         114
+  C:8C4AH         LINE#         116
+  C:8C4FH         LINE#         117
+  C:8C4FH         LINE#         119
+  C:8C52H         LINE#         120
+  C:8C54H         LINE#         121
+  C:8C59H         LINE#         122
+  C:8C59H         LINE#         124
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 11
 
 
-  C:88CFH         LINE#         152
-  C:88CFH         LINE#         154
-  C:88D6H         LINE#         155
-  C:88D8H         LINE#         157
-  C:88DEH         LINE#         158
-  C:88DEH         LINE#         161
-  C:88E6H         LINE#         162
-  C:88E6H         LINE#         163
-  C:88EDH         LINE#         164
-  C:88EDH         LINE#         165
-  C:88F0H         LINE#         166
-  C:88F0H         LINE#         168
-  C:88F0H         LINE#         170
-  C:88F0H         LINE#         171
-  C:88F0H         LINE#         172
-  C:88F0H         LINE#         173
-  C:88F0H         LINE#         174
-  C:88F0H         LINE#         175
-  C:88F2H         LINE#         177
-  C:88F2H         LINE#         179
-  C:88F9H         LINE#         180
-  C:88F9H         LINE#         181
-  C:88FCH         LINE#         182
-  C:88FCH         LINE#         184
-  C:88FCH         LINE#         186
-  C:88FCH         LINE#         187
-  C:88FFH         LINE#         188
-  C:8901H         LINE#         189
-  C:8901H         LINE#         190
-  C:8901H         LINE#         191
-  C:8901H         LINE#         192
-  C:8901H         LINE#         193
-  C:8901H         LINE#         195
-  C:8904H         LINE#         196
+  C:8C5CH         LINE#         125
+  C:8C5CH         LINE#         126
+  C:8C5EH         LINE#         128
+  C:8C5EH         LINE#         130
+  C:8C63H         LINE#         131
+  C:8C63H         LINE#         132
+  C:8C65H         LINE#         133
+  C:8C65H         LINE#         134
+  C:8C65H         LINE#         135
+  C:8C65H         LINE#         136
+  C:8C67H         LINE#         137
+  C:8C6BH         LINE#         138
+  C:8C6BH         LINE#         140
+  C:8C72H         LINE#         141
+  C:8C74H         LINE#         143
+  C:8C74H         LINE#         144
+  C:8C74H         LINE#         180
+  C:8C74H         LINE#         181
+  C:8C74H         LINE#         183
+  C:8C77H         LINE#         184
   -------         ENDPROC       KEY_SCAN_10MS_ISR
   -------         PROC          KEY_EVENT_HANDLE
-  C:8D97H         LINE#         199
-  C:8D97H         LINE#         200
-  C:8D97H         LINE#         203
-  C:8D9FH         LINE#         204
-  C:8D9FH         LINE#         206
-  C:8DA4H         LINE#         207
-  C:8DA4H         LINE#         209
-  C:8DA7H         LINE#         210
-  C:8DA9H         LINE#         211
-  C:8DABH         LINE#         212
-  C:8DADH         LINE#         213
-  C:8DB2H         LINE#         214
-  C:8DB2H         LINE#         217
-  C:8DB7H         LINE#         218
-  C:8DB9H         LINE#         219
-  C:8DBEH         LINE#         220
-  C:8DBEH         LINE#         223
-  C:8DC3H         LINE#         224
-  C:8DC3H         LINE#         225
-  C:8DC5H         LINE#         227
-  C:8DC5H         LINE#         229
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 14
-
-
-  C:8DCDH         LINE#         231
-  C:8DCDH         LINE#         233
-  C:8DD0H         LINE#         234
-  C:8DD2H         LINE#         235
-  C:8DD2H         LINE#         236
-  C:8DD2H         LINE#         239
-  C:8DD5H         LINE#         240
+  C:8F27H         LINE#         187
+  C:8F27H         LINE#         188
+  C:8F27H         LINE#         229
+  C:8F2AH         LINE#         230
   -------         ENDPROC       KEY_EVENT_HANDLE
   -------         ENDMOD        KEY
 
   -------         MODULE        LED
   C:0000H         SYMBOL        _ICE_DUMMY_
-  D:005EH         PUBLIC        cur_sel_led
-  C:8FB7H         PUBLIC        led_config
-  D:005FH         PUBLIC        cur_ctl_led_blink_cnt
+  D:0051H         PUBLIC        cur_sel_led
+  C:8E3CH         PUBLIC        led_config
+  C:8E55H         PUBLIC        led_red_on
+  D:00EAH         PUBLIC        STMR2_PCONRA
+  D:00EBH         PUBLIC        STMR2_PCONRB
+  D:0052H         PUBLIC        cur_ctl_led_blink_cnt
+  B:0090H.2       PUBLIC        P12
+  B:0090H.3       PUBLIC        P13
+  D:00E1H         PUBLIC        STMR2_CMPAH
+  D:00DEH         PUBLIC        STMR2_PRH
+  D:00E3H         PUBLIC        STMR2_CMPBH
+  C:8EF0H         PUBLIC        led_green_off
+  D:00DFH         PUBLIC        STMR2_CMPAL
+  D:00DDH         PUBLIC        STMR2_PRL
+  D:00E2H         PUBLIC        STMR2_CMPBL
+  D:00E5H         PUBLIC        STMR2_FCONR
+  C:8E6CH         PUBLIC        led_green_on
+  D:00E4H         PUBLIC        STMR2_CR
+  C:8EE3H         PUBLIC        led_red_off
   -------         PROC          LED_CONFIG
-  C:8FB7H         LINE#         6
-  C:8FB7H         LINE#         7
-  C:8FB7H         LINE#         9
-  C:8FBDH         LINE#         11
-  C:8FC3H         LINE#         12
+  C:8E3CH         LINE#         9
+  C:8E3CH         LINE#         10
+  C:8E3CH         LINE#         19
+  C:8E42H         LINE#         23
+  C:8E45H         LINE#         24
+  C:8E48H         LINE#         25
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 12
+
+
+  C:8E4BH         LINE#         32
+  C:8E4EH         LINE#         33
+  C:8E51H         LINE#         34
+  C:8E54H         LINE#         35
   -------         ENDPROC       LED_CONFIG
+  -------         PROC          LED_RED_ON
+  C:8E55H         LINE#         37
+  C:8E55H         LINE#         38
+  C:8E55H         LINE#         40
+  C:8E5BH         LINE#         41
+  C:8E5FH         LINE#         42
+  C:8E65H         LINE#         43
+  C:8E68H         LINE#         44
+  C:8E6BH         LINE#         54
+  -------         ENDPROC       LED_RED_ON
+  -------         PROC          LED_RED_OFF
+  C:8EE3H         LINE#         56
+  C:8EE3H         LINE#         57
+  C:8EE3H         LINE#         59
+  C:8EE9H         LINE#         60
+  C:8EEDH         LINE#         61
+  C:8EEFH         LINE#         69
+  -------         ENDPROC       LED_RED_OFF
+  -------         PROC          LED_GREEN_ON
+  C:8E6CH         LINE#         71
+  C:8E6CH         LINE#         72
+  C:8E6CH         LINE#         74
+  C:8E72H         LINE#         75
+  C:8E76H         LINE#         76
+  C:8E7CH         LINE#         77
+  C:8E7FH         LINE#         78
+  C:8E82H         LINE#         88
+  -------         ENDPROC       LED_GREEN_ON
+  -------         PROC          LED_GREEN_OFF
+  C:8EF0H         LINE#         90
+  C:8EF0H         LINE#         91
+  C:8EF0H         LINE#         93
+  C:8EF6H         LINE#         94
+  C:8EFAH         LINE#         95
+  C:8EFCH         LINE#         103
+  -------         ENDPROC       LED_GREEN_OFF
   -------         ENDMOD        LED
 
   -------         MODULE        UART
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:8D56H         PUBLIC        UART1_IRQHandler
+  C:8CC1H         PUBLIC        UART1_IRQHandler
   D:00A8H         PUBLIC        IE
   D:00FDH         PUBLIC        UART1_BAUD0
   D:00FEH         PUBLIC        UART1_BAUD1
-  D:001AH         SYMBOL        recv_data
+  D:004EH         SYMBOL        recv_data
   D:00FBH         PUBLIC        UART1_CON
   D:00FCH         PUBLIC        UART1_STA
   D:00A9H         PUBLIC        IE1
-  C:8E8DH         PUBLIC        uart1_config
-  D:001BH         PUBLIC        recv_ctl
-  D:001CH         PUBLIC        cur_recv_status
+  C:8D5DH         PUBLIC        uart1_config
+  D:004FH         PUBLIC        recv_ctl
+  D:0050H         PUBLIC        cur_recv_status
   D:00FFH         PUBLIC        UART1_DATA
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 13
+
+
   B:00A8H.7       PUBLIC        IE_EA
   -------         PROC          UART1_CONFIG
-  C:8E8DH         LINE#         9
-  C:8E8DH         LINE#         10
-  C:8E8DH         LINE#         12
-  C:8E93H         LINE#         13
-  C:8E97H         LINE#         14
-  C:8E9DH         LINE#         15
-  C:8EA1H         LINE#         17
-  C:8EA4H         LINE#         18
-  C:8EA6H         LINE#         20
-  C:8EA9H         LINE#         21
-  C:8EACH         LINE#         22
-  C:8EAFH         LINE#         23
-  C:8EB2H         LINE#         24
+  C:8D5DH         LINE#         9
+  C:8D5DH         LINE#         10
+  C:8D5DH         LINE#         12
+  C:8D63H         LINE#         13
+  C:8D67H         LINE#         14
+  C:8D6DH         LINE#         15
+  C:8D71H         LINE#         17
+  C:8D74H         LINE#         18
+  C:8D76H         LINE#         20
+  C:8D79H         LINE#         21
+  C:8D7CH         LINE#         22
+  C:8D7FH         LINE#         23
+  C:8D82H         LINE#         24
   -------         ENDPROC       UART1_CONFIG
   -------         PROC          UART1_IRQHANDLER
-  C:8D56H         LINE#         40
-  C:8D5AH         LINE#         53
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 15
-
-
-  C:8D5FH         LINE#         54
-  C:8D5FH         LINE#         55
-  C:8D63H         LINE#         56
-  C:8D63H         LINE#         58
-  C:8D69H         LINE#         59
-  C:8D69H         LINE#         60
-  C:8D6CH         LINE#         61
-  C:8D6CH         LINE#         62
-  C:8D6EH         LINE#         63
-  C:8D73H         LINE#         64
-  C:8D73H         LINE#         66
-  C:8D76H         LINE#         67
-  C:8D79H         LINE#         68
-  C:8D7BH         LINE#         69
-  C:8D80H         LINE#         70
-  C:8D80H         LINE#         73
-  C:8D87H         LINE#         74
-  C:8D87H         LINE#         77
-  C:8D8AH         LINE#         78
-  C:8D8CH         LINE#         79
-  C:8D8CH         LINE#         81
-  C:8D8CH         LINE#         84
-  C:8D8CH         LINE#         86
-  C:8D8FH         LINE#         87
-  C:8D8FH         LINE#         88
-  C:8D8FH         LINE#         89
-  C:8D92H         LINE#         90
+  C:8CC1H         LINE#         40
+  C:8CC5H         LINE#         53
+  C:8CCAH         LINE#         54
+  C:8CCAH         LINE#         55
+  C:8CCEH         LINE#         56
+  C:8CCEH         LINE#         58
+  C:8CD4H         LINE#         59
+  C:8CD4H         LINE#         60
+  C:8CD7H         LINE#         61
+  C:8CD7H         LINE#         62
+  C:8CD9H         LINE#         63
+  C:8CDEH         LINE#         64
+  C:8CDEH         LINE#         66
+  C:8CE1H         LINE#         67
+  C:8CE4H         LINE#         68
+  C:8CE6H         LINE#         69
+  C:8CEBH         LINE#         70
+  C:8CEBH         LINE#         73
+  C:8CF2H         LINE#         74
+  C:8CF2H         LINE#         77
+  C:8CF5H         LINE#         78
+  C:8CF7H         LINE#         79
+  C:8CF7H         LINE#         81
+  C:8CF7H         LINE#         84
+  C:8CF7H         LINE#         86
+  C:8CFAH         LINE#         87
+  C:8CFAH         LINE#         88
+  C:8CFAH         LINE#         89
+  C:8CFDH         LINE#         90
   -------         ENDPROC       UART1_IRQHANDLER
   -------         ENDMOD        UART
 
   -------         MODULE        CHARGE
   C:0000H         SYMBOL        _ICE_DUMMY_
-  B:0090H.2       PUBLIC        P12
-  B:0080H.5       PUBLIC        P05
   D:00C7H         PUBLIC        TMR2_PWMH
-  C:834FH         PUBLIC        charge_scan_handle
+  C:8386H         PUBLIC        charge_scan_handle
   D:00C6H         PUBLIC        TMR2_PWML
   D:00C5H         PUBLIC        TMR2_PRH
   D:00C4H         PUBLIC        TMR2_PRL
+  C:8EFDH         SYMBOL        Com003D
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 14
+
+
+  C:8EFDH         SYMBOL        L?0062
+  -------         PROC          COM003D
+  -------         ENDPROC       COM003D
+  C:8608H         SYMBOL        L?0063
   -------         PROC          CHARGE_SCAN_HANDLE
   -------         DO            
-  D:0040H         SYMBOL        i
-  D:0041H         SYMBOL        adc_bat_val
-  D:0043H         SYMBOL        adc_charging_val
-  D:0045H         SYMBOL        tmp_bat_val
+  D:0028H         SYMBOL        adc_bat_val
+  D:002AH         SYMBOL        adc_charging_val
+  D:002CH         SYMBOL        tmp_bat_val
   D:0019H         SYMBOL        over_charging_cnt
   -------         DO            
-  D:0047H         SYMBOL        max_pwm_val
-  D:0049H         SYMBOL        last_pwm_val
-  D:004BH         SYMBOL        tmp_val
+  D:002EH         SYMBOL        i
+  D:002FH         SYMBOL        max_pwm_val
+  D:0031H         SYMBOL        last_pwm_val
+  D:0033H         SYMBOL        tmp_val
   D:0008H         SYMBOL        tmp_val_l
   D:0018H         SYMBOL        tmp_val_cnt
   -------         ENDDO         
   -------         ENDDO         
-  C:834FH         LINE#         38
-  C:834FH         LINE#         39
-  C:834FH         LINE#         40
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 16
+  C:8386H         LINE#         44
+  C:8386H         LINE#         45
+  C:8386H         LINE#         47
+  C:838BH         LINE#         48
+  C:838FH         LINE#         49
+  C:8393H         LINE#         52
+  C:8398H         LINE#         53
+  C:839FH         LINE#         55
+  C:83A4H         LINE#         56
+  C:83ABH         LINE#         59
+  C:83B6H         LINE#         60
+  C:83B6H         LINE#         61
+  C:83B8H         LINE#         62
+  C:83BAH         LINE#         64
+  C:83BAH         LINE#         65
+  C:83BCH         LINE#         66
+  C:83BCH         LINE#         68
+  C:83C2H         LINE#         69
+  C:83C2H         LINE#         74
+  C:83C5H         LINE#         75
+  C:83C5H         LINE#         79
+  C:83D0H         LINE#         80
+  C:83D0H         LINE#         83
+  C:83D3H         LINE#         84
+  C:83D5H         LINE#         85
+  C:83D7H         LINE#         87
+  C:83D9H         LINE#         88
+  C:83E4H         LINE#         89
+  C:83E4H         LINE#         91
+  C:83E6H         LINE#         92
+  C:83E8H         LINE#         93
+  C:83F3H         LINE#         94
+  C:83F3H         LINE#         96
+  C:83F5H         LINE#         97
+  C:83F7H         LINE#         99
+  C:83F7H         LINE#         102
+  C:83F9H         LINE#         103
+  C:83FBH         LINE#         104
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 15
 
 
-  C:8352H         LINE#         41
-  C:8356H         LINE#         42
-  C:835AH         LINE#         43
-  C:835EH         LINE#         46
-  C:8363H         LINE#         47
-  C:836AH         LINE#         49
-  C:836FH         LINE#         50
-  C:8376H         LINE#         52
-  C:8381H         LINE#         53
-  C:8381H         LINE#         54
-  C:8383H         LINE#         55
-  C:8385H         LINE#         57
-  C:8385H         LINE#         58
-  C:8387H         LINE#         59
-  C:8387H         LINE#         61
-  C:838AH         LINE#         62
-  C:838AH         LINE#         64
-  C:838CH         LINE#         65
-  C:838EH         LINE#         71
-  C:8399H         LINE#         72
-  C:8399H         LINE#         75
-  C:839CH         LINE#         76
-  C:839EH         LINE#         77
-  C:83A0H         LINE#         78
-  C:83A2H         LINE#         79
-  C:83A4H         LINE#         80
-  C:83AFH         LINE#         81
-  C:83AFH         LINE#         83
-  C:83B1H         LINE#         84
-  C:83B3H         LINE#         86
-  C:83B3H         LINE#         89
-  C:83B5H         LINE#         90
-  C:83B5H         LINE#         93
-  C:83BFH         LINE#         95
-  C:83BFH         LINE#         96
-  C:83C2H         LINE#         97
-  C:83C4H         LINE#         98
-  C:83C7H         LINE#         99
-  C:83CAH         LINE#         100
-  C:83CCH         LINE#         102
-  C:83CEH         LINE#         103
-  C:83D0H         LINE#         104
-  C:83D0H         LINE#         109
-  C:83D7H         LINE#         110
-  C:83D7H         LINE#         112
-  C:83D9H         LINE#         113
-  C:83DBH         LINE#         115
-  C:83DBH         LINE#         116
-  C:83DDH         LINE#         117
-  C:83DDH         LINE#         119
-  C:83E0H         LINE#         120
-  C:83E0H         LINE#         122
-  C:83E2H         LINE#         124
-  C:83E5H         LINE#         126
-  C:83E7H         LINE#         127
-  C:83E9H         LINE#         134
-  C:83E9H         LINE#         137
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 17
-
-
-  C:83EBH         LINE#         139
-  C:83EBH         LINE#         141
-  C:83EDH         LINE#         142
-  C:83F0H         LINE#         146
-  C:83F8H         LINE#         147
-  C:83F8H         LINE#         150
-  C:8403H         LINE#         151
-  C:8403H         LINE#         153
-  C:8405H         LINE#         154
-  C:8407H         LINE#         155
-  C:8409H         LINE#         156
-  C:8414H         LINE#         158
-  C:8414H         LINE#         160
-  C:8416H         LINE#         161
-  C:8418H         LINE#         162
-  C:841AH         LINE#         164
-  C:841AH         LINE#         166
-  C:841CH         LINE#         167
-  C:841EH         LINE#         168
-  C:841EH         LINE#         171
-  C:8421H         LINE#         172
-  C:8421H         LINE#         173
-  C:8423H         LINE#         174
-  C:8425H         LINE#         175
-  C:842BH         LINE#         177
-  C:842BH         LINE#         179
-  C:842DH         LINE#         180
-  C:842FH         LINE#         181
-  C:8431H         LINE#         182
-  C:8431H         LINE#         183
-  C:8431H         LINE#         188
-  C:8438H         LINE#         189
-  C:8438H         LINE#         191
-  C:843AH         LINE#         192
-  C:843CH         LINE#         194
-  C:843CH         LINE#         195
-  C:843EH         LINE#         196
-  C:843EH         LINE#         198
-  C:8441H         LINE#         199
-  C:8441H         LINE#         201
-  C:8443H         LINE#         207
-  C:8446H         LINE#         209
-  C:8448H         LINE#         210
-  C:8448H         LINE#         212
-  C:8448H         LINE#         215
-  C:844EH         LINE#         216
-  C:844EH         LINE#         217
-  C:8453H         LINE#         218
-  C:8457H         LINE#         219
+  C:83FBH         LINE#         106
+  C:8401H         LINE#         107
+  C:8401H         LINE#         109
+  C:8403H         LINE#         110
+  C:8405H         LINE#         111
+  C:8405H         LINE#         112
+  C:8408H         LINE#         113
+  C:8408H         LINE#         115
+  C:8412H         LINE#         117
+  C:8412H         LINE#         119
+  C:8415H         LINE#         120
+  C:8417H         LINE#         121
+  C:841AH         LINE#         122
+  C:841DH         LINE#         123
+  C:841FH         LINE#         125
+  C:8420H         LINE#         126
+  C:8420H         LINE#         127
+  C:8423H         LINE#         128
+  C:8423H         LINE#         129
+  C:8423H         LINE#         135
+  C:842AH         LINE#         136
+  C:842AH         LINE#         138
+  C:842CH         LINE#         139
+  C:842EH         LINE#         141
+  C:842EH         LINE#         142
+  C:8430H         LINE#         143
+  C:8430H         LINE#         145
+  C:8433H         LINE#         146
+  C:8433H         LINE#         148
+  C:8435H         LINE#         151
+  C:8437H         LINE#         152
+  C:8439H         LINE#         154
+  C:843BH         LINE#         155
+  C:843DH         LINE#         156
+  C:8440H         LINE#         158
+  C:8443H         LINE#         160
+  C:8446H         LINE#         161
+  C:8449H         LINE#         163
+  C:8450H         LINE#         166
+  C:8459H         LINE#         170
+  C:8459H         LINE#         173
+  C:845BH         LINE#         175
   C:845BH         LINE#         223
-  C:846FH         LINE#         224
-  C:8486H         LINE#         241
-  C:8491H         LINE#         242
-  C:8491H         LINE#         243
-  C:8495H         LINE#         244
-  C:8497H         LINE#         245
-  C:84A2H         LINE#         246
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 18
+  C:8462H         LINE#         224
+  C:8462H         LINE#         226
+  C:8464H         LINE#         227
+  C:8466H         LINE#         229
+  C:8466H         LINE#         230
+  C:8468H         LINE#         231
+  C:8468H         LINE#         233
+  C:846BH         LINE#         234
+  C:846BH         LINE#         236
+  C:846DH         LINE#         239
+  C:846FH         LINE#         240
+  C:8471H         LINE#         243
+  C:847AH         LINE#         246
+  C:847DH         LINE#         248
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 16
 
 
-  C:84A2H         LINE#         247
-  C:84A6H         LINE#         248
-  C:84A8H         LINE#         249
-  C:84B3H         LINE#         250
-  C:84B3H         LINE#         251
-  C:84BEH         LINE#         252
-  C:84C0H         LINE#         253
-  C:84CBH         LINE#         254
-  C:84CBH         LINE#         255
-  C:84D1H         LINE#         256
-  C:84D3H         LINE#         258
-  C:84D3H         LINE#         262
-  C:84FBH         LINE#         263
-  C:84FBH         LINE#         265
-  C:8506H         LINE#         309
-  C:8544H         LINE#         311
-  C:854FH         LINE#         312
-  C:854FH         LINE#         314
-  C:8554H         LINE#         315
-  C:8554H         LINE#         318
-  C:8556H         LINE#         319
-  C:8559H         LINE#         320
-  C:857CH         LINE#         321
-  C:8581H         LINE#         322
-  C:8583H         LINE#         323
-  C:8583H         LINE#         324
-  C:8597H         LINE#         325
-  C:859EH         LINE#         326
-  C:85AFH         LINE#         328
-  C:85B8H         LINE#         329
-  C:85B8H         LINE#         330
-  C:85C0H         LINE#         331
-  C:85C2H         LINE#         332
-  C:85CDH         LINE#         333
-  C:85CDH         LINE#         334
-  C:85D5H         LINE#         335
-  C:85D5H         LINE#         337
-  C:85D8H         LINE#         338
-  C:85DCH         LINE#         339
-  C:85DCH         LINE#         340
+  C:847FH         LINE#         249
+  C:8481H         LINE#         250
+  C:8481H         LINE#         252
+  C:8481H         LINE#         256
+  C:8487H         LINE#         257
+  C:8487H         LINE#         258
+  C:848AH         LINE#         259
+  C:848EH         LINE#         260
+  C:8492H         LINE#         261
+  C:8496H         LINE#         265
+  C:84AAH         LINE#         266
+  C:84C1H         LINE#         283
+  C:84CCH         LINE#         284
+  C:84CCH         LINE#         285
+  C:84D0H         LINE#         286
+  C:84D2H         LINE#         287
+  C:84DDH         LINE#         288
+  C:84DDH         LINE#         289
+  C:84E1H         LINE#         290
+  C:84E3H         LINE#         291
+  C:84EEH         LINE#         292
+  C:84EEH         LINE#         293
+  C:84F9H         LINE#         294
+  C:84FBH         LINE#         295
+  C:8506H         LINE#         296
+  C:8506H         LINE#         297
+  C:850CH         LINE#         298
+  C:850EH         LINE#         300
+  C:850EH         LINE#         304
+  C:8536H         LINE#         305
+  C:8536H         LINE#         307
+  C:8541H         LINE#         352
+  C:857FH         LINE#         354
+  C:858AH         LINE#         355
+  C:858AH         LINE#         357
+  C:858FH         LINE#         358
+  C:858FH         LINE#         361
+  C:8591H         LINE#         362
+  C:8594H         LINE#         363
+  C:85AFH         LINE#         364
+  C:85B4H         LINE#         365
+  C:85B6H         LINE#         366
+  C:85B6H         LINE#         367
+  C:85C2H         LINE#         368
+  C:85C9H         LINE#         369
+  C:85DAH         LINE#         371
+  C:85E3H         LINE#         372
+  C:85E3H         LINE#         373
+  C:85EBH         LINE#         374
+  C:85EDH         LINE#         375
+  C:85F8H         LINE#         376
+  C:85F8H         LINE#         377
+  C:8600H         LINE#         378
+  C:8600H         LINE#         380
+  C:8603H         LINE#         381
+  C:8607H         LINE#         382
+  C:8607H         LINE#         383
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 17
+
+
   -------         ENDPROC       CHARGE_SCAN_HANDLE
   -------         ENDMOD        CHARGE
 
   -------         MODULE        HEATING
   C:0000H         SYMBOL        _ICE_DUMMY_
-  D:0060H         PUBLIC        cur_ctl_heat_status
-  B:0090H.2       PUBLIC        P12
-  B:0080H.5       PUBLIC        P05
-  C:8003H         PUBLIC        heating_pin_config
-  C:8F80H         PUBLIC        fun_ctl_close_heat
-  C:8C7AH         PUBLIC        _fun_ctl_heat_status
+  D:0054H         PUBLIC        cur_ctl_heat_status
+  C:8F14H         PUBLIC        heating_pin_config
   -------         PROC          HEATING_PIN_CONFIG
-  C:8003H         LINE#         13
-  C:8003H         LINE#         14
-  C:8003H         LINE#         17
-  C:8009H         LINE#         19
+  C:8F14H         LINE#         13
+  C:8F14H         LINE#         14
+  C:8F14H         LINE#         17
+  C:8F1AH         LINE#         18
   -------         ENDPROC       HEATING_PIN_CONFIG
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 19
-
-
-  -------         PROC          FUN_CTL_CLOSE_HEAT
-  C:8F80H         LINE#         23
-  C:8F80H         LINE#         24
-  C:8F80H         LINE#         25
-  C:8F83H         LINE#         28
-  C:8F86H         LINE#         29
-  C:8F86H         LINE#         30
-  C:8F88H         LINE#         32
-  C:8F8CH         LINE#         33
-  C:8F8CH         LINE#         36
-  C:8F8EH         LINE#         37
-  C:8F8EH         LINE#         38
-  C:8F8EH         LINE#         39
-  -------         ENDPROC       FUN_CTL_CLOSE_HEAT
-  -------         PROC          _FUN_CTL_HEAT_STATUS
-  D:0041H         SYMBOL        adjust_heat_status
-  C:8C7AH         LINE#         52
-  C:8C7CH         LINE#         53
-  C:8C7CH         LINE#         61
-  C:8C7EH         LINE#         62
-  C:8C85H         LINE#         64
-  C:8C89H         LINE#         65
-  C:8C89H         LINE#         67
-  C:8C8DH         LINE#         68
-  C:8C8DH         LINE#         69
-  C:8C90H         LINE#         70
-  C:8C92H         LINE#         71
-  C:8C97H         LINE#         72
-  C:8C97H         LINE#         73
-  C:8C9AH         LINE#         74
-  C:8C9CH         LINE#         75
-  C:8CA1H         LINE#         76
-  C:8CA1H         LINE#         78
-  C:8CA1H         LINE#         79
-  C:8CA1H         LINE#         80
-  C:8CA3H         LINE#         82
-  C:8CA3H         LINE#         84
-  C:8CA8H         LINE#         85
-  C:8CA8H         LINE#         87
-  C:8CABH         LINE#         88
-  C:8CADH         LINE#         90
-  C:8CADH         LINE#         91
-  C:8CB0H         LINE#         92
-  C:8CB0H         LINE#         93
-  C:8CB0H         LINE#         97
-  C:8CB3H         LINE#         98
-  C:8CB3H         LINE#         99
-  C:8CB7H         LINE#         100
-  C:8CB7H         LINE#         101
-  C:8CB9H         LINE#         102
-  C:8CBBH         LINE#         103
-  C:8CBEH         LINE#         104
-  C:8CC1H         LINE#         105
-  C:8CC3H         LINE#         106
-  C:8CC3H         LINE#         107
-  C:8CC3H         LINE#         108
-  -------         ENDPROC       _FUN_CTL_HEAT_STATUS
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 20
-
-
   -------         ENDMOD        HEATING
 
   -------         MODULE        SPEECH_PROCESS
   C:0000H         SYMBOL        _ICE_DUMMY_
-  C:800AH         PUBLIC        speech_ctl_pin_config
-  B:0090H.2       PUBLIC        P12
-  B:0080H.5       PUBLIC        P05
-  C:8905H         PUBLIC        speech_scan_process
+  C:8F1BH         PUBLIC        speech_ctl_pin_config
   -------         PROC          SPEECH_CTL_PIN_CONFIG
-  C:800AH         LINE#         30
-  C:800AH         LINE#         31
-  C:800AH         LINE#         32
+  C:8F1BH         LINE#         30
+  C:8F1BH         LINE#         31
+  C:8F1BH         LINE#         33
+  C:8F21H         LINE#         34
   -------         ENDPROC       SPEECH_CTL_PIN_CONFIG
-  -------         PROC          SPEECH_SCAN_PROCESS
-  -------         DO            
-  D:0040H         SYMBOL        cmd
-  -------         ENDDO         
-  C:8905H         LINE#         34
-  C:8905H         LINE#         35
-  C:8905H         LINE#         36
-  C:890BH         LINE#         37
-  C:890BH         LINE#         39
-  C:890EH         LINE#         40
-  C:8910H         LINE#         41
-  C:8913H         LINE#         44
-  C:8915H         LINE#         47
-  C:893CH         LINE#         48
-  C:893CH         LINE#         49
-  C:893CH         LINE#         52
-  C:8940H         LINE#         53
-  C:8940H         LINE#         54
-  C:8945H         LINE#         55
-  C:8948H         LINE#         57
-  C:894BH         LINE#         58
-  C:894EH         LINE#         61
-  C:8951H         LINE#         62
-  C:8951H         LINE#         63
-  C:8955H         LINE#         64
-  C:8955H         LINE#         66
-  C:8957H         LINE#         67
-  C:8959H         LINE#         68
-  C:895CH         LINE#         69
-  C:895EH         LINE#         71
-  C:895EH         LINE#         73
-  C:8960H         LINE#         74
-  C:8962H         LINE#         75
-  C:8965H         LINE#         76
-  C:8965H         LINE#         78
-  C:8968H         LINE#         79
-  C:896AH         LINE#         80
-  C:896AH         LINE#         81
-  C:896BH         LINE#         83
-  C:896BH         LINE#         85
-  C:896BH         LINE#         87
-  C:896BH         LINE#         89
-  C:896BH         LINE#         91
-  C:896DH         LINE#         93
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 21
-
-
-  C:896EH         LINE#         95
-  C:896EH         LINE#         97
-  C:8972H         LINE#         98
-  C:8972H         LINE#         101
-  C:8973H         LINE#         102
-  C:8973H         LINE#         104
-  C:8975H         LINE#         106
-  C:8975H         LINE#         108
-  C:8979H         LINE#         109
-  C:8979H         LINE#         111
-  C:897BH         LINE#         112
-  C:8982H         LINE#         113
-  C:8985H         LINE#         114
-  C:8985H         LINE#         116
-  C:8985H         LINE#         118
-  C:8985H         LINE#         120
-  C:8989H         LINE#         121
-  C:8989H         LINE#         123
-  C:898BH         LINE#         126
-  C:898DH         LINE#         127
-  C:898DH         LINE#         129
-  C:898EH         LINE#         131
-  C:898EH         LINE#         133
-  C:8992H         LINE#         134
-  C:8992H         LINE#         135
-  C:8994H         LINE#         136
-  C:8994H         LINE#         138
-  C:8996H         LINE#         140
-  C:8996H         LINE#         142
-  C:899AH         LINE#         143
-  C:899AH         LINE#         144
-  C:899CH         LINE#         145
-  C:899CH         LINE#         147
-  C:899EH         LINE#         149
-  C:899EH         LINE#         151
-  C:89A2H         LINE#         152
-  C:89A2H         LINE#         153
-  C:89A7H         LINE#         154
-  C:89A7H         LINE#         156
-  C:89A7H         LINE#         158
-  C:89A7H         LINE#         160
-  C:89ABH         LINE#         161
-  C:89ABH         LINE#         162
-  C:89ADH         LINE#         163
-  C:89ADH         LINE#         165
-  C:89AFH         LINE#         167
-  C:89AFH         LINE#         169
-  C:89B3H         LINE#         170
-  C:89B3H         LINE#         171
-  C:89B8H         LINE#         172
-  C:89B8H         LINE#         174
-  C:89B8H         LINE#         175
-  C:89B8H         LINE#         176
-  C:89B8H         LINE#         177
-  -------         ENDPROC       SPEECH_SCAN_PROCESS
   -------         ENDMOD        SPEECH_PROCESS
-
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 22
-
 
   -------         MODULE        LOW_POWER
   C:0000H         SYMBOL        _ICE_DUMMY_
@@ -1268,7 +994,7 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   D:00ABH         PUBLIC        WKUP_CON0
   D:00BAH         PUBLIC        LVD_CON0
   D:00BEH         PUBLIC        LP_CON
-  C:8B07H         PUBLIC        low_power
+  C:89D1H         PUBLIC        low_power
   D:00A4H         PUBLIC        FLASH_TIM1
   -------         PROC          LOW_POWER
   -------         DO            
@@ -1277,681 +1003,362 @@ SYMBOL TABLE OF MODULE:  .\Release\Objects\Demo (?C_STARTUP)
   D:0005H         SYMBOL        p1_md0_sta
   D:0004H         SYMBOL        p1_md1_sta
   -------         ENDDO         
-  C:8B07H         LINE#         3
-  C:8B07H         LINE#         4
-  C:8B07H         LINE#         10
-  C:8B0BH         LINE#         11
-  C:8B0EH         LINE#         12
-  C:8B12H         LINE#         13
-  C:8B15H         LINE#         16
-  C:8B1AH         LINE#         17
-  C:8B1CH         LINE#         18
-  C:8B1FH         LINE#         19
-  C:8B21H         LINE#         22
-  C:8B25H         LINE#         23
-  C:8B29H         LINE#         24
-  C:8B2FH         LINE#         25
-  C:8B35H         LINE#         27
-  C:8B38H         LINE#         28
-  C:8B3BH         LINE#         29
-  C:8B3EH         LINE#         33
-  C:8B70H         LINE#         34
-  C:8B91H         LINE#         37
-  C:8B95H         LINE#         38
-  C:8B98H         LINE#         39
-  C:8B9CH         LINE#         40
-  C:8B9FH         LINE#         56
+  C:89D1H         LINE#         3
+  C:89D1H         LINE#         4
+  C:89D1H         LINE#         10
+  C:89D5H         LINE#         11
+  C:89D8H         LINE#         12
+  C:89DCH         LINE#         13
+  C:89DFH         LINE#         16
+  C:89E4H         LINE#         17
+  C:89E6H         LINE#         18
+  C:89E9H         LINE#         19
+  C:89EBH         LINE#         22
+  C:89EFH         LINE#         23
+  C:89F3H         LINE#         24
+  C:89F9H         LINE#         25
+  C:89FFH         LINE#         27
+  C:8A02H         LINE#         28
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 18
+
+
+  C:8A05H         LINE#         29
+  C:8A08H         LINE#         33
+  C:8A3AH         LINE#         34
+  C:8A5BH         LINE#         37
+  C:8A5FH         LINE#         38
+  C:8A62H         LINE#         39
+  C:8A66H         LINE#         40
+  C:8A69H         LINE#         56
   -------         ENDPROC       LOW_POWER
   -------         ENDMOD        LOW_POWER
 
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
-  B:0020H.1       PUBLIC        flag_ctl_low_bat_alarm
-  B:0020H.2       PUBLIC        flag_tim_set_bat_is_low
-  B:0020H.3       PUBLIC        flag_tim_scan_maybe_shut_down
-  B:0020H.4       PUBLIC        flag_bat_is_empty
-  B:0020H.5       PUBLIC        flag_bat_is_full
-  C:8C2CH         PUBLIC        _fun_ctl_motor_status
-  B:0020H.6       PUBLIC        flag_ctl_turn_dir
-  B:0020H.7       PUBLIC        flag_tim_scan_maybe_low_bat
-  B:0021H.0       PUBLIC        flag_is_recv_ctl
+  B:0020H.0       PUBLIC        flag_ctl_low_bat_alarm
+  B:0020H.1       PUBLIC        flag_tim_set_bat_is_low
+  B:0020H.2       PUBLIC        flag_tim_scan_maybe_shut_down
+  B:0020H.3       PUBLIC        flag_bat_is_empty
+  B:0020H.4       PUBLIC        flag_bat_is_full
+  B:0020H.5       PUBLIC        flag_ctl_turn_dir
+  B:0020H.6       PUBLIC        flag_tim_scan_maybe_low_bat
+  B:0020H.7       PUBLIC        flag_is_recv_ctl
+  B:0021H.0       PUBLIC        flag_bat_is_near_full
   B:0021H.1       PUBLIC        flag_tim_set_is_in_charging
   B:0021H.2       PUBLIC        flag_tim_scan_maybe_motor_stalling
-  C:8E3AH         PUBLIC        fun_ctl_power_off
+  C:8D83H         PUBLIC        fun_ctl_power_off
   B:0021H.3       PUBLIC        flag_is_enter_low_power
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 23
-
-
   B:0021H.4       PUBLIC        flag_tim_scan_maybe_in_charging
-  C:8A6BH         PUBLIC        main
+  C:8921H         PUBLIC        main
   D:0089H         PUBLIC        TMR0_CONH
-  B:0090H.2       PUBLIC        P12
-  C:802AH         PUBLIC        TMR0_IRQHandler
-  B:0090H.4       PUBLIC        P14
-  B:0080H.5       PUBLIC        P05
-  B:0080H.7       PUBLIC        P07
+  C:8810H         PUBLIC        TMR0_IRQHandler
+  B:0090H.5       PUBLIC        P15
   B:0021H.5       PUBLIC        flag_tim_set_shut_down
   D:00AEH         PUBLIC        WDT_KEY
   B:0021H.6       PUBLIC        flag_is_in_charging
   B:0021H.7       PUBLIC        flag_is_new_operation
-  C:8F0BH         PUBLIC        fun_ctl_power_on
+  C:8003H         PUBLIC        fun_ctl_power_on
   B:0022H.0       PUBLIC        flag_is_turn_dir_by_speech
   B:0022H.1       PUBLIC        flag_tim_scan_maybe_not_charge
+  D:00C7H         PUBLIC        TMR2_PWMH
+  D:00E1H         PUBLIC        STMR2_CMPAH
+  D:00C6H         PUBLIC        TMR2_PWML
+  D:00DFH         PUBLIC        STMR2_CMPAL
   B:0022H.2       PUBLIC        flag_ctl_led_blink
   B:0022H.3       PUBLIC        flag_tim_set_motor_stalling
   B:0022H.4       PUBLIC        flag_is_enable_key_scan
   B:0022H.5       PUBLIC        flag_ctl_dev_close
   B:0022H.6       PUBLIC        flag_tim_set_bat_is_full
   B:0022H.7       PUBLIC        flag_is_disable_to_open
-  B:0023H.0       PUBLIC        flag_tim_scan_bat_maybe_full
+  B:0023H.0       PUBLIC        flag_tim_set_bat_is_near_full
+  B:0023H.1       PUBLIC        flag_tim_scan_bat_maybe_full
+  B:0023H.2       PUBLIC        flag_tim_scan_bat_maybe_near_full
   -------         PROC          FUN_CTL_POWER_ON
-  C:8F0BH         LINE#         72
-  C:8F0BH         LINE#         73
-  C:8F0BH         LINE#         74
-  C:8F10H         LINE#         76
-  C:8F13H         LINE#         78
-  C:8F16H         LINE#         79
-  C:8F19H         LINE#         83
-  C:8F1BH         LINE#         84
-  C:8F1EH         LINE#         85
-  C:8F21H         LINE#         86
-  C:8F23H         LINE#         87
+  C:8003H         LINE#         75
+  C:8003H         LINE#         76
+  C:8003H         LINE#         88
+  C:8006H         LINE#         89
+  C:8009H         LINE#         93
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 19
+
+
+  C:800BH         LINE#         94
   -------         ENDPROC       FUN_CTL_POWER_ON
   -------         PROC          FUN_CTL_POWER_OFF
-  C:8E3AH         LINE#         90
-  C:8E3AH         LINE#         91
-  C:8E3AH         LINE#         95
-  C:8E3CH         LINE#         96
-  C:8E43H         LINE#         97
-  C:8E45H         LINE#         98
-  C:8E47H         LINE#         101
-  C:8E4AH         LINE#         104
-  C:8E4DH         LINE#         106
-  C:8E50H         LINE#         107
-  C:8E52H         LINE#         112
-  C:8E55H         LINE#         113
-  C:8E55H         LINE#         115
-  C:8E57H         LINE#         116
-  C:8E59H         LINE#         117
-  C:8E5BH         LINE#         118
-  C:8E5DH         LINE#         119
-  C:8E5FH         LINE#         120
-  C:8E61H         LINE#         121
-  C:8E63H         LINE#         122
-  C:8E65H         LINE#         123
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 24
-
-
-  C:8E65H         LINE#         124
+  C:8D83H         LINE#         97
+  C:8D83H         LINE#         98
+  C:8D83H         LINE#         102
+  C:8D85H         LINE#         103
+  C:8D8CH         LINE#         104
+  C:8D8FH         LINE#         105
+  C:8D92H         LINE#         108
+  C:8D95H         LINE#         120
+  C:8D98H         LINE#         121
+  C:8D98H         LINE#         123
+  C:8D9AH         LINE#         124
+  C:8D9CH         LINE#         125
+  C:8D9EH         LINE#         126
+  C:8DA0H         LINE#         127
+  C:8DA2H         LINE#         128
+  C:8DA4H         LINE#         129
+  C:8DA6H         LINE#         130
+  C:8DA8H         LINE#         131
+  C:8DA8H         LINE#         132
   -------         ENDPROC       FUN_CTL_POWER_OFF
-  -------         PROC          _FUN_CTL_MOTOR_STATUS
-  D:0007H         SYMBOL        adjust_motor_status
-  C:8C2CH         LINE#         137
-  C:8C2CH         LINE#         138
-  C:8C2CH         LINE#         146
-  C:8C2FH         LINE#         147
-  C:8C2FH         LINE#         150
-  C:8C34H         LINE#         151
-  C:8C34H         LINE#         153
-  C:8C37H         LINE#         154
-  C:8C39H         LINE#         155
-  C:8C3EH         LINE#         156
-  C:8C3EH         LINE#         158
-  C:8C41H         LINE#         159
-  C:8C43H         LINE#         160
-  C:8C48H         LINE#         161
-  C:8C48H         LINE#         163
-  C:8C4BH         LINE#         164
-  C:8C4BH         LINE#         165
-  C:8C4DH         LINE#         167
-  C:8C4DH         LINE#         169
-  C:8C4FH         LINE#         170
-  C:8C4FH         LINE#         172
-  C:8C54H         LINE#         175
-  C:8C56H         LINE#         176
-  C:8C5DH         LINE#         179
-  C:8C60H         LINE#         180
-  C:8C60H         LINE#         181
-  C:8C64H         LINE#         182
-  C:8C64H         LINE#         184
-  C:8C66H         LINE#         185
-  C:8C68H         LINE#         186
-  C:8C6BH         LINE#         187
-  C:8C6DH         LINE#         189
-  C:8C6DH         LINE#         191
-  C:8C6FH         LINE#         192
-  C:8C71H         LINE#         193
-  C:8C74H         LINE#         194
-  C:8C74H         LINE#         196
-  C:8C77H         LINE#         197
-  C:8C79H         LINE#         198
-  C:8C79H         LINE#         199
-  -------         ENDPROC       _FUN_CTL_MOTOR_STATUS
   -------         PROC          MAIN
-  C:8A6BH         LINE#         201
-  C:8A6BH         LINE#         202
-  C:8A6BH         LINE#         203
-  C:8A6EH         LINE#         206
-  C:8A71H         LINE#         208
-  C:8A77H         LINE#         209
-  C:8A7AH         LINE#         219
-  C:8A80H         LINE#         220
-  C:8A86H         LINE#         225
-  C:8A89H         LINE#         226
-  C:8A8CH         LINE#         227
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 25
+  -------         DO            
+  D:0025H         SYMBOL        i
+  D:0026H         SYMBOL        adc_val
+  -------         ENDDO         
+  C:8921H         LINE#         211
+  C:8921H         LINE#         212
+  C:8921H         LINE#         213
+  C:8924H         LINE#         216
+  C:8927H         LINE#         217
+  C:892DH         LINE#         218
+  C:8930H         LINE#         222
+  C:8933H         LINE#         223
+  C:893CH         LINE#         226
+  C:893FH         LINE#         227
+  C:8942H         LINE#         228
+  C:8945H         LINE#         229
+  C:8948H         LINE#         231
+  C:894BH         LINE#         232
+  C:894EH         LINE#         234
+  C:8951H         LINE#         239
+  C:8954H         LINE#         242
+  C:895AH         LINE#         243
+  C:895CH         LINE#         246
+  C:895FH         LINE#         247
+  C:8966H         LINE#         248
+  C:8969H         LINE#         255
+  C:896CH         LINE#         256
+  C:896FH         LINE#         257
+  C:8972H         LINE#         258
+  C:8977H         LINE#         260
+  C:8977H         LINE#         261
+  C:897AH         LINE#         262
+  C:897EH         LINE#         263
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 20
 
 
-  C:8A8FH         LINE#         229
-  C:8A92H         LINE#         230
-  C:8A95H         LINE#         232
-  C:8A98H         LINE#         233
-  C:8A9BH         LINE#         235
-  C:8A9EH         LINE#         238
-  C:8AA0H         LINE#         239
-  C:8AA7H         LINE#         240
-  C:8AA9H         LINE#         271
-  C:8AA9H         LINE#         272
-  C:8AA9H         LINE#         287
-  C:8AACH         LINE#         289
-  C:8AB2H         LINE#         291
-  C:8AB2H         LINE#         292
-  C:8AB5H         LINE#         293
-  C:8AB5H         LINE#         294
-  C:8AB7H         LINE#         295
-  C:8ABAH         LINE#         296
-  C:8ABAH         LINE#         298
-  C:8ABDH         LINE#         299
-  C:8ABDH         LINE#         301
-  C:8AC0H         LINE#         305
-  C:8AC3H         LINE#         306
-  C:8AC3H         LINE#         308
-  C:8AC5H         LINE#         309
-  C:8AC9H         LINE#         310
-  C:8AC9H         LINE#         312
-  C:8AC9H         LINE#         313
-  C:8ACEH         LINE#         314
-  C:8ACEH         LINE#         317
-  C:8AD1H         LINE#         318
-  C:8AD8H         LINE#         320
-  C:8ADBH         LINE#         321
-  C:8ADEH         LINE#         322
-  C:8AE0H         LINE#         323
-  C:8AE5H         LINE#         324
-  C:8AE5H         LINE#         327
-  C:8AE8H         LINE#         328
-  C:8AEFH         LINE#         330
-  C:8AF2H         LINE#         331
-  C:8AF5H         LINE#         332
-  C:8AF5H         LINE#         334
-  C:8AF5H         LINE#         336
-  C:8AF5H         LINE#         337
-  C:8AF5H         LINE#         342
-  C:8AF8H         LINE#         347
-  C:8AFBH         LINE#         348
-  C:8AFBH         LINE#         350
-  C:8AFDH         LINE#         352
-  C:8B00H         LINE#         353
-  C:8B00H         LINE#         355
-  C:8B02H         LINE#         356
-  C:8B02H         LINE#         358
-  C:8B05H         LINE#         359
-  C:8B05H         LINE#         373
+  C:8980H         LINE#         264
+  C:8980H         LINE#         265
+  C:8987H         LINE#         266
+  C:8992H         LINE#         267
+  C:8992H         LINE#         268
+  C:8994H         LINE#         269
+  C:8994H         LINE#         270
+  C:899DH         LINE#         271
+  C:899DH         LINE#         273
+  C:89A0H         LINE#         274
+  C:89A3H         LINE#         275
+  C:89A5H         LINE#         279
+  C:89A5H         LINE#         280
+  C:89A5H         LINE#         283
+  C:89A8H         LINE#         284
+  C:89A8H         LINE#         286
+  C:89ABH         LINE#         287
+  C:89B2H         LINE#         288
+  C:89B5H         LINE#         289
+  C:89BCH         LINE#         290
+  C:89BEH         LINE#         291
+  C:89BEH         LINE#         295
+  C:89C1H         LINE#         300
+  C:89C4H         LINE#         303
+  C:89C4H         LINE#         304
+  C:89C7H         LINE#         305
+  C:89C7H         LINE#         306
+  C:89C9H         LINE#         307
+  C:89CCH         LINE#         308
+  C:89CCH         LINE#         310
+  C:89CFH         LINE#         311
+  C:89CFH         LINE#         387
   -------         ENDPROC       MAIN
   -------         PROC          TMR0_IRQHANDLER
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 26
-
-
   -------         DO            
-  D:0024H         SYMBOL        key_scan_cnt
-  D:0025H         SYMBOL        not_charge_ms_cnt
-  D:0026H         SYMBOL        charging_ms_cnt
-  D:0027H         SYMBOL        blink_ms_cnt
-  D:0029H         SYMBOL        cur_blink_status
-  D:002AH         SYMBOL        __blink_cnt
-  D:002BH         SYMBOL        __ctl_heat_ms_cnt
-  D:002CH         SYMBOL        shut_down_ms_cnt
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
+  D:001AH         SYMBOL        key_scan_cnt
+  D:001BH         SYMBOL        not_charge_ms_cnt
+  D:001CH         SYMBOL        charging_ms_cnt
+  D:001DH         SYMBOL        cur_breathing_status
+  D:001EH         SYMBOL        pwm_duty
   -------         ENDDO         
   -------         DO            
-  D:0025H         SYMBOL        not_charge_ms_cnt
-  D:0026H         SYMBOL        charging_ms_cnt
-  D:0027H         SYMBOL        blink_ms_cnt
-  D:0029H         SYMBOL        cur_blink_status
-  D:002AH         SYMBOL        __blink_cnt
-  D:002BH         SYMBOL        __ctl_heat_ms_cnt
-  D:002CH         SYMBOL        shut_down_ms_cnt
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
+  D:001BH         SYMBOL        not_charge_ms_cnt
+  D:001CH         SYMBOL        charging_ms_cnt
+  D:001DH         SYMBOL        cur_breathing_status
+  D:001EH         SYMBOL        pwm_duty
   -------         ENDDO         
   -------         DO            
-  D:0027H         SYMBOL        blink_ms_cnt
-  D:0029H         SYMBOL        cur_blink_status
-  D:002AH         SYMBOL        __blink_cnt
-  D:002BH         SYMBOL        __ctl_heat_ms_cnt
-  D:002CH         SYMBOL        shut_down_ms_cnt
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
+  D:001DH         SYMBOL        cur_breathing_status
+  D:001EH         SYMBOL        pwm_duty
   -------         ENDDO         
-  -------         DO            
-  D:002BH         SYMBOL        __ctl_heat_ms_cnt
-  D:002CH         SYMBOL        shut_down_ms_cnt
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 27
+  C:8810H         LINE#         390
+  C:882DH         LINE#         392
+  C:8835H         LINE#         393
+  C:8835H         LINE#         394
+  C:8838H         LINE#         397
+  C:883EH         LINE#         398
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 21
 
 
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:002CH         SYMBOL        shut_down_ms_cnt
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:0030H         SYMBOL        turn_dir_ms_cnt
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:0032H         SYMBOL        bat_is_full_ms_cnt
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:0034H         SYMBOL        low_bat_ms_cnt
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  B:0020H.0       SYMBOL        __flag_is_in_low_bat_alarm
-  D:0036H         SYMBOL        __blink_cnt_in_low_bat_alarm
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:0038H         SYMBOL        __shut_down_cnt
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:003AH         SYMBOL        __detect_motor_stalling_cnt
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 28
+  C:883EH         LINE#         400
+  C:883EH         LINE#         402
+  C:883EH         LINE#         404
+  C:8840H         LINE#         405
+  C:8847H         LINE#         406
+  C:8847H         LINE#         407
+  C:884AH         LINE#         408
+  C:884CH         LINE#         409
+  C:884CH         LINE#         410
+  C:884CH         LINE#         414
+  C:884CH         LINE#         417
+  C:884FH         LINE#         418
+  C:884FH         LINE#         419
+  C:8852H         LINE#         420
+  C:8852H         LINE#         422
+  C:8854H         LINE#         423
+  C:885BH         LINE#         424
+  C:885BH         LINE#         425
+  C:885EH         LINE#         426
+  C:8860H         LINE#         427
+  C:8860H         LINE#         428
+  C:8862H         LINE#         430
+  C:8862H         LINE#         432
+  C:8865H         LINE#         433
+  C:8867H         LINE#         434
+  C:8867H         LINE#         435
+  C:8869H         LINE#         437
+  C:8869H         LINE#         438
+  C:886CH         LINE#         439
+  C:886CH         LINE#         441
+  C:886EH         LINE#         442
+  C:8875H         LINE#         443
+  C:8875H         LINE#         444
+  C:8878H         LINE#         445
+  C:887AH         LINE#         446
+  C:887AH         LINE#         447
+  C:887CH         LINE#         449
+  C:887CH         LINE#         451
+  C:887FH         LINE#         452
+  C:8881H         LINE#         453
+  C:8881H         LINE#         454
+  C:8881H         LINE#         455
+  C:8881H         LINE#         861
+  C:8881H         LINE#         869
+  C:888AH         LINE#         872
+  C:888AH         LINE#         873
+  C:888EH         LINE#         874
+  C:888EH         LINE#         875
+  C:8891H         LINE#         876
+  C:8891H         LINE#         877
+  C:8893H         LINE#         879
+  C:8893H         LINE#         880
+  C:8896H         LINE#         881
+  C:889CH         LINE#         882
+  C:889CH         LINE#         884
+  C:88A1H         LINE#         885
+  C:88A1H         LINE#         886
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 22
 
 
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  -------         DO            
-  D:003CH         SYMBOL        no_operation_shut_down_cnt
-  -------         ENDDO         
-  C:802AH         LINE#         376
-  C:8047H         LINE#         378
-  C:804FH         LINE#         379
-  C:804FH         LINE#         380
-  C:8052H         LINE#         383
-  C:8058H         LINE#         384
-  C:8058H         LINE#         386
-  C:8058H         LINE#         388
-  C:8058H         LINE#         390
-  C:805AH         LINE#         391
-  C:8061H         LINE#         392
-  C:8061H         LINE#         393
-  C:8064H         LINE#         394
-  C:8066H         LINE#         395
-  C:8066H         LINE#         396
-  C:8066H         LINE#         400
-  C:8066H         LINE#         403
-  C:8069H         LINE#         404
-  C:8069H         LINE#         405
-  C:806CH         LINE#         406
-  C:806CH         LINE#         408
-  C:806EH         LINE#         409
-  C:8075H         LINE#         410
-  C:8075H         LINE#         411
-  C:8078H         LINE#         412
-  C:807AH         LINE#         413
-  C:807AH         LINE#         414
-  C:807CH         LINE#         416
-  C:807CH         LINE#         418
-  C:807FH         LINE#         419
-  C:8081H         LINE#         420
-  C:8081H         LINE#         421
-  C:8083H         LINE#         423
-  C:8083H         LINE#         424
-  C:8086H         LINE#         425
-  C:8086H         LINE#         427
-  C:8088H         LINE#         428
-  C:808FH         LINE#         429
-  C:808FH         LINE#         430
-  C:8092H         LINE#         431
-  C:8094H         LINE#         432
-  C:8094H         LINE#         433
-  C:8096H         LINE#         435
-  C:8096H         LINE#         437
-  C:8099H         LINE#         438
-  C:809BH         LINE#         439
-  C:809BH         LINE#         440
-  C:809BH         LINE#         441
-  C:809BH         LINE#         446
-  C:809BH         LINE#         457
-  C:809EH         LINE#         458
-  C:809EH         LINE#         460
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 29
-
-
-  C:80A2H         LINE#         461
-  C:80A2H         LINE#         463
-  C:80A5H         LINE#         464
-  C:80A5H         LINE#         465
-  C:80A7H         LINE#         467
-  C:80A7H         LINE#         469
-  C:80AAH         LINE#         470
-  C:80B0H         LINE#         471
-  C:80B3H         LINE#         472
-  C:80B3H         LINE#         474
-  C:80B8H         LINE#         475
-  C:80B8H         LINE#         494
-  C:80C0H         LINE#         495
-  C:80CBH         LINE#         496
-  C:80CBH         LINE#         497
-  C:80D1H         LINE#         498
-  C:80D4H         LINE#         499
-  C:80D4H         LINE#         500
-  C:80D6H         LINE#         501
-  C:80DCH         LINE#         502
-  C:80DCH         LINE#         504
-  C:80E0H         LINE#         505
-  C:80E0H         LINE#         506
-  C:80E3H         LINE#         507
-  C:80E3H         LINE#         509
-  C:80E7H         LINE#         510
-  C:80E7H         LINE#         511
-  C:80EFH         LINE#         512
-  C:80FAH         LINE#         513
-  C:80FAH         LINE#         515
-  C:80FFH         LINE#         516
-  C:80FFH         LINE#         518
-  C:8101H         LINE#         519
-  C:8103H         LINE#         520
-  C:8109H         LINE#         521
-  C:8109H         LINE#         523
-  C:810BH         LINE#         524
-  C:810BH         LINE#         525
-  C:810DH         LINE#         526
-  C:8118H         LINE#         527
-  C:8118H         LINE#         529
-  C:811DH         LINE#         530
-  C:811DH         LINE#         532
-  C:811FH         LINE#         533
-  C:8121H         LINE#         534
-  C:8126H         LINE#         535
-  C:8126H         LINE#         537
-  C:8128H         LINE#         538
-  C:8128H         LINE#         539
-  C:812AH         LINE#         541
-  C:812AH         LINE#         542
-  C:8130H         LINE#         543
-  C:8133H         LINE#         544
-  C:8133H         LINE#         545
-  C:8133H         LINE#         547
-  C:8135H         LINE#         548
-  C:8138H         LINE#         549
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 30
-
-
-  C:8138H         LINE#         550
-  C:8138H         LINE#         551
-  C:8138H         LINE#         552
-  C:8138H         LINE#         553
-  C:8138H         LINE#         558
-  C:8138H         LINE#         561
-  C:813DH         LINE#         562
-  C:813DH         LINE#         564
-  C:813FH         LINE#         565
-  C:8141H         LINE#         566
-  C:8146H         LINE#         567
-  C:8146H         LINE#         569
-  C:8148H         LINE#         570
-  C:814FH         LINE#         571
-  C:814FH         LINE#         572
-  C:8151H         LINE#         573
-  C:8153H         LINE#         574
-  C:815AH         LINE#         575
-  C:815AH         LINE#         576
-  C:815CH         LINE#         577
-  C:815EH         LINE#         584
-  C:815EH         LINE#         586
-  C:8160H         LINE#         587
-  C:8163H         LINE#         588
-  C:8163H         LINE#         590
-  C:8163H         LINE#         595
-  C:8163H         LINE#         598
-  C:816EH         LINE#         602
-  C:816EH         LINE#         603
-  C:818AH         LINE#         604
-  C:81A0H         LINE#         605
-  C:81A0H         LINE#         606
-  C:81ACH         LINE#         607
-  C:81AEH         LINE#         608
-  C:81AEH         LINE#         609
-  C:81B0H         LINE#         611
-  C:81B0H         LINE#         612
-  C:81BCH         LINE#         613
-  C:81BCH         LINE#         614
-  C:81BCH         LINE#         619
-  C:81BCH         LINE#         623
-  C:81C3H         LINE#         626
-  C:81C3H         LINE#         627
-  C:81CBH         LINE#         628
-  C:81DEH         LINE#         630
-  C:81DEH         LINE#         631
-  C:81E4H         LINE#         633
-  C:81E6H         LINE#         634
-  C:81E6H         LINE#         635
-  C:81E8H         LINE#         637
-  C:81E8H         LINE#         638
-  C:81EEH         LINE#         640
-  C:81F1H         LINE#         641
-  C:81F1H         LINE#         642
-  C:81F3H         LINE#         643
-  C:81F3H         LINE#         644
-  C:81F3H         LINE#         646
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 31
-
-
-  C:81F3H         LINE#         651
-  C:81F3H         LINE#         653
-  C:81F6H         LINE#         654
-  C:81F6H         LINE#         655
-  C:81F9H         LINE#         656
-  C:81F9H         LINE#         658
-  C:8201H         LINE#         659
-  C:820CH         LINE#         660
-  C:820CH         LINE#         661
-  C:8212H         LINE#         662
-  C:8214H         LINE#         663
-  C:8214H         LINE#         664
-  C:8216H         LINE#         666
-  C:8216H         LINE#         668
-  C:821CH         LINE#         669
-  C:821EH         LINE#         670
-  C:821EH         LINE#         671
-  C:821EH         LINE#         672
-  C:821EH         LINE#         677
-  C:821EH         LINE#         679
-  C:8221H         LINE#         680
-  C:8221H         LINE#         682
-  C:8229H         LINE#         683
-  C:8232H         LINE#         684
-  C:8232H         LINE#         685
-  C:8238H         LINE#         686
-  C:823AH         LINE#         687
-  C:823AH         LINE#         688
-  C:823CH         LINE#         690
-  C:823CH         LINE#         692
-  C:8242H         LINE#         693
-  C:8244H         LINE#         694
-  C:8244H         LINE#         695
-  C:8244H         LINE#         697
-  C:8244H         LINE#         703
-  C:824FH         LINE#         705
-  C:824FH         LINE#         706
-  C:8252H         LINE#         707
-  C:8252H         LINE#         708
-  C:8254H         LINE#         709
-  C:8254H         LINE#         710
-  C:8256H         LINE#         712
-  C:8256H         LINE#         713
-  C:825CH         LINE#         714
-  C:825EH         LINE#         715
-  C:825EH         LINE#         717
-  C:8261H         LINE#         718
-  C:8261H         LINE#         719
-  C:8269H         LINE#         720
-  C:8272H         LINE#         721
-  C:8272H         LINE#         722
-  C:8274H         LINE#         723
-  C:8276H         LINE#         724
-  C:8281H         LINE#         725
-  C:8281H         LINE#         726
-  C:8283H         LINE#         727
-  C:8285H         LINE#         729
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 32
-
-
-  C:8285H         LINE#         730
-  C:828BH         LINE#         731
-  C:828BH         LINE#         732
-  C:828BH         LINE#         733
-  C:828BH         LINE#         738
-  C:828BH         LINE#         741
-  C:828EH         LINE#         742
-  C:828EH         LINE#         744
-  C:8296H         LINE#         745
-  C:829FH         LINE#         746
-  C:829FH         LINE#         747
-  C:82A5H         LINE#         748
-  C:82A7H         LINE#         749
-  C:82A7H         LINE#         750
-  C:82A9H         LINE#         752
-  C:82A9H         LINE#         754
-  C:82AFH         LINE#         755
-  C:82B1H         LINE#         756
-  C:82B1H         LINE#         757
-  C:82B1H         LINE#         762
-  C:82B1H         LINE#         766
-  C:82B8H         LINE#         767
-  C:82B8H         LINE#         771
-  C:82C0H         LINE#         772
-  C:82C9H         LINE#         773
-  C:82C9H         LINE#         774
-  C:82CFH         LINE#         775
-  C:82D1H         LINE#         776
-  C:82D1H         LINE#         777
-  C:82D3H         LINE#         779
-  C:82D3H         LINE#         783
-  C:82D9H         LINE#         784
-  C:82DBH         LINE#         785
-  C:82DBH         LINE#         786
-  C:82DBH         LINE#         791
-  C:82DBH         LINE#         794
-  C:82E9H         LINE#         798
-  C:82E9H         LINE#         799
-  C:8301H         LINE#         800
-  C:8316H         LINE#         801
-  C:8316H         LINE#         802
-  C:8322H         LINE#         803
-  C:8324H         LINE#         804
-  C:8324H         LINE#         805
-  C:8326H         LINE#         807
-  C:8326H         LINE#         808
-  C:8332H         LINE#         809
-  C:8334H         LINE#         810
-  C:8334H         LINE#         811
-  C:8334H         LINE#         813
-  C:8334H         LINE#         814
+  C:88A7H         LINE#         887
+  C:88AAH         LINE#         888
+  C:88ADH         LINE#         889
+  C:88AFH         LINE#         890
+  C:88B4H         LINE#         891
+  C:88B4H         LINE#         892
+  C:88BFH         LINE#         893
+  C:88BFH         LINE#         894
+  C:88C7H         LINE#         895
+  C:88C9H         LINE#         897
+  C:88C9H         LINE#         898
+  C:88CCH         LINE#         899
+  C:88D2H         LINE#         900
+  C:88D2H         LINE#         902
+  C:88D2H         LINE#         903
+  C:88D2H         LINE#         904
+  C:88D4H         LINE#         905
+  C:88DAH         LINE#         906
+  C:88DAH         LINE#         907
+  C:88ECH         LINE#         908
+  C:88ECH         LINE#         909
+  C:88F4H         LINE#         910
+  C:88F6H         LINE#         912
+  C:88F6H         LINE#         913
+  C:88F9H         LINE#         914
+  C:88FFH         LINE#         915
+  C:88FFH         LINE#         917
+  C:8903H         LINE#         918
+  C:8906H         LINE#         919
+  C:8906H         LINE#         920
+  C:8906H         LINE#         923
+  C:8906H         LINE#         924
   -------         ENDPROC       TMR0_IRQHANDLER
   -------         ENDMOD        MAIN
 
   -------         MODULE        ?C?LMUL
-  C:85DDH         PUBLIC        ?C?LMUL
+  C:8614H         PUBLIC        ?C?LMUL
   -------         ENDMOD        ?C?LMUL
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/17/2025  17:51:46  PAGE 33
-
-
 
   -------         MODULE        ?C?ULDIV
-  C:8668H         PUBLIC        ?C?ULDIV
+  C:869FH         PUBLIC        ?C?ULDIV
   -------         ENDMOD        ?C?ULDIV
 
-  -------         MODULE        ?C?SLCMP
-  C:86FAH         PUBLIC        ?C?SLCMP
-  -------         ENDMOD        ?C?SLCMP
-
   -------         MODULE        ?C?ULCMP
-  C:8710H         PUBLIC        ?C?ULCMP
+  C:8731H         PUBLIC        ?C?ULCMP
   -------         ENDMOD        ?C?ULCMP
 
   -------         MODULE        ?C?ULSHR
-  C:8721H         PUBLIC        ?C?ULSHR
+  C:8742H         PUBLIC        ?C?ULSHR
   -------         ENDMOD        ?C?ULSHR
 
-  -------         MODULE        ?C?CCASE
-  C:8734H         PUBLIC        ?C?CCASE
-  -------         ENDMOD        ?C?CCASE
-
   -------         MODULE        ?C?LIMUL
-  C:875AH         PUBLIC        ?C?LIMUL
+  C:8755H         PUBLIC        ?C?LIMUL
   -------         ENDMOD        ?C?LIMUL
 
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?ADC_GET_VAL?ADC
+  -------         MODULE        PRINTF
+  D:0035H         PUBLIC        ?_PRINTF517?BYTE
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  02/18/2025  17:34:26  PAGE 23
+
+
+  D:0035H         PUBLIC        ?_PRINTF?BYTE
+  D:0035H         PUBLIC        ?_SPRINTF517?BYTE
+  D:0035H         PUBLIC        ?_SPRINTF?BYTE
+  C:808CH         PUBLIC        _PRINTF
+  C:808CH         PUBLIC        _PRINTF517
+  C:8086H         PUBLIC        _SPRINTF
+  C:8086H         PUBLIC        _SPRINTF517
+  -------         ENDMOD        PRINTF
+
+  -------         MODULE        ?C?CLDPTR
+  C:8782H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?CLDOPTR
+  C:879BH         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
+
+  -------         MODULE        ?C?CSTPTR
+  C:87C8H         PUBLIC        ?C?CSTPTR
+  -------         ENDMOD        ?C?CSTPTR
+
+  -------         MODULE        ?C?PLDIIDATA
+  C:87DAH         PUBLIC        ?C?PLDIIDATA
+  -------         ENDMOD        ?C?PLDIIDATA
+
+  -------         MODULE        ?C?CCASE
+  C:87EAH         PUBLIC        ?C?CCASE
+  -------         ENDMOD        ?C?CCASE
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?LOW_POWER?LOW_POWER
 
-Program Size: data=97.2 xdata=0 code=4046
-LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?FUN_CTL_POWER_ON?MAIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?FUN_CTL_POWER_OFF?MAIN
+
+Program Size: data=85.5 xdata=0 code=3883
+LINK/LOCATE RUN COMPLETE.  3 WARNING(S),  0 ERROR(S)

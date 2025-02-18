@@ -1,9 +1,9 @@
-C51 COMPILER V9.60.7.0   LED                                                               02/17/2025 17:05:46 PAGE 1   
+C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
 OBJECT MODULE PLACED IN .\Release\Objects\led.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\led.c OPTIMIZE(8,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(..
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\led.c OPTIMIZE(9,SIZE) BROWSE INTVECTOR(0X8000) INCDIR(..
                     -\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\led.l
                     -st) OBJECT(.\Release\Objects\led.obj)
 
@@ -12,28 +12,126 @@ line level    source
    1          #include "led.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
+*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
-   3          volatile u8 cur_sel_led = CUR_SEL_LED_NONE;
-   4          volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要控制灯光闪烁的次数
+   3          // 20KHz
+   4          // #define STMR2_PRE (SYSCLK / 1 / (20000 - 100) - 1) // 值 == 1608
    5          
-   6          void led_config(void)
-   7          {
-   8   1          // LED引脚配置为输出模式
-   9   1          P1_MD0 |= 0x01 << 4; // P12
-  10   1          // P1_MD0 |= 0x01 << 6; // P13
-  11   1          P0_MD1 |= 0x01 << 2; // P05
-  12   1      }
+   6          volatile u8 cur_sel_led = CUR_SEL_LED_NONE;
+   7          volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要控制灯光闪烁的次数
+   8          
+   9          void led_config(void)
+  10          {
+  11   1      #if 0
+                  // LED引脚配置为输出模式
+                  P1_MD0 |= 0x01 << 4; // P12
+                  // P1_MD0 |= 0x01 << 6; // P13
+                  P0_MD1 |= 0x01 << 2; // P05
+              #endif
+  17   1      
+  18   1          // P12、P13对应的LED都使用PWM来驱动
+  19   1          P1_MD0 |= 0xA0; // P12、P13都配置为多功能IO模式
+  20   1          // P1_AF0 &= ~(0x0F); // (可以不写，默认就是0)P12复用为 STMR2_CHB 、P13复用为 STMR2_CH
+             -A
+  21   1      
+  22   1          // 配置STIMER1
+  23   1          STMR2_FCONR = 0x00;          // 选择系统时钟，0分频
+  24   1          STMR2_PRH = STMR2_PRE / 256; // 周期值
+  25   1          STMR2_PRL = STMR2_PRE % 256;
+  26   1          // 占空比默认为0，不点亮LED
+  27   1          // STMR2_CMPAH = STMR2_PRE / 2 / 256; // 通道A占空比
+  28   1          // STMR2_CMPAL = STMR2_PRE / 2 % 256;
+  29   1          // STMR2_CMPBH = STMR2_PRE / 4 / 256; // 通道B占空比
+  30   1          // STMR2_CMPBL = STMR2_PRE / 4 % 256;
+  31   1      
+  32   1          STMR2_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
+  33   1          STMR2_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
+  34   1          STMR2_CR |= 0x01;    // 使能高级定时器
+  35   1      }
+  36          
+  37          void led_red_on(void)
+  38          {
+  39   1      #ifdef USE_P13_RLED_USE_P12_GLED
+  40   1          P1_MD0 &= ~(0x03 << 6);
+  41   1          P1_MD0 |= 0x02 << 6;                 // 多功能IO模式
+  42   1          P1_AF0 &= ~(0x03 << 6);              // 复用为 STMR2_CHA
+  43   1          STMR2_CMPAH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+  44   1          STMR2_CMPAL = (STMR2_PRE + 1) % 256; 
+  45   1      #endif
+  46   1      
+  47   1      #ifdef USE_P12_RLED_USE_P13_GLED
+                  P1_MD0 &= ~(0x03 << 4);
+C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 2   
+
+                  P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
+                  P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
+                  STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+                  STMR2_CMPBL = (STMR2_PRE + 1) % 256;
+              #endif
+  54   1      }
+  55          
+  56          void led_red_off(void)
+  57          {
+  58   1      #ifdef USE_P13_RLED_USE_P12_GLED
+  59   1          P1_MD0 &= ~(0x03 << 6);
+  60   1          P1_MD0 |= 0x01 << 6; // 输出模式
+  61   1          P13 = 0;             // 输出低电平
+  62   1      #endif
+  63   1      
+  64   1      #ifdef USE_P12_RLED_USE_P13_GLED
+                  P1_MD0 &= ~(0x03 << 4);
+                  P1_MD0 |= 0x01 << 4; // 输出模式
+                  P12 = 0;             // 输出低电平
+              #endif
+  69   1      }
+  70          
+  71          void led_green_on(void)
+  72          {
+  73   1      #ifdef USE_P13_RLED_USE_P12_GLED 
+  74   1          P1_MD0 &= ~(0x03 << 4);
+  75   1          P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
+  76   1          P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
+  77   1          STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+  78   1          STMR2_CMPBL = (STMR2_PRE + 1) % 256;
+  79   1      #endif
+  80   1      
+  81   1      #ifdef USE_P12_RLED_USE_P13_GLED
+                  P1_MD0 &= ~(0x03 << 6);
+                  P1_MD0 |= 0x02 << 6;                 // 多功能IO模式
+                  P1_AF0 &= ~(0x03 << 6);              // 复用为 STMR2_CHA
+                  STMR2_CMPAH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+                  STMR2_CMPAL = (STMR2_PRE + 1) % 256; 
+              #endif
+  88   1      }
+  89          
+  90          void led_green_off(void)
+  91          {
+  92   1      #ifdef USE_P13_RLED_USE_P12_GLED 
+  93   1          P1_MD0 &= ~(0x03 << 4);
+  94   1          P1_MD0 |= 0x01 << 4; // 输出模式
+  95   1          P12 = 0;             // 输出低电平
+  96   1      #endif
+  97   1      
+  98   1      #ifdef USE_P12_RLED_USE_P13_GLED
+                  P1_MD0 &= ~(0x03 << 6);
+                  P1_MD0 |= 0x01 << 6; // 输出模式
+                  P13 = 0;             // 输出低电平
+              #endif
+ 103   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     13    ----
+   CODE SIZE        =     97    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 3   
+
    DATA SIZE        =      2    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)

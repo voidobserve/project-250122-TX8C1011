@@ -38,33 +38,33 @@ void adc_sel_channel(u8 adc_channel)
         // P04 AIN4 检测充电口传过来的ad值
         ADC_CHS0 = 0x04; // 软件触发，P04通路
 
-        AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
+        // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+        // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
     case ADC_CHANNEL_BAT:
         // P06 AIN6 检测电池分压后的ad值
         ADC_CHS0 = 0x06; // 软件触发，P06通路
 
-        AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
+        // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+        // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
-    case ADC_CHANNEL_KEY_SCAN:
-        // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
-        ADC_CHS0 = 0x09; // 软件触发，P11通路
+    // case ADC_CHANNEL_KEY_SCAN:
+    //     // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
+    //     ADC_CHS0 = 0x09; // 软件触发，P11通路
 
-        // 参考电压改为VDD
-        AIP_CON4 &= ~(0x01 << 4); // 关闭内部参考
-        AIP_CON3 |= 0x02 << 2;    // 使用VCCA作为参考电压
-        break;
+    //     // 参考电压改为VDD
+    //     AIP_CON4 &= ~(0x01 << 4); // 关闭内部参考
+    //     AIP_CON3 |= 0x02 << 2;    // 使用VCCA作为参考电压
+    //     break;
 
     case ADC_CHANNEL_MOTOR: // 过流检测通道
         // 假设使用 P15 AIN13 来检测电机是否堵转  
         ADC_CHS0 = 0x0D; // 软件触发，P15通路
 
-        AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-        AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
+        // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
+        // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
         break;
 
     default:
