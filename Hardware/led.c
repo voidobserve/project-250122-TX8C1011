@@ -48,7 +48,7 @@ void led_red_on(void)
     P1_MD0 &= ~(0x03 << 4);
     P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
     P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
-    STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+    STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道B占空比  100%
     STMR2_CMPBL = (STMR2_PRE + 1) % 256;
 #endif
 }
@@ -74,7 +74,7 @@ void led_green_on(void)
     P1_MD0 &= ~(0x03 << 4);
     P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
     P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
-    STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+    STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道B占空比  100%
     STMR2_CMPBL = (STMR2_PRE + 1) % 256;
 #endif
 

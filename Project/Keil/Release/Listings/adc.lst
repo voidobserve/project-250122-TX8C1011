@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ADC                                                               02/18/2025 17:34:22 PAGE 1   
+C51 COMPILER V9.60.7.0   ADC                                                               02/19/2025 14:55:10 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
@@ -12,8 +12,6 @@ line level    source
    1          #include "adc.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
-*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
-*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
    3          void adc_config(void)
    4          {
@@ -21,135 +19,115 @@ line level    source
    6   1          P0_MD1 |= 0x03;        // 模拟模式
    7   1          P0_AIOEN |= 0x01 << 4; // 使能模拟功能
    8   1      
-   9   1          // P06 AIN6 检测电池分压后的ad值
-  10   1          P0_MD1 |= 0x03 << 4;   // 模拟模式
-  11   1          P0_AIOEN |= 0x01 << 6; // 使能模拟功能
-  12   1      
-  13   1          // 假设使用 P15 AIN13 检测电机是否堵转
-  14   1          P1_MD1 |= 0x3 << 2; // 模拟模式
-  15   1          P1_AIOEN |= 0x01 << 5; // 使能模拟功能
+   9   1          // P05 AIN5 检测电池分压后的ad值
+  10   1          P0_MD1 |= 0x03 << 2;   // 模拟模式
+  11   1          P0_AIOEN |= 0x01 << 5; // 使能模拟功能
+  12   1       
+  13   1          // 使用 P06 AIN06 检测电机是否堵转
+  14   1          P1_MD1 |= 0x3 << 4;    // 模拟模式
+  15   1          P1_AIOEN |= 0x01 << 6; // 使能模拟功能
   16   1      
   17   1          AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
   18   1          AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时�
              -��芯片需在5V电压供电下)
-  19   1      }
-  20          
-  21          // 切换adc检测的引脚
-  22          void adc_sel_channel(u8 adc_channel)
-  23          {
-  24   1      #if 1 // 可以节省7字节程序空间
-  25   1          // 避免前后切换相同的通道，节省时间：
-  26   1          static u8 last_adc_channel = ADC_CHANNEL_NONE;
-  27   1          if (last_adc_channel == adc_channel)
-  28   1          {
-  29   2              return;
-  30   2          }
-  31   1          last_adc_channel = adc_channel;
-  32   1      #endif // 可以节省7字节程序空间
-  33   1      
-  34   1          // 根据传参，切换成对应的通道
-  35   1          switch (adc_channel)
-  36   1          {
-  37   2          case ADC_CHANNEL_CHARGE:
-  38   2              // P04 AIN4 检测充电口传过来的ad值
-  39   2              ADC_CHS0 = 0x04; // 软件触发，P04通路
-  40   2      
-  41   2              // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-  42   2              // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
-  43   2              break;
-  44   2      
-  45   2          case ADC_CHANNEL_BAT:
-  46   2              // P06 AIN6 检测电池分压后的ad值
-  47   2              ADC_CHS0 = 0x06; // 软件触发，P06通路
-  48   2      
-C51 COMPILER V9.60.7.0   ADC                                                               02/18/2025 17:34:22 PAGE 2   
+  19   1      
+  20   1          ADC_CFG1 = 0x3C; // ADC时钟分频，16分频
+  21   1          ADC_CFG2 = 0xFF; // ADC采样时钟，256个ADC时钟
+  22   1      }
+  23          
+  24          // 切换adc检测的引脚
+  25          void adc_sel_channel(u8 adc_channel)
+  26          {
+  27   1      #if 1 // 可以节省7字节程序空间
+  28   1          // 避免前后切换相同的通道，节省时间：
+  29   1          static u8 last_adc_channel = ADC_CHANNEL_NONE;
+  30   1          if (last_adc_channel == adc_channel)
+  31   1          {
+  32   2              return;
+  33   2          }
+  34   1          last_adc_channel = adc_channel;
+  35   1      #endif // 可以节省7字节程序空间
+  36   1      
+  37   1          // 使用if-else语句比switch更节省程序空间
+  38   1          if (ADC_CHANNEL_CHARGE == adc_channel)
+  39   1          {
+  40   2              // P04 AIN4 检测充电口传过来的ad值
+  41   2              ADC_CHS0 = 0x04; // 软件触发，P04通路
+  42   2          }
+  43   1          else if (ADC_CHANNEL_BAT == adc_channel)
+  44   1          {
+  45   2              // P05 AIN5 检测电池分压后的ad值
+  46   2              ADC_CHS0 = 0x05; // 软件触发，P05通路
+  47   2          }
+  48   1          else if (ADC_CHANNEL_MOTOR == adc_channel)
+  49   1          {
+  50   2              // P06 AIN6 检测电机是否堵转
+C51 COMPILER V9.60.7.0   ADC                                                               02/19/2025 14:55:10 PAGE 2   
 
-  49   2              // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-  50   2              // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
-  51   2              break;
-  52   2      
-  53   2          // case ADC_CHANNEL_KEY_SCAN:
-  54   2          //     // 假设用 P11 AIN9 来检测ad按键 （更换板之后是直接检测电平）
-  55   2          //     ADC_CHS0 = 0x09; // 软件触发，P11通路
-  56   2      
-  57   2          //     // 参考电压改为VDD
-  58   2          //     AIP_CON4 &= ~(0x01 << 4); // 关闭内部参考
-  59   2          //     AIP_CON3 |= 0x02 << 2;    // 使用VCCA作为参考电压
-  60   2          //     break;
-  61   2      
-  62   2          case ADC_CHANNEL_MOTOR: // 过流检测通道
-  63   2              // 假设使用 P15 AIN13 来检测电机是否堵转  
-  64   2              ADC_CHS0 = 0x0D; // 软件触发，P15通路
-  65   2      
-  66   2              // AIP_CON3 &= ~(0x03 << 2); // 关闭外部参考电压
-  67   2              // AIP_CON4 |= 0x01 << 4;    // 使能内部参考电压2.4V
-  68   2              break;
-  69   2      
-  70   2          default:
-  71   2              break;
-  72   2          }
-  73   1      
-  74   1          ADC_CFG0 = 0x14; // 使能A/D转换，使能通道0转换
-  75   1          delay_ms(1);     // 切换adc检测的引脚后，要延时一段时间，等待adc稳定，防止意�
+  51   2              ADC_CHS0 = 0x06; // 软件触发，P06通路
+  52   2          }
+  53   1      
+  54   1          ADC_CFG0 = 0x14; // 使能A/D转换，使能通道0转换
+  55   1          delay_ms(1);     // 切换adc检测的引脚后，要延时一段时间，等待adc稳定，防止意�
              -��之外的检测结果
-  76   1      }
-  77          
-  78          // 获取adc单次转换后的值
-  79          u16 adc_get_val_once(void)
-  80          {
-  81   1          u16 g_temp_value = 0;
-  82   1      
-  83   1          ADC_CFG0 |= 0x01; // 触发ADC0转换
-  84   1          while (!(ADC_STA & 0x02))
-  85   1              ;                                          // 等待转换完成
-  86   1          ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
-  87   1          g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
-  88   1      
-  89   1          return g_temp_value;
-  90   1      }
-  91          
-  92          // 获取adc采集+滤波后的值
-  93          u16 adc_get_val(void)
-  94          {
-  95   1          u8 i = 0; // adc采集次数的计数
-  96   1          volatile u16 g_temp_value = 0;
-  97   1          volatile u32 g_tmpbuff = 0;
-  98   1          volatile u16 g_adcmax = 0;
-  99   1          volatile u16 g_adcmin = 0xFFFF;
- 100   1      
- 101   1          // 采集20次，去掉前两次采样，再去掉一个最大值和一个最小值，再取平均值
- 102   1          for (i = 0; i < 20; i++)
- 103   1          {
- 104   2              // ADC_CFG0 |= 0x01; // 触发ADC0转换
- 105   2              // while (!(ADC_STA & 0x02))
- 106   2              //     ;                                          // 等待转换完成
- 107   2              // ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
- 108   2              // g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
- 109   2      
-C51 COMPILER V9.60.7.0   ADC                                                               02/18/2025 17:34:22 PAGE 3   
-
- 110   2              g_temp_value = adc_get_val_once();
- 111   2      
- 112   2              if (i < 2)
- 113   2                  continue; // 丢弃前两次采样的
- 114   2              if (g_temp_value > g_adcmax)
- 115   2                  g_adcmax = g_temp_value; // 最大
- 116   2              if (g_temp_value < g_adcmin)
- 117   2                  g_adcmin = g_temp_value; // 最小
- 118   2      
- 119   2              g_tmpbuff += g_temp_value;
- 120   2          }
- 121   1      
- 122   1          g_tmpbuff -= g_adcmax;           // 去掉一个最大
- 123   1          g_tmpbuff -= g_adcmin;           // 去掉一个最小
- 124   1          g_temp_value = (g_tmpbuff >> 4); // 除以16，取平均值
- 125   1      
- 126   1          return g_temp_value;
- 127   1      }
+  56   1      }
+  57          
+  58          // // 获取adc单次转换后的值
+  59          // u16 adc_get_val_once(void)
+  60          // {
+  61          //     u16 g_temp_value = 0;
+  62          
+  63          //     ADC_CFG0 |= 0x01; // 触发ADC0转换
+  64          //     while (!(ADC_STA & 0x02))
+  65          //         ;                                          // 等待转换完成
+  66          //     ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+  67          //     g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+  68          
+  69          //     return g_temp_value;
+  70          // }
+  71          
+  72          // 获取adc采集+滤波后的值
+  73          u16 adc_get_val(void)
+  74          {
+  75   1          u8 i = 0; // adc采集次数的计数
+  76   1          volatile u16 g_temp_value = 0;
+  77   1          volatile u32 g_tmpbuff = 0;
+  78   1          volatile u16 g_adcmax = 0;
+  79   1          volatile u16 g_adcmin = 0xFFFF;
+  80   1      
+  81   1          // 采集20次，去掉前两次采样，再去掉一个最大值和一个最小值，再取平均值
+  82   1          for (i = 0; i < 20; i++)
+  83   1          {
+  84   2              ADC_CFG0 |= 0x01; // 触发ADC0转换
+  85   2              while (!(ADC_STA & 0x02))
+  86   2                  ;                                          // 等待转换完成
+  87   2              ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+  88   2              g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+  89   2      
+  90   2              // g_temp_value = adc_get_val_once();
+  91   2      
+  92   2              if (i < 2)
+  93   2                  continue; // 丢弃前两次采样的
+  94   2              if (g_temp_value > g_adcmax)
+  95   2                  g_adcmax = g_temp_value; // 最大
+  96   2              if (g_temp_value < g_adcmin)
+  97   2                  g_adcmin = g_temp_value; // 最小
+  98   2      
+  99   2              g_tmpbuff += g_temp_value;
+ 100   2          }
+ 101   1      
+ 102   1          g_tmpbuff -= g_adcmax;           // 去掉一个最大
+ 103   1          g_tmpbuff -= g_adcmin;           // 去掉一个最小
+ 104   1          g_temp_value = (g_tmpbuff >> 4); // 除以16，取平均值
+ 105   1      
+ 106   1          return g_temp_value;
+ 107   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    288    ----
+   CODE SIZE        =    284    ----
+C51 COMPILER V9.60.7.0   ADC                                                               02/19/2025 14:55:10 PAGE 3   
+
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -159,4 +137,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

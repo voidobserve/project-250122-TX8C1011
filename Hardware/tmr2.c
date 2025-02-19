@@ -14,6 +14,7 @@ void tmr2_pwm_config(void)
 
     TMR2_PRL = TMR2_CNT_TIME % 256; // 周期值
     TMR2_PRH = TMR2_CNT_TIME / 256;
+    // 占空比配置：（不能去掉，否则刚上电/充电时可能会是随机值，而不是0）
     TMR2_PWML = 0; // 占空比 0%
     TMR2_PWMH = 0;
     TMR2_CNTL = 0x00; // 清除计数值

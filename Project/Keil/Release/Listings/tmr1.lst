@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR1                                                              02/18/2025 17:34:21 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR1                                                              02/19/2025 11:52:39 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
@@ -12,15 +12,13 @@ line level    source
    1          #include "tmr1.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
-*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
-*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
    3          // 配置1ms定时器
    4          #define TMR0_CNT_TIME (SYSCLK / 128 / (1000 - 20) - 1) // 计数周期 1KHz(实际上会有误差，这里
              -要加上补偿)
    5          
    6          
-   7          void tmr1_config(void)
+   7          void tmr0_config(void)
    8          {
    9   1          __EnableIRQ(TMR0_IRQn); // 使能timer0中断
   10   1          IE_EA = 1;              // 使能总中断
@@ -44,4 +42,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   UART                                                              02/18/2025 17:34:22 PAGE 1   
+C51 COMPILER V9.60.7.0   UART                                                              02/19/2025 14:55:10 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
@@ -12,8 +12,6 @@ line level    source
    1          #include "uart.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
-*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
-*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
    3          #include <stdio.h>
    4          
@@ -30,7 +28,7 @@ line level    source
   15   1          P0_AF0 |= 0x01; // P00 复用为 UART1_RX
   16   1      
   17   1          __EnableIRQ(UART1_IRQn); // 打开UART模块中断
-  18   1          IE_EA = 1;               // 打开总中断
+  18   1          // IE_EA = 1;               // 打开总中断
   19   1      
   20   1          UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
   21   1          UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
@@ -62,10 +60,10 @@ line level    source
                       // printf("%d\n",uart_data); 
                       // _flag_is_recved_data = 1;
                   }
-C51 COMPILER V9.60.7.0   UART                                                              02/18/2025 17:34:22 PAGE 2   
-
                   UART1_STA |= 0x08; // 清中断请求标志位
               #endif
+C51 COMPILER V9.60.7.0   UART                                                              02/19/2025 14:55:10 PAGE 2   
+
   52   1      
   53   1          if (UART1_STA & 0x20)
   54   1          {
@@ -108,7 +106,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    103    ----
+   CODE SIZE        =    101    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -118,4 +116,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

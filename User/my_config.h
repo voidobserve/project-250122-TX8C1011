@@ -3,14 +3,15 @@
 
 #include "include.h"
 
-#define USE_MY_DEBUG 1
+#define USE_MY_DEBUG 0
+#define USE_DEBUG_PIN 0 // 是否使用单线通信(不用串口)的引脚用于测试
 
 #if USE_MY_DEBUG
 #include <stdio.h>
 #endif
 
 #include "adc.h"
-#include "tmr1.h"
+#include "tmr0.h"
 #include "tmr2.h"
 #include "uart.h"
 
@@ -22,8 +23,7 @@
 #include "charge.h"
 #include "speech_process.h"
 #include "low_power.h"
-
-#define USE_MOTOR 0
+ 
 
 
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
@@ -37,8 +37,8 @@
 // 使用第 07 脚检测 加热按键
 #define USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT 
 #else
-// 使用第 07 脚检测 加热按键
-// 使用第 10 脚检测 开关/模式按键
+// 使用第 07 脚检测 开关/模式按键
+// 使用第 10 脚检测 加热按键
 #define USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT 
 #endif // 选择使用哪个引脚检测 开关/模式 按键，哪个引脚检测 加热 按键
 

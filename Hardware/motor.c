@@ -1,6 +1,5 @@
 #include "motor.h"
-
-#if USE_MOTOR
+ 
 
 // 20KHz
 #define STMR1_PRE (SYSCLK / 1 / (20000 - 100) - 1) // 值 == 1608
@@ -160,7 +159,9 @@ void motor_over_current_detect_handle(void)
     }
 
     adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
-    adc_val = adc_get_val_once();
+    // adc_val = adc_get_val_once();
+    adc_val = adc_get_val();
+    
 
     if (adc_val >= MOTOR_STALLING_AD_VAL)
     {
@@ -180,5 +181,4 @@ void motor_over_current_detect_handle(void)
         flag_is_enter_low_power = 1; // 允许进入低功耗
     }
 }
-
-#endif
+ 

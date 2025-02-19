@@ -17,7 +17,7 @@ void heating_pin_config(void)
     P1_MD1 |= 0x01;
 }
 
-#if 0
+
 // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
 void fun_ctl_close_heat(void)
 {
@@ -104,5 +104,4 @@ void fun_ctl_heat_status(u8 adjust_heat_status)
             flag_ctl_led_blink = 1;
         }
     }
-}
-#endif
+} 

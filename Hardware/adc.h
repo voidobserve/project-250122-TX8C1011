@@ -15,7 +15,7 @@ enum
 
 void adc_config(void);
 void adc_sel_channel(u8 adc_channel);
-u16 adc_get_val_once(void);
+// u16 adc_get_val_once(void);
 u16 adc_get_val(void);
 
 #endif 

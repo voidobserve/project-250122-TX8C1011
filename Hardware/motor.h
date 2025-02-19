@@ -2,8 +2,7 @@
 #define __MOTOR_H
 
 #include "my_config.h"
-
-#if USE_MOTOR
+ 
 
 // 当前电机的挡位,0--初始状态(0%占空比)，1--一档，2--二档，3--三档
 extern volatile u8 cur_motor_status;
@@ -22,7 +21,7 @@ void motor_pwm_disable(void);
 
 void alter_motor_speed(u8 adjust_motor_status);
 void motor_over_current_detect_handle(void);
-#endif
+ 
 
 
 #endif

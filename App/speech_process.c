@@ -33,7 +33,7 @@ void speech_ctl_pin_config(void)
     P1_MD0 |= 0x01 << 2; // 输出模式
 }
 
-#if USE_MOTOR
+ 
 void speech_scan_process(void)
 {
     if (flag_is_recv_ctl)
@@ -44,140 +44,7 @@ void speech_scan_process(void)
         cmd = recv_ctl; // 从缓冲区取出控制命名
 
         // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计时
-        flag_is_new_operation = 1;
-
-#if 0
-        // 根据当前设备的情况，对指令进行处理
-        switch (cmd)
-        {
-        case CMD_OPEN_DEV: // 打开按摩/按摩枕/按摩器
-
-            // 如果当前电机是关闭的，才对 开机控制命令进行处理
-            if (0 == cur_motor_status)
-            {
-                alter_motor_speed(2); // 开机后，电机进入二档
-                motor_pwm_b_enable(); // 电机正向转动
-
-                cur_motor_dir = 1;    // 表示当前电机在正转
-                cur_motor_status = 2; // 更新电机挡位状态
-
-                // 如果不处于低电量报警状态，才使能LED闪烁功能：
-                if (0 == flag_tim_set_bat_is_low)
-                {
-                    if (0 == cur_ctl_heat_status)
-                    {
-                        // 如果没有打开加热，让绿灯闪烁
-                        LED_RED_OFF();
-                        LED_GREEN_ON();
-                        cur_sel_led = CUR_SEL_LED_GREEN;
-                    }
-                    else
-                    {
-                        // 如果打开了加热，让红灯闪烁
-                        LED_GREEN_OFF();
-                        LED_RED_ON();
-                        cur_sel_led = CUR_SEL_LED_RED;
-                    }
-
-                    cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
-                    flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
-                }
-            }
-            else
-            {
-                // 电机正在运行，不做处理
-            }
-
-            break;
-
-        case CMD_CLOSE_DEV: // 关闭按摩/按摩枕/按摩器
-
-            flag_ctl_dev_close = 1;
-
-            break;
-
-        case CMD_OPEN_HEAT: // 打开加热
-
-            if (0 == cur_ctl_heat_status)
-            {
-                // 如果加热没有开启
-                // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
-                fun_ctl_heat_status(0);
-            }
-
-            break;
-
-        case CMD_CLOSE_HEAT: // 关闭加热
-
-            if (0 != cur_ctl_heat_status)
-            {
-                // 如果加热已经开启
-                flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-                delay_ms(1); // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
-                fun_ctl_close_heat();
-            }
-
-            break;
-
-        case CMD_CHANGE_DIR: // 换个方向
-
-            if (0 != cur_motor_status)
-            {
-                // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
-                flag_ctl_turn_dir = 1;
-
-                // 给另外一个标志位置一，让定时器清除自动换方向的计时
-                flag_is_turn_dir_by_speech = 1;
-            }
-
-            break;
-
-        case CMD_INTENSITY_FIRST: // 力度一档
-
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(1);
-            }
-
-            break;
-
-        case CMD_INTENSITY_SECOND: // 力度二档
-
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(2);
-            }
-
-            break;
-
-        case CMD_INTENSITY_THIRD: // 力度三档
-
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(3);
-            }
-
-            break;
-
-        case CMD_HEAT_FIRST: // 加热一档
-
-            if (0 != cur_ctl_heat_status)
-            {
-                fun_ctl_heat_status(1);
-            }
-
-            break;
-
-        case CMD_HEAT_SECOND: // 加热二档
-
-            if (0 != cur_ctl_heat_status)
-            {
-                fun_ctl_heat_status(2);
-            }
-
-            break;
-        }
-#endif
+        flag_is_new_operation = 1; 
 
         // (用 if-else if 语句会比switch语句更省空间)
         // 根据当前设备的情况，对指令进行处理
@@ -290,4 +157,4 @@ void speech_scan_process(void)
         }
     }
 }
-#endif
+ 

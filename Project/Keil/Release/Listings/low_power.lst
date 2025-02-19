@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/18/2025 17:34:22 PAGE 1   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/19/2025 18:55:16 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LOW_POWER
@@ -12,69 +12,145 @@ line level    source
    1          #include "low_power.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
-*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
-*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
-   3          void low_power(void)
-   4          {
-   5   1          u8 p0_md0_sta;
-   6   1          u8 p0_md1_sta;
-   7   1          u8 p1_md0_sta;
-   8   1          u8 p1_md1_sta; 
-   9   1          
-  10   1          p0_md0_sta = P0_MD0;
-  11   1          p0_md1_sta = P0_MD1;
-  12   1          p1_md0_sta = P1_MD0;
-  13   1          p1_md1_sta = P1_MD1;
-  14   1          
-  15   1          // 低功耗下不需要的IO设置成模拟输入
-  16   1          P0_MD0 = 0xFF;
-  17   1          P0_MD1 = 0xFF;
-  18   1          P1_MD0 = 0xFF;
-  19   1          P1_MD1 = 0xFF;
-  20   1          
-  21   1          // 配置P14 低功耗唤醒IO
-  22   1          P1_MD1    &= ~0x03;
-  23   1          P1_MD1    |=  0x02;
-  24   1          P1_AF1    |=  0x03;
-  25   1          P1_PD     |=  0x10;     // P14下拉
-  26   1          
-  27   1          WKUP_CON0  = 0x01;      // 使能通道0，上升沿唤醒
-  28   1          WKPND      = 0xFF;      // 唤醒前清除pending
-  29   1          LP_CON    |= 0x40;      // 唤醒后Goon
-  30   1          // 关闭ADC,DACMP等模拟模块
-  31   1          // ....
-  32   1          
-  33   1          __ENTER_SLEEP_MODE;     // 进入SLEEP
-  34   1          __SLEEP_AFTER_WAKE_UP;  // SLEEP唤醒后
-  35   1      
-  36   1          // 恢复IO的功能
-  37   1          P0_MD0 = p0_md0_sta;
-  38   1          P0_MD1 = p0_md1_sta;
-  39   1          P1_MD0 = p1_md0_sta;
-  40   1          P1_MD1 = p1_md1_sta;
-  41   1          
-  42   1          // user_printf("Sleep out\n");
-  43   1      
-  44   1          // 重新初始化
-  45   1          // user_init();
+   3          extern void user_config(void);
+   4          
+   5          void low_power(void)
+   6          {
+   7   1          // 如果一直按着开机/模式按键，返回
+   8   1      
+   9   1      label_low_power_begin: // 标签，刚开始进入低功耗
+  10   1          // 关闭片上外设:
+  11   1          __DisableIRQ(TMR0_IRQn);  // 屏蔽TMR0中断
+  12   1          TMR0_CONL &= ~0x03;       // 关闭tmr0
+  13   1          tmr2_pwm_disable();       // 关闭tmr2 控制升压的PWM，相应的引脚输出低电平
+  14   1          ADC_CFG0 &= ~(0x14);      // 关闭ADC和使用到的ADC通道0
+  15   1          motor_pwm_disable();      // 关闭驱动电机的定时器(pwm)，相应的两个引脚输出低电�
+             -�
+  16   1          __DisableIRQ(UART1_IRQn); // 屏蔽接收控制命令的串口中断
+  17   1          UART1_CON &= ~(0x11);     // 关闭接收控制命令的串口，关闭RX中断
+  18   1                                    // 接收控制命令的引脚配置为输出模式，输出低电平:
+  19   1          P0_MD0 &= ~0x03;
+  20   1          P0_MD0 |= 0x01; // 输出模式
+  21   1          P00 = 0;
+  22   1      
+  23   1          STMR2_CR &= ~0x01; // 关闭驱动LED的定时器(pwm)
+  24   1          // 关闭LED：
+  25   1          LED_RED_OFF();
+  26   1          LED_GREEN_OFF();
+  27   1          HEATING_OFF();          // 控制加热的引脚输出低电平
+  28   1          SPEECH_POWER_DISABLE(); // 控制语音IC电源的引脚
+  29   1          // 检测电机是否堵转的引脚配置为输出模式，输出低电平
+  30   1          // 检测电池分压后的电压的引脚配置为输出模式，输出低电平
+  31   1          // 检测是否有充电的引脚配置为输出模式，输出低电平
+  32   1          // 也就是 P04、P05、P06都配置为输出模式，输出低电平
+  33   1          P0_MD1 &= ~0x3F;
+  34   1          P0_MD1 |= 0x15; // P04 P05 P06 输出模式
+  35   1          P0 &= ~0x70;    // P04 P05 P06 输出低电平
+  36   1      
+  37   1          // 使用TMR2产生1s的中断来触发唤醒（但是打开这个，在低功耗下耗电约300uA）
+  38   1          // 配置1s定时器唤醒sleep
+  39   1          // TMR2_PRL = (16000 - 1) % 256; // 周期值
+  40   1          // TMR2_PRH = (16000 - 1) / 256;
+  41   1          // TMR2_CNTL = 0x00; // 清除计数值
+  42   1          // TMR2_CNTH = 0x00;
+  43   1          // TMR2_CONH = 0xA0;                                                           // 使能计数中断
+  44   1          // TMR2_CONL = (((0x2 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 4分频，系统时�
+             -��，count模式
+  45   1          // WKUP_CON0 |= 0x04; // 使能通道2，上升沿唤醒
   46   1      
-  47   1      
-  48   1          // 如果一直按着开机/模式按键，返回
-  49   1      
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/18/2025 17:34:22 PAGE 2   
+  47   1      // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
+  48   1      #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
+  49   1          // 将检测加热按键的引脚配置为输出模式，输出低电平：
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/19/2025 18:55:16 PAGE 2   
 
-  50   1      
-  51   1          // 配置1s的定时器，用于唤醒，
-  52   1          // 唤醒后，如果没有按下 开机/模式按键，或是没有在充电，回到低功耗
+  50   1          P1_MD0 &= ~0x03; //
+  51   1          P1_MD0 |= 0x01;  // P10 输出模式
+  52   1          P10 = 0;
   53   1      
-  54   1          
-  55   1      
-  56   1      }
+  54   1          // 检测 开关/模式按键 的引脚配置为输入上拉，检测到低电平触发中断，唤醒
+             -CPU
+  55   1          // P1_TRG0 |= ; // 好像不用配置触发边沿，默认就是双边沿触发
+  56   1          P0_IMK |= 0x01 << 7;  // 使能 P07 中断
+  57   1          __EnableIRQ(P0_IRQn); // 在总中断使能P0中断
+  58   1          // 使能对应的唤醒通道：
+  59   1          WKUP_CON0 |= 0x11; // P07 连接到的唤醒单元使能，低电平触发唤醒
+  60   1      #endif
+  61   1      
+  62   1      // 如果是 使用第 10 脚检测 开关/模式按键 使用第 07 脚检测 加热按键
+  63   1      #ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
+                  P0_MD1 &= ~(0x03 << 6);
+                  P0_MD1 |= 0x01 << 6; // P07 输出模式
+                  P07 = 0;
+              
+                  // 检测 开关/模式按键 的引脚配置为输入上拉，检测到低电平触发中断，唤醒
+             -CPU
+                  P1_IMK |= 0x01;       // 使能P10中断
+                  __EnableIRQ(P1_IRQn); // 在总中断使能P1中断
+                  // 使能对应的唤醒通道：
+                  WKUP_CON0 |= 0x22; // P10 连接到的唤醒单元使能，低电平触发唤醒
+              #endif
+  74   1      
+  75   1          // WDT_KEY = 0x55;
+  76   1          // WDT_KEY = 0xEE; // 使能WDT唤醒
+  77   1          // WDT_KEY = 0x5A; // 使能WDT中断
+  78   1          // WDT_KEY = 0xA5; // 关闭WDT中断
+  79   1          SYS_CON2 |= 0x04;     // ISD模式下允许WDT复位
+  80   1          WDT_KEY = 0x55; // 访问 wdt
+  81   1          WDT_CON = 0x07; // 配置1s
+  82   1          WDT_KEY = 0xAA; // 喂狗，清除计数
+  83   1          WDT_KEY = 0xCC; // 启动看门狗工作
+  84   1          // WKUP_CON0 |= 0x0F; // 使能唤醒通道，上升沿唤醒
+  85   1      
+  86   1          // ======================================================================
+  87   1          WKPND = 0xFF;          // 唤醒前清除pending
+  88   1          LP_CON |= 0x01 << 6;   // 唤醒后程序会继续运行
+  89   1          __ENTER_SLEEP_MODE;    // 进入SLEEP
+  90   1          __SLEEP_AFTER_WAKE_UP; // SLEEP唤醒后
+  91   1          // ======================================================================
+  92   1      
+  93   1          WDT_KEY = 0xDD; // Close WDT
+  94   1      
+  95   1          // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
+  96   1      #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
+  97   1          // 关闭检测 开关/模式 按键引脚的中断
+  98   1          P0_IMK &= ~(0x01 << 7); // 使能 P07 中断
+  99   1          __DisableIRQ(P0_IRQn);  // 在总中断使能P0中断
+ 100   1      #endif
+ 101   1      
+ 102   1      // 如果是 使用第 10 脚检测 开关/模式按键 使用第 07 脚检测 加热按键
+ 103   1      #ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
+                  // 关闭检测 开关/模式 按键引脚的中断
+                  P1_IMK &= ~0x01;       // 关闭P10中断
+                  __DisableIRQ(P1_IRQn); // 在总中断关闭P1中断
+              #endif
+ 108   1      
+ 109   1          // 关闭TMR2的中断
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/19/2025 18:55:16 PAGE 3   
+
+ 110   1          // WKUP_CON0 &= ~(0x01 << 2); // 关闭TMR2连接到的唤醒单元
+ 111   1      
+ 112   1          // 唤醒后，如果没有检测到 充电或是按着开机/模式按键，重新回到低功耗
+ 113   1          if (0)
+ 114   1          {
+ 115   2              goto label_low_power_begin;
+ 116   2          }
+ 117   1      
+ 118   1          // 重新初始化
+ 119   1          user_config();
+ 120   1      }
+ 121          
+ 122          void WDT_IRQHandler(void) interrupt WDT_IRQn
+ 123          {
+ 124   1          if (WDT_CON & 0x40)
+ 125   1          {
+ 126   2              WDT_KEY = 0xAA; // feed wdt
+ 127   2          }
+ 128   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    153    ----
+   CODE SIZE        =    218    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -84,4 +160,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

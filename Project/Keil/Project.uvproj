@@ -402,11 +402,6 @@
               <FilePath>..\..\Hardware\motor.c</FilePath>
             </File>
             <File>
-              <FileName>tmr1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Hardware\tmr1.c</FilePath>
-            </File>
-            <File>
               <FileName>tmr2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\tmr2.c</FilePath>
@@ -430,6 +425,11 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>tmr0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Hardware\tmr0.c</FilePath>
             </File>
           </Files>
         </Group>

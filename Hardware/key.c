@@ -36,6 +36,8 @@ void key_config(void)
     // 上拉：
     P0_PU |= 0x01 << 7;
     P1_PU |= 0x01;
+    P0_MD1 &= ~(0x03 << 6); // P07 输入模式
+    P1_MD0 &= ~0x03;        // P10 输入模式
 }
 
 // ad按键扫描检测函数，需要放到周期为10ms的循环内执行
@@ -142,7 +144,6 @@ void key_scan_10ms_isr(void)
 
         if (KEY_ID_MODE == cur_key_id)
         {
-#if USE_MOTOR
             // if (flag_is_dev_open)
             // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
             if (cur_motor_status || cur_ctl_heat_status)
@@ -176,7 +177,6 @@ void key_scan_10ms_isr(void)
                     }
                 }
             }
-#endif
         }
     }
 
@@ -186,7 +186,7 @@ void key_scan_10ms_isr(void)
 // 按键事件处理
 void key_event_handle(void)
 {
-#if USE_MOTOR
+
     // if (flag_is_dev_open)
     // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
     if (cur_motor_status || cur_ctl_heat_status)
@@ -223,7 +223,6 @@ void key_event_handle(void)
             SPEECH_POWER_ENABLE();
         }
     }
-#endif
 
     // 处理完成后，清除按键事件
     key_event = KEY_EVENT_NONE;

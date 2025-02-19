@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 1   
+C51 COMPILER V9.60.7.0   LED                                                               02/19/2025 14:55:10 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
@@ -12,8 +12,6 @@ line level    source
    1          #include "led.h"
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
-*** WARNING C322 IN LINE 6 OF ..\..\Hardware\motor.h: unknown identifier
-*** WARNING C322 IN LINE 26 OF ..\..\App\speech_process.h: unknown identifier
    2          
    3          // 20KHz
    4          // #define STMR2_PRE (SYSCLK / 1 / (20000 - 100) - 1) // 值 == 1608
@@ -62,11 +60,11 @@ line level    source
   46   1      
   47   1      #ifdef USE_P12_RLED_USE_P13_GLED
                   P1_MD0 &= ~(0x03 << 4);
-C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 2   
-
                   P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
                   P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
-                  STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+C51 COMPILER V9.60.7.0   LED                                                               02/19/2025 14:55:10 PAGE 2   
+
+                  STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道B占空比  100%
                   STMR2_CMPBL = (STMR2_PRE + 1) % 256;
               #endif
   54   1      }
@@ -92,7 +90,7 @@ line level    source
   74   1          P1_MD0 &= ~(0x03 << 4);
   75   1          P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
   76   1          P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
-  77   1          STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
+  77   1          STMR2_CMPBH = (STMR2_PRE + 1) / 256; // 通道B占空比  100%
   78   1          STMR2_CMPBL = (STMR2_PRE + 1) % 256;
   79   1      #endif
   80   1      
@@ -126,12 +124,12 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.7.0   LED                                                               02/18/2025 17:34:22 PAGE 3   
-
    DATA SIZE        =      2    ----
    IDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.7.0   LED                                                               02/19/2025 14:55:10 PAGE 3   
+
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

@@ -15,7 +15,7 @@ void uart1_config(void)
     P0_AF0 |= 0x01; // P00 复用为 UART1_RX
 
     __EnableIRQ(UART1_IRQn); // 打开UART模块中断
-    IE_EA = 1;               // 打开总中断
+    // IE_EA = 1;               // 打开总中断
 
     UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
     UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位

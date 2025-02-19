@@ -43,22 +43,23 @@ extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低�
  */
 void charge_scan_handle(void)
 {
-
     u16 adc_bat_val = 0;             // 存放检测到的电池电压的adc值
     u16 adc_charging_val = 0;        // 存放检测到的充电电压的adc值
     u16 tmp_bat_val = 0;             // 存放检测到的电池电压+计算的压差对应的adc值
     static u8 over_charging_cnt = 0; // 存放过充计数
 
     adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
-    adc_bat_val = adc_get_val_once(); // 更新电池对应的ad值
+    // adc_bat_val = adc_get_val_once(); // 更新电池对应的ad值
+    adc_bat_val = adc_get_val(); // 更新电池对应的ad值
 
     adc_sel_channel(ADC_CHANNEL_CHARGE);   // 切换到检测充电的电压检测引脚(检测到的充电电压 == USB-C口电压 / 2)
-    adc_charging_val = adc_get_val_once(); // 更新当前检测到的充电电压对应的ad值
+    adc_charging_val = adc_get_val(); // 更新当前检测到的充电电压对应的ad值
 
-    printf("");
+    // printf("bat val %u\n", adc_bat_val);
+    // printf("charge val %u\n", adc_charging_val);
 
     // 低电量不允许开机
-    if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
+    if (adc_bat_val < LOW_BAT_ALARM_AD_VAL)
     {
         flag_is_disable_to_open = 1;
     }
@@ -69,8 +70,8 @@ void charge_scan_handle(void)
 
     if (flag_is_in_charging)
     {
-
         // 如果正在充电，检测电池是否充满电
+
 #if 1 // 检测在充电时，电池是否充满电，并做相应的处理
 
         if (0 == flag_bat_is_full)
@@ -109,7 +110,7 @@ void charge_scan_handle(void)
             {
                 // 如果电池接近满电，关闭充电时的呼吸灯，点亮绿灯，但是不关闭控制充电的PWM
                 flag_bat_is_near_full = 1;
-                delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
+                // delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
                 LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
                 LED_GREEN_ON(); // 充满电时，让绿灯常亮
             }
@@ -122,9 +123,9 @@ void charge_scan_handle(void)
                 flag_bat_is_full = 1;  // 表示电池被充满电
                 tmr2_pwm_disable();    // 关闭控制升压电路的pwm
                 TMR2_PWML = 0;         // 占空比 0%
-                TMR2_PWMH = 0;
+                TMR2_PWMH = 0;         //
                 // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清零）
-                delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
+                // delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
                 LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
                 LED_GREEN_ON(); // 充满电时，让绿灯常亮
             }
@@ -158,11 +159,9 @@ void charge_scan_handle(void)
             over_charging_cnt = 0; // 清除过充计数
 
             tmr2_pwm_disable(); // 关闭控制充电的PWM输出
-
+            delay_ms(1); // 等待定时器清空相应的变量和标志位
             LED_GREEN_OFF();
             LED_RED_OFF();
-
-            delay_ms(1); // 等待定时器清空相应的变量和标志位
 
 #if USE_MY_DEBUG
             printf("uncharging\n");
@@ -176,7 +175,7 @@ void charge_scan_handle(void)
     else // 如果不在充电
     {
 
-#if 0  // 在设备工作时，检测是否处于低电量，并进行相应处理
+#if 1 // 在设备工作时，检测是否处于低电量，并进行相应处理
 
         if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
         {
@@ -246,27 +245,31 @@ void charge_scan_handle(void)
 #endif // #if USE_MY_DEBUG
 
             tmr2_pwm_enable(); // 使能PWM输出
-
             flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
             flag_is_enter_low_power = 0; // 不进入低功耗
+
+            LED_GREEN_OFF(); // 关闭绿灯(如果等到主循环扫描到再关闭绿灯，第1ms会出现红灯和绿灯一起点亮的情况)
         }
 #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
     }
 
-    // 充电电流控制
+#if 1  // 充电电流控制
+ 
     // if (flag_is_in_charging && 0 == flag_bat_is_full)
     if (flag_is_in_charging)
     {
         u8 i = 0;             // 循环计数值
-        u16 max_pwm_val = 0;  // 临时存放最大占空比对应的值
-        u16 last_pwm_val = 0; // 记录之前的pwm占空比的值
-        u16 tmp_val = 0;      // 临时存放需要调节的占空比对应的值
+        u8 max_pwm_val = 0;  // 临时存放最大占空比对应的值 
+        u8 last_pwm_val = 0; // 记录之前的pwm占空比的值
+        u16 tmp_val = 0;      // 临时存放需要调节的占空比对应的值 
         static u16 tmp_val_l[8] = {0};
         static u8 tmp_val_cnt = 0;
 
-        last_pwm_val = (u16)TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
-        max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的值
-        // printf("max_pwm_val %lu\n", max_pwm_val);
+        // last_pwm_val = (u16)TMR2_PWML + ((u16)TMR2_PWMH << 7); // 读出上一次PWM占空比对应的值
+        // max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1;     // 读出PWM占空比设定的、最大的值
+        last_pwm_val = TMR2_PWML;
+        max_pwm_val = TMR2_PRL + 1;
+ 
 
         /*
             修改电压差值，电压差值 = 203 - (adc_bat_val * 122 / 1000)
@@ -282,19 +285,19 @@ void charge_scan_handle(void)
             转换成单片机可以计算的形式：压差 = 203 - (充电时的电池电压 * 122 / 1000)
         */
 
-        if (adc_bat_val <= 2837) // 如果检测电池电压小于 6.5V
+        if (adc_bat_val <= 2752) // 如果检测电池电压小于 6.5V
         {
             tmp_bat_val = (adc_bat_val + 37);
         }
-        else if (adc_bat_val <= 3056) // 如果检测电池电压小于 7.0V
+        else if (adc_bat_val <= 2964) // 如果检测电池电压小于 7.0V
         {
             tmp_bat_val = (adc_bat_val + 27);
         }
-        else if (adc_bat_val <= 3188) // 如果检测电池电压小于 7.3V
+        else if (adc_bat_val <= 3091) // 如果检测电池电压小于 7.3V
         {
             tmp_bat_val = (adc_bat_val + 16);
         }
-        else if (adc_bat_val <= 3326) // 如果检测电池电压小于 7.62V
+        else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
         {
             tmp_bat_val = (adc_bat_val + 0);
         }
@@ -306,8 +309,8 @@ void charge_scan_handle(void)
             tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522);
         }
 
-        tmp_bat_val += 95; //
-        // tmp_bat_val += 1195;
+        // tmp_bat_val += 95; // 1.8A
+        tmp_bat_val += 30;
 
         // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)
         // {
@@ -372,14 +375,21 @@ void charge_scan_handle(void)
 
         if (tmp_val > last_pwm_val)
         {
-            last_pwm_val = last_pwm_val + 1;
+            // last_pwm_val = last_pwm_val + 1;
+            last_pwm_val++;
         }
         else if (tmp_val < last_pwm_val)
         {
-            last_pwm_val = last_pwm_val - 1;
+            // last_pwm_val = last_pwm_val - 1;
+            last_pwm_val--;
         }
 
         TMR2_PWML = last_pwm_val % 256;
-        TMR2_PWMH = last_pwm_val / 256;
+        // TMR2_PWMH = last_pwm_val / 256;  // 最大占空比的值不超过255，为了节省程序空间，可以不用配置高8位的寄存器
+        TMR2_PWMH = 0;
+
+        // 充电时，每隔一段时间再调整一次PWM占空比，否则充电电流跳动会很厉害
+        delay_ms(100);
     } // if (flag_is_in_charging)
+#endif // 充电电流控制
 }
