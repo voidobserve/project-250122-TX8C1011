@@ -211,35 +211,272 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
 
 void user_config(void)
 {
-#if 1
+#if 0
     IE_EA = 1; // 使能总中断
-    key_config();
-    heating_pin_config();    // 加热控制引脚
-    speech_ctl_pin_config(); // 控制语音IC电源的引脚
-    led_config();
-#endif
 
-    tmr0_config();     // 1ms定时器
-    tmr2_pwm_config(); // 控制升压的PWM
+    // 检测开机/模式按键 和 检测加热按键的引脚：
+    // key_config();
+    // 上拉：
+    P0_PU |= 0x01 << 7;
+    P1_PU |= 0x01;
+    P0_MD1 &= ~(0x03 << 6); // P07 输入模式
+    P1_MD0 &= ~0x03;        // P10 输入模式
 
-    adc_config();
-    motor_config(); // 控制电机的两路PWM
+    // heating_pin_config();    // 加热控制引脚
+    P1_MD1 |= 0x01; // 用 P14 控制加热
 
-    uart1_config();
+                    // speech_ctl_pin_config(); // 控制语音IC电源的引脚
+    // P11
+    P1_MD0 |= 0x01 << 2; // 输出模式
 
-    // P1_PU |= 0x01 << 5;
+    // led_config();
+    // P12、P13对应的LED都使用PWM来驱动
+    P1_MD0 |= 0xA0; // P12、P13都配置为多功能IO模式
+    // P1_AF0 &= ~(0x0F); // (可以不写，默认就是0)P12复用为 STMR2_CHB 、P13复用为 STMR2_CHA
+    // 配置STIMER1
+    STMR2_FCONR = 0x00;          // 选择系统时钟，0分频
+    STMR2_PRH = STMR2_PRE / 256; // 周期值
+    STMR2_PRL = STMR2_PRE % 256;
+    // 占空比默认为0，不点亮LED
+    // STMR2_CMPAH = STMR2_PRE / 2 / 256; // 通道A占空比
+    // STMR2_CMPAL = STMR2_PRE / 2 % 256;
+    // STMR2_CMPBH = STMR2_PRE / 4 / 256; // 通道B占空比
+    // STMR2_CMPBL = STMR2_PRE / 4 % 256;
+    STMR2_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
+    STMR2_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
+    STMR2_CR |= 0x01;    // 使能高级定时器
+
+
+
+    // tmr0_config();     // 1ms定时器
+    __EnableIRQ(TMR0_IRQn);                                                     // 使能timer0中断
+    TMR0_PRL = TMR0_CNT_TIME;                                                   // 周期值
+    TMR0_CNTL = 0x00;                                                           // 清除计数值
+    TMR0_CONH = 0xA0;                                                           // 使能计数中断
+    TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统时钟，count模式
+
+    // tmr2_pwm_config(); // 控制升压的PWM
+    P0_AF0 &= ~(0x03 << 2);         // 复用模式选择为TMR2PWM输出
+    TMR2_PRL = TMR2_CNT_TIME % 256; // 周期值
+    TMR2_PRH = TMR2_CNT_TIME / 256;
+    // 占空比配置：（不能去掉，否则刚上电/充电时可能会是随机值，而不是0）
+    TMR2_PWML = 0; // 占空比 0%
+    TMR2_PWMH = 0;
+    TMR2_CNTL = 0x00; // 清除计数值
+    TMR2_CNTH = 0x00;
+    TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0分频，系统时钟，PWM模式
+    // 关闭定时器2
+    tmr2_pwm_disable();
+
+    // adc_config();
+    // P04 AIN4 检测充电口传过来的ad值
+    P0_MD1 |= 0x03;        // 模拟模式
+    P0_AIOEN |= 0x01 << 4; // 使能模拟功能
+    // P05 AIN5 检测电池分压后的ad值
+    P0_MD1 |= 0x03 << 2;   // 模拟模式
+    P0_AIOEN |= 0x01 << 5; // 使能模拟功能
+    // 使用 P06 AIN06 检测电机是否堵转
+    P1_MD1 |= 0x3 << 4;    // 模拟模式
+    P1_AIOEN |= 0x01 << 6; // 使能模拟功能
+    AIP_CON2 |= 0xC0;      // 使能ADC中CMP使能信号和CMP校准功能
+    AIP_CON4 |= 0x01;      // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
+    ADC_CFG1 = 0x3C;       // ADC时钟分频，16分频
+    ADC_CFG2 = 0xFF;       // ADC采样时钟，256个ADC时钟
+
+    // motor_config();  // 控制电机的两路PWM
+    P0_AF0 &= ~0xF0; // P02 复用为 STMR1_PWMB，P03 复用为 STMR1_PWMA
+    // 配置STIMER1
+    STMR1_FCONR = 0x00;          // 选择系统时钟，0分频
+    STMR1_PRH = STMR1_PRE / 256; // 周期值
+    STMR1_PRL = STMR1_PRE % 256;
+    // 占空比，默认为0
+    // STMR1_CMPAH = STMR1_PRE / 2 / 256;
+    // STMR1_CMPAL = STMR1_PRE / 2 % 256;
+    // STMR1_CMPBH = STMR1_PRE / 4 / 256;
+    // STMR1_CMPBL = STMR1_PRE / 4 % 256;
+    STMR1_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
+    STMR1_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
+    STMR1_CR |= 0x01;    // 使能高级定时器
+    // 关闭定时器，IO配置为输出模式，输出低电平
+    motor_pwm_disable();
+
+    // uart1_config();
+    // P00 RX
+    P0_MD0 &= ~0x03;
+    P0_MD0 |= 0x02; // 多功能IO模式
+    P0_AF0 &= ~0x03;
+    P0_AF0 |= 0x01;                             // P00 复用为 UART1_RX
+    __EnableIRQ(UART1_IRQn);                    // 打开UART模块中断
+    UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
+    UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
+    UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
+    UART1_CON |= 0x02;                          // 接收模式
+
 #if 0
     // 不使用的引脚配置为输出，输出低电平
     P1_MD1 |= 0x01 << 2;
     P15 = 0;
 #endif
 
-    // P1_MD1
+#endif
+
+    IE_EA = 1; // 使能总中断
+
+    // 上拉：
+    // P0_PU |= 0x01 << 7;
+    // P1_PU |= 0x01;
+    P0_PU = 0x80; // P07 上拉
+    P1_PU = 0x01; // P10 上拉
+
+    /*
+        P03 多功能IO模式
+        P02 多功能IO模式
+        P01 多功能IO模式
+        P00 多功能IO模式
+    */
+    P0_MD0 = 0xAA;
+    /*
+        P07 输入模式 检测开机/模式切换的引脚
+        P06 模拟模式 检测电机是否堵转
+        P05 模拟模式 检测电池分压后的电压(外部1M上拉，330K下拉)
+        P04 模拟模式 检测是否有充电(外部3.3K上拉，2.2K下拉)
+    */
+    P0_MD1 = 0x3F;
+    /*
+        P13 多功能IO模式 驱动红色LED
+        P12 多功能IO模式 驱动绿色LED
+        P11 输出模式 控制语音IC供电
+        P10 输入模式 检测加热按键的引脚
+    */
+    P1_MD0 = 0xA4;
+    /*
+        P15 输入模式 外部2K上拉，连接到充电C口的5V，10K下拉接地
+        P14 输出模式 控制加热
+    */
+    P1_MD1 = 0x01;
+    /*
+        P03 复用为 STMR1_PWMA
+        P02 复用为 STMR1_PWMB
+        P01 复用为 TMR2_PWM
+        P00 复用为 UART1_RX
+    */
+    P0_AF0 = 0x01;
+    /*
+        P07 不复用
+        P06 不复用
+        P05 不复用
+        P04 不复用
+    */
+    // P0_AF1 = 0x00; // 默认就是0,可以不写
+    /*
+        P13 复用为 STMR2_CHA
+        P12 复用为 STMR2_CHB
+        P11 不复用
+        P10 不复用
+    */
+    // P1_AF0 = 0x00; // 默认就是0,可以不写
+    /*
+        P15 不复用
+        P14 不复用
+    */
+    // P1_AF1 = 0x00; // 默认就是0,可以不写
+    
+    /*
+        只使能 P04 和 P05 的模拟功能
+    */
+    P0_AIOEN = 0x30; // 
+
+    // P12、P13对应的LED都使用PWM来驱动 
+    // 配置STIMER1
+    STMR2_FCONR = 0x00;          // 选择系统时钟，0分频
+    STMR2_PRH = STMR2_PRE / 256; // 周期值
+    STMR2_PRL = STMR2_PRE % 256;
+    // 占空比默认为0，不点亮LED
+    // STMR2_CMPAH = STMR2_PRE / 2 / 256; // 通道A占空比
+    // STMR2_CMPAL = STMR2_PRE / 2 % 256;
+    // STMR2_CMPBH = STMR2_PRE / 4 / 256; // 通道B占空比
+    // STMR2_CMPBL = STMR2_PRE / 4 % 256;
+    STMR2_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
+    STMR2_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
+    STMR2_CR |= 0x01;    // 使能高级定时器
+
+    __EnableIRQ(TMR0_IRQn);                                                     // 使能timer0中断
+    TMR0_PRL = TMR0_CNT_TIME;                                                   // 周期值
+    TMR0_CNTL = 0x00;                                                           // 清除计数值
+    TMR0_CONH = 0xA0;                                                           // 使能计数中断
+    TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统时钟，count模式
+    
+    // 控制升压的PWM
+    TMR2_PRL = TMR2_CNT_TIME % 256; // 周期值
+    TMR2_PRH = TMR2_CNT_TIME / 256;
+    // 占空比配置：（不能去掉，否则刚上电/充电时可能会是随机值，而不是0）
+    TMR2_PWML = 0; // 占空比 0%
+    TMR2_PWMH = 0;
+    // TMR2_CNTL = 0x00; // 清除计数值
+    // TMR2_CNTH = 0x00;
+    TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0分频，系统时钟，PWM模式
+    // 关闭定时器2
+    tmr2_pwm_disable();
+
+    // P04 AIN4 检测充电口传过来的ad值
+    // P0_MD1 |= 0x03;        // 模拟模式
+    // P0_AIOEN |= 0x01 << 4; // 使能模拟功能
+    // P05 AIN5 检测电池分压后的ad值
+    // P0_MD1 |= 0x03 << 2;   // 模拟模式
+    // P0_AIOEN |= 0x01 << 5; // 使能模拟功能
+    // 使用 P06 AIN06 检测电机是否堵转
+    // P1_MD1 |= 0x3 << 4;    // 模拟模式
+    P1_AIOEN |= 0x01 << 6; // 使能模拟功能
+    AIP_CON2 |= 0xC0;      // 使能ADC中CMP使能信号和CMP校准功能
+    AIP_CON4 |= 0x01;      // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
+    ADC_CFG1 = 0x3C;       // ADC时钟分频，16分频
+    ADC_CFG2 = 0xFF;       // ADC采样时钟，256个ADC时钟
+
+    // P0_AF0 &= ~0xF0; // P02 复用为 STMR1_PWMB，P03 复用为 STMR1_PWMA
+    // 配置STIMER1
+    STMR1_FCONR = 0x00;          // 选择系统时钟，0分频
+    STMR1_PRH = STMR1_PRE / 256; // 周期值
+    STMR1_PRL = STMR1_PRE % 256;
+    // 占空比，默认为0
+    // STMR1_CMPAH = STMR1_PRE / 2 / 256;
+    // STMR1_CMPAL = STMR1_PRE / 2 % 256;
+    // STMR1_CMPBH = STMR1_PRE / 4 / 256;
+    // STMR1_CMPBL = STMR1_PRE / 4 % 256;
+    STMR1_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
+    STMR1_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
+    STMR1_CR |= 0x01;    // 使能高级定时器
+    // 关闭定时器，IO配置为输出模式，输出低电平
+    motor_pwm_disable();
+
+    // P00 RX 
+    __EnableIRQ(UART1_IRQn);                    // 打开UART模块中断
+    UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
+    UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
+    UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
+    UART1_CON |= 0x02;                          // 接收模式
+
+#if 0
+    // 不使用的引脚配置为输出，输出低电平
+    P1_MD1 |= 0x01 << 2;
+    P15 = 0;
+#endif
 }
 
 void main(void)
 {
-    system_init();
+// system_init();
+#define HRCSC_STEP_VAL (*(u8 code *)0x9111) // 获取HRC时钟细调值
+    u8 hrcsc_data = HRCSC_STEP_VAL & 0x7f;  // 获取HRC时钟细调值
+    WDT_KEY = 0xDD;                         // Close WDT
+    FLASH_TIM0 = 0x55;
+    FLASH_TIM1 = 0x54; // FLASH 16M 访问速度
+    FLASH_TRIM = 0x0A;
+    AIP_CON0 = 0x80 | hrcsc_data; // 使能 hirc
+    CLK_CON0 = 0x03;              // 选择 hirc clk
+    CLK_CON2 = 0x00;              // 系统时钟不分频
+    CLK_CON6 = 0x1F;              // FLASH烧写时钟32分频：1M
+    delay_ms(1);                  // 该延迟不可删除，保证烧录稳定性
+    __ADC_VREFP_TRIM_5V_CALIB;    // 填入5V电压供电下内部2.4V参考电压的校准值
 
     // 关闭HCK和HDA的调试功能
     WDT_KEY = 0x55;  // 解除写保护
@@ -299,12 +536,6 @@ void main(void)
     while (1)
     {
 
-        // LED_RED_OFF();
-        // // P15 = 0;
-        // low_power();
-        // // P15 = 1;
-        // LED_RED_ON();
-
 #if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
         if (flag_bat_is_empty)
         {
@@ -335,7 +566,7 @@ void main(void)
         // speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
 #endif
 
-#if 0  // 电机自动转向
+#if 1 // 电机自动转向
         if (flag_ctl_turn_dir)
         {
             // 如果要切换电机转向
@@ -394,7 +625,7 @@ void main(void)
         }
 #endif // 根据控制标志位来控制关机
 
-#if 1 // 低功耗
+#if 0  // 低功耗
 
         {
             if (flag_is_enter_low_power)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   HEATING                                                           02/19/2025 14:55:10 PAGE 1   
+C51 COMPILER V9.60.7.0   HEATING                                                           02/21/2025 17:16:08 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE HEATING
@@ -22,13 +22,13 @@ line level    source
    9          extern volatile bit flag_ctl_led_blink;
   10          extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
   11          
-  12          // 初始化控制加热的引脚
-  13          void heating_pin_config(void)
-  14          {
-  15   1          // 配置为输出模式
-  16   1          //  用 P14 控制加热
-  17   1          P1_MD1 |= 0x01;
-  18   1      }
+  12          // // 初始化控制加热的引脚
+  13          // void heating_pin_config(void)
+  14          // {
+  15          //     // 配置为输出模式
+  16          //     //  用 P14 控制加热
+  17          //     P1_MD1 |= 0x01;
+  18          // }
   19          
   20          
   21          // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
@@ -62,7 +62,7 @@ line level    source
   49           *                          其他--函数直接返回 （为了节省程序空间，这里没有加）
   50           */
   51          void fun_ctl_heat_status(u8 adjust_heat_status)
-C51 COMPILER V9.60.7.0   HEATING                                                           02/19/2025 14:55:10 PAGE 2   
+C51 COMPILER V9.60.7.0   HEATING                                                           02/21/2025 17:16:08 PAGE 2   
 
   52          {
   53   1      #if 0  // 可以节省4字节程序空间
@@ -125,8 +125,8 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    100    ----
-C51 COMPILER V9.60.7.0   HEATING                                                           02/19/2025 14:55:10 PAGE 3   
+   CODE SIZE        =     93    ----
+C51 COMPILER V9.60.7.0   HEATING                                                           02/21/2025 17:16:08 PAGE 3   
 
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----

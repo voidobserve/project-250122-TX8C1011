@@ -3,6 +3,8 @@
 
 #include "my_config.h"
 
+#define USER_UART_BAUD ((SYSCLK - 115200UL) / (115200UL))
+
 // 定义串口接收到的控制命令：
 #define CMD_OPEN_DEV (0x01)         // 打开按摩/按摩枕/按摩器
 #define CMD_OPEN_HEAT (0x02)        // 打开加热
@@ -17,6 +19,6 @@
 
 extern volatile u8 recv_ctl; // 存放接收完成的控制命令
 
-void uart1_config(void); 
+// void uart1_config(void); 
 
 #endif

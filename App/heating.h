@@ -29,7 +29,7 @@
 // 2--加热二档
 extern volatile u8 cur_ctl_heat_status;
 
-void heating_pin_config(void); // 初始化控制加热的引脚
+// void heating_pin_config(void); // 初始化控制加热的引脚
 // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)
 void fun_ctl_close_heat(void);
 

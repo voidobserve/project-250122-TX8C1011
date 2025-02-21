@@ -27,11 +27,11 @@ extern void fun_ctl_motor_status(u8 adjust_motor_status);
 extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
 // 初始化控制语音IC电源的引脚
-void speech_ctl_pin_config(void)
-{
-    // P11
-    P1_MD0 |= 0x01 << 2; // 输出模式
-}
+// void speech_ctl_pin_config(void)
+// {
+//     // P11
+//     P1_MD0 |= 0x01 << 2; // 输出模式
+// }
 
  
 void speech_scan_process(void)

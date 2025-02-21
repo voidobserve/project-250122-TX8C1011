@@ -1,30 +1,30 @@
 #include "adc.h"
 
-void adc_config(void)
-{
-    // P04 AIN4 检测充电口传过来的ad值
-    P0_MD1 |= 0x03;        // 模拟模式
-    P0_AIOEN |= 0x01 << 4; // 使能模拟功能
+// void adc_config(void)
+// {
+//     // P04 AIN4 检测充电口传过来的ad值
+//     P0_MD1 |= 0x03;        // 模拟模式
+//     P0_AIOEN |= 0x01 << 4; // 使能模拟功能
 
-    // P05 AIN5 检测电池分压后的ad值
-    P0_MD1 |= 0x03 << 2;   // 模拟模式
-    P0_AIOEN |= 0x01 << 5; // 使能模拟功能
+//     // P05 AIN5 检测电池分压后的ad值
+//     P0_MD1 |= 0x03 << 2;   // 模拟模式
+//     P0_AIOEN |= 0x01 << 5; // 使能模拟功能
  
-    // 使用 P06 AIN06 检测电机是否堵转
-    P1_MD1 |= 0x3 << 4;    // 模拟模式
-    P1_AIOEN |= 0x01 << 6; // 使能模拟功能
+//     // 使用 P06 AIN06 检测电机是否堵转
+//     P1_MD1 |= 0x3 << 4;    // 模拟模式
+//     P1_AIOEN |= 0x01 << 6; // 使能模拟功能
 
-    AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
-    AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
+//     AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
+//     AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
 
-    ADC_CFG1 = 0x3C; // ADC时钟分频，16分频
-    ADC_CFG2 = 0xFF; // ADC采样时钟，256个ADC时钟
-}
+//     ADC_CFG1 = 0x3C; // ADC时钟分频，16分频
+//     ADC_CFG2 = 0xFF; // ADC采样时钟，256个ADC时钟
+// }
 
 // 切换adc检测的引脚
 void adc_sel_channel(u8 adc_channel)
 {
-#if 1 // 可以节省7字节程序空间
+#if 0 // 可以节省7字节程序空间
     // 避免前后切换相同的通道，节省时间：
     static u8 last_adc_channel = ADC_CHANNEL_NONE;
     if (last_adc_channel == adc_channel)

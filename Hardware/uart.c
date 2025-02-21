@@ -2,26 +2,26 @@
 
 #include <stdio.h>
 
-#define USER_UART_BAUD ((SYSCLK - 115200UL) / (115200UL))
+
 
 extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
 
-void uart1_config(void)
-{
-    // P00 RX
-    P0_MD0 &= ~0x03;
-    P0_MD0 |= 0x02; // 多功能IO模式
-    P0_AF0 &= ~0x03;
-    P0_AF0 |= 0x01; // P00 复用为 UART1_RX
+// void uart1_config(void)
+// {
+//     // P00 RX
+//     P0_MD0 &= ~0x03;
+//     P0_MD0 |= 0x02; // 多功能IO模式
+//     P0_AF0 &= ~0x03;
+//     P0_AF0 |= 0x01; // P00 复用为 UART1_RX
 
-    __EnableIRQ(UART1_IRQn); // 打开UART模块中断
-    // IE_EA = 1;               // 打开总中断
+//     __EnableIRQ(UART1_IRQn); // 打开UART模块中断
+//     // IE_EA = 1;               // 打开总中断
 
-    UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
-    UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
-    UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
-    UART1_CON |= 0x02;                          // 接收模式
-}
+//     UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
+//     UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
+//     UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
+//     UART1_CON |= 0x02;                          // 接收模式
+// }
 
 // 定义串口接收的状态机
 // 表示串口已经接收了什么类型的数据

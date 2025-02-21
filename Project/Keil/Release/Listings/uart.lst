@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   UART                                                              02/19/2025 14:55:10 PAGE 1   
+C51 COMPILER V9.60.7.0   UART                                                              02/21/2025 17:16:08 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
@@ -15,26 +15,26 @@ line level    source
    2          
    3          #include <stdio.h>
    4          
-   5          #define USER_UART_BAUD ((SYSCLK - 115200UL) / (115200UL))
+   5          
    6          
    7          extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
    8          
-   9          void uart1_config(void)
-  10          {
-  11   1          // P00 RX
-  12   1          P0_MD0 &= ~0x03;
-  13   1          P0_MD0 |= 0x02; // 多功能IO模式
-  14   1          P0_AF0 &= ~0x03;
-  15   1          P0_AF0 |= 0x01; // P00 复用为 UART1_RX
-  16   1      
-  17   1          __EnableIRQ(UART1_IRQn); // 打开UART模块中断
-  18   1          // IE_EA = 1;               // 打开总中断
-  19   1      
-  20   1          UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
-  21   1          UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
-  22   1          UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
-  23   1          UART1_CON |= 0x02;                          // 接收模式
-  24   1      }
+   9          // void uart1_config(void)
+  10          // {
+  11          //     // P00 RX
+  12          //     P0_MD0 &= ~0x03;
+  13          //     P0_MD0 |= 0x02; // 多功能IO模式
+  14          //     P0_AF0 &= ~0x03;
+  15          //     P0_AF0 |= 0x01; // P00 复用为 UART1_RX
+  16          
+  17          //     __EnableIRQ(UART1_IRQn); // 打开UART模块中断
+  18          //     // IE_EA = 1;               // 打开总中断
+  19          
+  20          //     UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // 配置波特率高八位
+  21          //     UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // 配置波特率低八位
+  22          //     UART1_CON = 0x91;                           // 8bit数据，1bit停止位，使能中断
+  23          //     UART1_CON |= 0x02;                          // 接收模式
+  24          // }
   25          
   26          // 定义串口接收的状态机
   27          // 表示串口已经接收了什么类型的数据
@@ -62,7 +62,7 @@ line level    source
                   }
                   UART1_STA |= 0x08; // 清中断请求标志位
               #endif
-C51 COMPILER V9.60.7.0   UART                                                              02/19/2025 14:55:10 PAGE 2   
+C51 COMPILER V9.60.7.0   UART                                                              02/21/2025 17:16:08 PAGE 2   
 
   52   1      
   53   1          if (UART1_STA & 0x20)
@@ -106,7 +106,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    101    ----
+   CODE SIZE        =     65    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -9,13 +9,13 @@ volatile u8 cur_ctl_heat_status = 0;
 extern volatile bit flag_ctl_led_blink;
 extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
 
-// 初始化控制加热的引脚
-void heating_pin_config(void)
-{
-    // 配置为输出模式
-    //  用 P14 控制加热
-    P1_MD1 |= 0x01;
-}
+// // 初始化控制加热的引脚
+// void heating_pin_config(void)
+// {
+//     // 配置为输出模式
+//     //  用 P14 控制加热
+//     P1_MD1 |= 0x01;
+// }
 
 
 // 关闭加热(调用前需要注意，是不是要先关闭当前正在执行的灯光闪烁功能)

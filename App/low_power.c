@@ -44,7 +44,7 @@ label_low_power_begin: // 标签，刚开始进入低功耗
 // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
 #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
     // 关闭检测按键的上拉
-    // P0_PU &= ~(0x01 << 7);
+    // P0_PU &= ~(0x01 << 7); // 不能关闭这个上拉电阻，会无法唤醒
     P1_PU &= ~0x01;
 
     // 将检测加热按键的引脚配置为输出模式，输出低电平：
@@ -142,7 +142,7 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     // 重新初始化
     user_config();
 
-    LED_GREEN_ON();
+    // LED_GREEN_ON(); // 测试用，看看能不能唤醒
 }
 
 // void WDT_IRQHandler(void) interrupt WDT_IRQn

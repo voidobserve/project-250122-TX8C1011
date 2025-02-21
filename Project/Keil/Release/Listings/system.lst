@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SYSTEM                                                            02/19/2025 14:55:09 PAGE 1   
+C51 COMPILER V9.60.7.0   SYSTEM                                                            02/21/2025 17:16:07 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SYSTEM
@@ -50,36 +50,36 @@ line level    source
   39            * @param  None
   40            * @retval None
   41            */
-  42          void system_init(void)
-  43          {
-  44   1          u8 hrcsc_data = HRCSC_STEP_VAL & 0x7f;      // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
-  45   1          
-  46   1          WDT_KEY    = 0xDD;                          // Close WDT
-  47   1          
-  48   1          FLASH_TIM0 = 0x55;
-  49   1          FLASH_TIM1 = 0x54;                          // FLASH 16M ·ÃÎÊËÙ¶È
-  50   1          FLASH_TRIM = 0x0A;
-  51   1          
-  52   1          AIP_CON0   = 0x80 | hrcsc_data;             // Ê¹ÄÜ hirc
-  53   1          CLK_CON0   = 0x03;                          // Ñ¡Ôñ hirc clk
-C51 COMPILER V9.60.7.0   SYSTEM                                                            02/19/2025 14:55:09 PAGE 2   
+  42          // void system_init(void)
+  43          // {
+  44          //     u8 hrcsc_data = HRCSC_STEP_VAL & 0x7f;      // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
+  45              
+  46          //     WDT_KEY    = 0xDD;                          // Close WDT
+  47              
+  48          //     FLASH_TIM0 = 0x55;
+  49          //     FLASH_TIM1 = 0x54;                          // FLASH 16M ·ÃÎÊËÙ¶È
+  50          //     FLASH_TRIM = 0x0A;
+  51              
+  52          //     AIP_CON0   = 0x80 | hrcsc_data;             // Ê¹ÄÜ hirc
+  53          //     CLK_CON0   = 0x03;                          // Ñ¡Ôñ hirc clk
+C51 COMPILER V9.60.7.0   SYSTEM                                                            02/21/2025 17:16:07 PAGE 2   
 
-  54   1          CLK_CON2   = 0x00;                          // ÏµÍ³Ê±ÖÓ²»·ÖÆµ
-  55   1          CLK_CON6   = 0x1F;                          // FLASHÉÕÐ´Ê±ÖÓ32·ÖÆµ£º1M
-  56   1          
-  57   1          delay_ms(1);                                // ¸ÃÑÓ³Ù²»¿ÉÉ¾³ý£¬±£Ö¤ÉÕÂ¼ÎÈ¶¨ÐÔ
-  58   1      
-  59   1          __ADC_VREFP_TRIM_5V_CALIB;                  // ÌîÈë5VµçÑ¹¹©µçÏÂÄÚ²¿2.4V²Î¿¼µçÑ¹µÄÐ£×¼Öµ
-  60   1          
-  61   1      //    __SET_ALL_IO_ANALOG_MODE;              // ËùÓÐIOµÄ³õÊ¼×´Ì¬ÉèÎªÄ£ÄâÄ£Ê½£¬ÔÚ¶þ´Î¿ª·¢Ê±²»Ê¹ÓÃµ½µÄIO±£³Ö
-             -Ä£ÄâÄ£Ê½¿É¼õÐ¡¹¦ºÄ
-  62   1      }
+  54          //     CLK_CON2   = 0x00;                          // ÏµÍ³Ê±ÖÓ²»·ÖÆµ
+  55          //     CLK_CON6   = 0x1F;                          // FLASHÉÕÐ´Ê±ÖÓ32·ÖÆµ£º1M
+  56              
+  57          //     delay_ms(1);                                // ¸ÃÑÓ³Ù²»¿ÉÉ¾³ý£¬±£Ö¤ÉÕÂ¼ÎÈ¶¨ÐÔ
+  58          
+  59          //     __ADC_VREFP_TRIM_5V_CALIB;                  // ÌîÈë5VµçÑ¹¹©µçÏÂÄÚ²¿2.4V²Î¿¼µçÑ¹µÄÐ£×¼Öµ
+  60              
+  61          // //    __SET_ALL_IO_ANALOG_MODE;              // ËùÓÐIOµÄ³õÊ¼×´Ì¬ÉèÎªÄ£ÄâÄ£Ê½£¬ÔÚ¶þ´Î¿ª·¢Ê±²»Ê¹ÓÃµ½µÄIO±
+             -£³ÖÄ£ÄâÄ£Ê½¿É¼õÐ¡¹¦ºÄ
+  62          // }
   63          
   64          /*************************** (C) COPYRIGHT 2021 HUGE-IC ***** END OF FILE *****/
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     73    ----
+   CODE SIZE        =   ----    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -49,7 +49,6 @@ void charge_scan_handle(void)
     static u8 over_charging_cnt = 0; // 存放过充计数
 
     adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
-    // adc_bat_val = adc_get_val_once(); // 更新电池对应的ad值
     adc_bat_val = adc_get_val(); // 更新电池对应的ad值
 
     adc_sel_channel(ADC_CHANNEL_CHARGE);   // 切换到检测充电的电压检测引脚(检测到的充电电压 == USB-C口电压 / 2)

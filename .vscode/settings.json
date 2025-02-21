@@ -11,6 +11,8 @@
         "led.h": "c",
         "speech_process.h": "c",
         "key.h": "c",
-        "motor.h": "c"
+        "motor.h": "c",
+        "tmr0.h": "c",
+        "tmr2.h": "c"
     }
 }

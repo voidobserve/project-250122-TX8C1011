@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR0                                                              02/19/2025 14:55:10 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR0                                                              02/21/2025 17:16:08 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR0
@@ -13,26 +13,23 @@ line level    source
 *** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
              -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
    2          
-   3          // 配置1ms定时器
-   4          #define TMR0_CNT_TIME (SYSCLK / 128 / (1000 - 20) - 1) // 计数周期 1KHz(实际上会有误差，这里
-             -要加上补偿)
-   5          
-   6          
-   7          void tmr0_config(void)
-   8          {
-   9   1          __EnableIRQ(TMR0_IRQn); // 使能timer0中断
-  10   1          // IE_EA = 1;              // 使能总中断
-  11   1      
-  12   1          TMR0_PRL = TMR0_CNT_TIME;                                                   // 周期值
-  13   1          TMR0_CNTL = 0x00;                                                           // 清除计数值
-  14   1          TMR0_CONH = 0xA0;                                                           // 使能计数中断
-  15   1          TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统时�
-             -�，count模式
-  16   1      }
+   3          
+   4          
+   5          // void tmr0_config(void)
+   6          // {
+   7          //     __EnableIRQ(TMR0_IRQn); // 使能timer0中断
+   8          //     // IE_EA = 1;              // 使能总中断
+   9          
+  10          //     TMR0_PRL = TMR0_CNT_TIME;                                                   // 周期值
+  11          //     TMR0_CNTL = 0x00;                                                           // 清除计数值
+  12          //     TMR0_CONH = 0xA0;                                                           // 使能计数中断
+  13          //     TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统�
+             -�钟，count模式
+  14          // }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     16    ----
+   CODE SIZE        =   ----    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

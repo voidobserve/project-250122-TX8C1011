@@ -31,14 +31,14 @@ extern void fun_ctl_power_on(void);
 extern void fun_ctl_power_off(void);
 extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
-void key_config(void)
-{
-    // 上拉：
-    P0_PU |= 0x01 << 7;
-    P1_PU |= 0x01;
-    P0_MD1 &= ~(0x03 << 6); // P07 输入模式
-    P1_MD0 &= ~0x03;        // P10 输入模式
-}
+// void key_config(void)
+// {
+//     // 上拉：
+//     P0_PU |= 0x01 << 7;
+//     P1_PU |= 0x01;
+//     P0_MD1 &= ~(0x03 << 6); // P07 输入模式
+//     P1_MD0 &= ~0x03;        // P10 输入模式
+// }
 
 // ad按键扫描检测函数，需要放到周期为10ms的循环内执行
 void key_scan_10ms_isr(void)
