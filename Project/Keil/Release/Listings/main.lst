@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   46          volatile bit flag_ctl_led_blink = 0; // 控制标志位，是否控制指示灯闪烁
   47          volatile bit flag_ctl_turn_dir = 0;  // 控制标志位，是否更换电机的方向
   48          
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 2   
 
   49          volatile bit flag_ctl_dev_close = 0; // 控制标志位，是否要关闭设备
   50          
@@ -126,7 +126,7 @@ line level    source
  108   2              LED_RED_OFF();
  109   2          }
  110   1      
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 3   
 
  111   1          // 关闭加热
  112   1          cur_ctl_heat_status = 0;
@@ -190,7 +190,7 @@ line level    source
  170   2              else if (3 == cur_motor_status)
  171   2              {
  172   3                  // 从 3档 -> 1档
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 4   
 
  173   3                  cur_motor_status = 1;
  174   3              }
@@ -232,9 +232,9 @@ line level    source
  210          #endif
  211          
  212          void user_config(void)
- 213          { 
+ 213          {
  214   1      #if 1
- 215   1          IE_EA = 1;              // 使能总中断
+ 215   1          IE_EA = 1; // 使能总中断
  216   1          key_config();
  217   1          heating_pin_config();    // 加热控制引脚
  218   1          speech_ctl_pin_config(); // 控制语音IC电源的引脚
@@ -249,38 +249,45 @@ line level    source
  227   1      
  228   1          uart1_config();
  229   1      
- 230   1          // 不使用的引脚配置为输出，输出低电平
- 231   1          P1_MD1 |= 0x01 << 2;
- 232   1          P15 = 0;
- 233   1      }
- 234          
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 5   
+ 230   1          // P1_PU |= 0x01 << 5;
+ 231   1      #if 0
+                  // 不使用的引脚配置为输出，输出低电平
+                  P1_MD1 |= 0x01 << 2;
+                  P15 = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 5   
 
- 235          void main(void)
- 236          {
- 237   1          system_init();
- 238   1      
- 239   1          // 关闭HCK和HDA的调试功能
- 240   1          WDT_KEY = 0x55;  // 解除写保护
- 241   1          IO_MAP &= ~0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
- 242   1          WDT_KEY = 0xBB;
+              #endif
+ 236   1      
+ 237   1          // P1_MD1
+ 238   1      }
+ 239          
+ 240          void main(void)
+ 241          {
+ 242   1          system_init();
  243   1      
- 244   1          // 初始化打印
- 245   1      #if USE_MY_DEBUG
+ 244   1          // 关闭HCK和HDA的调试功能
+ 245   1          WDT_KEY = 0x55;  // 解除写保护
+ 246   1          IO_MAP &= ~0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
+ 247   1          WDT_KEY = 0xBB;
+ 248   1      
+ 249   1          // 初始化打印
+ 250   1      #if USE_MY_DEBUG
                   debug_init();
                   printf("TXM8C101x_SDK main start\n");
               #endif //  #if USE_MY_DEBUG
- 249   1      
- 250   1          user_config();
- 251   1      
- 252   1      #if 0
-                  // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
-                  LED_GREEN_ON();
-                  delay_ms(1000);
-                  LED_GREEN_OFF();
-              #endif
- 258   1      
- 259   1      #if 0 // 上电时检测电池是否正确安装(测试通过):
+ 254   1      
+ 255   1          user_config();
+ 256   1      
+ 257   1      #if 1
+ 258   1          // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
+ 259   1          LED_GREEN_ON();
+ 260   1          // LED_RED_ON();
+ 261   1          delay_ms(1000);
+ 262   1          LED_GREEN_OFF();
+ 263   1          // LED_RED_OFF();
+ 264   1      #endif
+ 265   1      
+ 266   1      #if 0 // 上电时检测电池是否正确安装(测试通过):
               
                   /*
                       如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
@@ -310,18 +317,21 @@ line level    source
                   // TMR2_PWMH = 0;  // 最大占空比的值不超过255，为了节省程序空间，可以不用配置高8位的寄存器
               
               #endif // 上电时检测电池是否正确安装
- 289   1      
- 290   1          while (1)
- 291   1          {
- 292   2              // LED_RED_ON();
- 293   2              // P15 = 1;
- 294   2              low_power();
- 295   2              // LED_RED_OFF();
- 296   2              // P15 = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 6   
+ 296   1      
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 6   
 
- 297   2      
- 298   2      #if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
+ 297   1          // flag_is_enter_low_power = 1;
+ 298   1      
+ 299   1          while (1)
+ 300   1          {
+ 301   2      
+ 302   2              // LED_RED_OFF();
+ 303   2              // // P15 = 0;
+ 304   2              // low_power();
+ 305   2              // // P15 = 1;
+ 306   2              // LED_RED_ON();
+ 307   2      
+ 308   2      #if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
                       if (flag_bat_is_empty)
                       {
                           // 没有放入电池，控制LED闪烁，直到重新上电
@@ -332,26 +342,26 @@ line level    source
                           continue;
                       }
               #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
- 309   2      
- 310   2      #if 0
-                      charge_scan_handle();
-              
-                      if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
-                          0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
-                      {
-                          if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
-                          {
-                              flag_is_enable_key_scan = 0;
-                              key_scan_10ms_isr();
-                          }
-              
-                          key_event_handle();
-                      }
-              
-                      // speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
-              #endif
- 327   2      
- 328   2      #if 0  // 电机自动转向
+ 319   2      
+ 320   2      #if 1
+ 321   2              // charge_scan_handle();
+ 322   2      
+ 323   2              if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
+ 324   2                  0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
+ 325   2              {
+ 326   3                  if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
+ 327   3                  {
+ 328   4                      flag_is_enable_key_scan = 0;
+ 329   4                      key_scan_10ms_isr();
+ 330   4                  }
+ 331   3      
+ 332   3                  key_event_handle();
+ 333   3              }
+ 334   2      
+ 335   2              // speech_scan_process(); // 检测是否有从语音IC传来的命令，如果有则做相应的处理
+ 336   2      #endif
+ 337   2      
+ 338   2      #if 0  // 电机自动转向
                       if (flag_ctl_turn_dir)
                       {
                           // 如果要切换电机转向
@@ -372,6 +382,8 @@ line level    source
                           }
                           else if (2 == cur_motor_dir)
                           {
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 7   
+
                               // 如果当前电机为反转，调节为正转
                               // PWM1EC = 0; // 关闭反转的PWM输出
                               motor_pwm_a_disable(); // 关闭反转的PWM输出
@@ -382,629 +394,627 @@ line level    source
                           }
                           else
                           {
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 7   
-
                               // 其他情况，不考虑，不做处理
                           }
                       }
               #endif // 电机自动转向
- 363   2      
- 364   2      #if 0 // 电机过流检测和处理
+ 373   2      
+ 374   2      #if 0 // 电机过流检测和处理
               
                       motor_over_current_detect_handle(); // 函数内部会检测电机有没有运行
               
               #endif // 电机过流检测和处理
- 369   2      
- 370   2      #if 0 // 根据控制标志位来控制关机
-                      if (flag_ctl_dev_close)
-                      {
-                          // 如果要关闭设备
-                          flag_ctl_dev_close = 0;
-              
-                          if (flag_is_in_charging)
-                          {
-                              // 如果正在充电，直接关闭语音IC的电源
-                              SPEECH_POWER_DISABLE();
-                          }
-              
-                          // 函数内部会判断是不是正在充电而关机
-                          fun_ctl_power_off();
-                      }
-              #endif // 根据控制标志位来控制关机
- 386   2      
- 387   2      #if 0  // 低功耗
-              
-                      {
-                          if (flag_is_enter_low_power)
-                          {
-                              flag_is_enter_low_power = 0;
-              
-                              SPEECH_POWER_DISABLE(); // 关闭语音IC的电源
-                              low_power();
-                          }
-                      }
-              #endif // 低功耗
- 399   2      
- 400   2          } // while (1)
- 401   1      }
- 402          
- 403          void TMR0_IRQHandler(void) interrupt TMR0_IRQn
- 404          {
- 405   1          if (TMR0_CONH & 0x80)
- 406   1          {
- 407   2              TMR0_CONH |= 0x80;
- 408   2              // 1ms产生一次中断，进入到这里
+ 379   2      
+ 380   2      #if 1 // 根据控制标志位来控制关机
+ 381   2              if (flag_ctl_dev_close)
+ 382   2              {
+ 383   3                  // 如果要关闭设备
+ 384   3                  flag_ctl_dev_close = 0;
+ 385   3      
+ 386   3                  if (flag_is_in_charging)
+ 387   3                  {
+ 388   4                      // 如果正在充电，直接关闭语音IC的电源
+ 389   4                      SPEECH_POWER_DISABLE();
+ 390   4                  }
+ 391   3      
+ 392   3                  // 函数内部会判断是不是正在充电而关机
+ 393   3                  fun_ctl_power_off();
+ 394   3              }
+ 395   2      #endif // 根据控制标志位来控制关机
+ 396   2      
+ 397   2      #if 1 // 低功耗
+ 398   2      
+ 399   2              {
+ 400   3                  if (flag_is_enter_low_power)
+ 401   3                  {
+ 402   4                      flag_is_enter_low_power = 0;
+ 403   4      
+ 404   4                      SPEECH_POWER_DISABLE(); // 关闭语音IC的电源
+ 405   4                      low_power();
+ 406   4                  }
+ 407   3              }
+ 408   2      #endif // 低功耗
  409   2      
- 410   2              if (flag_bat_is_empty)
- 411   2              {
- 412   3                  return; // 如果电池为空，提前退出中断服务函数
- 413   3              }
- 414   2      
- 415   2              { // 按键扫描
- 416   3                  static volatile u8 key_scan_cnt = 0;
- 417   3                  key_scan_cnt++;
- 418   3                  if (key_scan_cnt >= 10)
- 419   3                  {
- 420   4                      key_scan_cnt = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 8   
+ 410   2          } // while (1)
+ 411   1      }
+ 412          
+ 413          void TMR0_IRQHandler(void) interrupt TMR0_IRQn
+ 414          {
+ 415   1          if (TMR0_CONH & 0x80)
+ 416   1          {
+ 417   2              TMR0_CONH |= 0x80;
+ 418   2              // 1ms产生一次中断，进入到这里
+ 419   2      
+ 420   2              if (flag_bat_is_empty)
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 8   
 
- 421   4                      flag_is_enable_key_scan = 1;
- 422   4                  }
- 423   3              } // 按键扫描
+ 421   2              {
+ 422   3                  return; // 如果电池为空，提前退出中断服务函数
+ 423   3              }
  424   2      
- 425   2      #if 1 // 检测是否拔出/插入充电器
- 426   2      
- 427   2              { // 检测是否拔出/插入充电器
- 428   3                  static u8 not_charge_ms_cnt = 0;
- 429   3                  static u8 charging_ms_cnt = 0;
- 430   3                  if (flag_is_in_charging)
- 431   3                  {
- 432   4                      if (flag_tim_scan_maybe_not_charge)
- 433   4                      {
- 434   5                          // 正在充电，并且检测到可能有充电器断开，进行计时
- 435   5                          not_charge_ms_cnt++;
- 436   5                          if (not_charge_ms_cnt >= 50)
- 437   5                          {
- 438   6                              not_charge_ms_cnt = 0;
- 439   6                              flag_tim_set_is_in_charging = 0;
- 440   6                          }
- 441   5                      }
- 442   4                      else
+ 425   2              { // 按键扫描
+ 426   3                  static volatile u8 key_scan_cnt = 0;
+ 427   3                  key_scan_cnt++;
+ 428   3                  if (key_scan_cnt >= 10)
+ 429   3                  {
+ 430   4                      key_scan_cnt = 0;
+ 431   4                      flag_is_enable_key_scan = 1;
+ 432   4                  }
+ 433   3              } // 按键扫描
+ 434   2      
+ 435   2      #if 1 // 检测是否拔出/插入充电器
+ 436   2      
+ 437   2              { // 检测是否拔出/插入充电器
+ 438   3                  static u8 not_charge_ms_cnt = 0;
+ 439   3                  static u8 charging_ms_cnt = 0;
+ 440   3                  if (flag_is_in_charging)
+ 441   3                  {
+ 442   4                      if (flag_tim_scan_maybe_not_charge)
  443   4                      {
- 444   5                          // 正在充电，并且没有检测到充电器断开：
- 445   5                          not_charge_ms_cnt = 0;
- 446   5                          flag_tim_set_is_in_charging = 1;
- 447   5                      }
- 448   4                  }
- 449   3                  else
- 450   3                  {
- 451   4                      if (flag_tim_scan_maybe_in_charging)
- 452   4                      {
- 453   5                          // 没有在充电，但是检测到有充电器插入，进行计时，确认充电器是否真的插入：
- 454   5                          charging_ms_cnt++;
- 455   5                          if (charging_ms_cnt >= 50)
- 456   5                          {
- 457   6                              charging_ms_cnt = 0;
- 458   6                              flag_tim_set_is_in_charging = 1;
- 459   6                          }
- 460   5                      }
- 461   4                      else
+ 444   5                          // 正在充电，并且检测到可能有充电器断开，进行计时
+ 445   5                          not_charge_ms_cnt++;
+ 446   5                          if (not_charge_ms_cnt >= 50)
+ 447   5                          {
+ 448   6                              not_charge_ms_cnt = 0;
+ 449   6                              flag_tim_set_is_in_charging = 0;
+ 450   6                          }
+ 451   5                      }
+ 452   4                      else
+ 453   4                      {
+ 454   5                          // 正在充电，并且没有检测到充电器断开：
+ 455   5                          not_charge_ms_cnt = 0;
+ 456   5                          flag_tim_set_is_in_charging = 1;
+ 457   5                      }
+ 458   4                  }
+ 459   3                  else
+ 460   3                  {
+ 461   4                      if (flag_tim_scan_maybe_in_charging)
  462   4                      {
- 463   5                          // 没有在充电，并且也没有检测到充电器插入
- 464   5                          charging_ms_cnt = 0;
- 465   5                          flag_tim_set_is_in_charging = 0;
- 466   5                      }
- 467   4                  }
- 468   3              } // 检测是否拔出/插入充电器
- 469   2      #endif // 检测是否拔出/插入充电器
- 470   2      
- 471   2      #if 1 // 控制灯光闪烁的效果
- 472   2      
- 473   2              { // 控制灯光闪烁的效果
- 474   3      
- 475   3                  static volatile u16 blink_ms_cnt = 0; // 计数值，控制灯光闪烁的时间间隔
- 476   3      
- 477   3                  // 状态机，
- 478   3                  // 0--初始值、无状态，
- 479   3                  // 1--准备进入闪烁，
- 480   3                  // 2--正在闪烁
- 481   3                  static volatile u8 cur_blink_status = 0;
- 482   3                  static u8 __blink_cnt = 0; // 一开始存放要闪烁的次数，后面控制当前剩余闪烁次数
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 9   
+ 463   5                          // 没有在充电，但是检测到有充电器插入，进行计时，确认充电器是否真的插入：
+ 464   5                          charging_ms_cnt++;
+ 465   5                          if (charging_ms_cnt >= 50)
+ 466   5                          {
+ 467   6                              charging_ms_cnt = 0;
+ 468   6                              flag_tim_set_is_in_charging = 1;
+ 469   6                          }
+ 470   5                      }
+ 471   4                      else
+ 472   4                      {
+ 473   5                          // 没有在充电，并且也没有检测到充电器插入
+ 474   5                          charging_ms_cnt = 0;
+ 475   5                          flag_tim_set_is_in_charging = 0;
+ 476   5                      }
+ 477   4                  }
+ 478   3              } // 检测是否拔出/插入充电器
+ 479   2      #endif // 检测是否拔出/插入充电器
+ 480   2      
+ 481   2      #if 1 // 控制灯光闪烁的效果
+ 482   2      
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 9   
 
- 483   3      
- 484   3                  if (flag_ctl_led_blink)
- 485   3                  {
- 486   4                      // 如果使能了灯光闪烁
- 487   4                      if (0 == cur_blink_status)
- 488   4                      {
- 489   5                          // 如果当前灯光状态处于初始值，没有在闪烁
- 490   5                          cur_blink_status = 1;
- 491   5                      }
- 492   4                  }
- 493   3                  else
- 494   3                  {
- 495   4                      // 如果不使能灯光闪烁，立即停止当前灯光闪烁的效果
- 496   4                      cur_blink_status = 0;
- 497   4                      blink_ms_cnt = 0;
- 498   4                      __blink_cnt = 0;
- 499   4                  }
- 500   3      
- 501   3                  if (1 == cur_blink_status)
- 502   3                  {
- 503   4                      // 准备进入闪烁，判断要闪烁的是红灯还是绿灯，是要表示当前电机的挡位还是加热的挡位
- 504   4      
- 505   4                      // 可以在闪烁前先关闭灯光，再点亮要闪烁的LED，
- 506   4                      // 最后再使能闪烁的效果，这样就不用加入下面的判断：
- 507   4                      // if (CUR_SEL_LED_RED == cur_sel_led)
- 508   4                      // {
- 509   4                      //     // 如果要让红灯闪烁
- 510   4                      //     // LED_GREEN_OFF();
- 511   4                      //     // LED_RED_ON();
- 512   4                      // }
- 513   4                      // else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 514   4                      // {
- 515   4                      //     // 如果要让绿灯闪烁
- 516   4                      //     // LED_RED_OFF();
- 517   4                      //     // LED_GREEN_ON();
- 518   4                      // }
- 519   4      
- 520   4                      // 让灯光保持点亮500ms
- 521   4                      blink_ms_cnt++;
- 522   4                      if (blink_ms_cnt >= 500)
- 523   4                      {
- 524   5                          blink_ms_cnt = 0;
- 525   5                          cur_blink_status = 2; // 表示正式进入LED闪烁状态
- 526   5                      }
- 527   4                  }
- 528   3                  else if (2 == cur_blink_status)
- 529   3                  {
- 530   4                      // 如果正在进行LED闪烁
- 531   4                      if (0 == __blink_cnt)
- 532   4                      {
- 533   5                          __blink_cnt = cur_ctl_led_blink_cnt; // 存放当前要闪烁的次数
- 534   5                      }
- 535   4      
- 536   4                      if (__blink_cnt) // 如果闪烁次数不为0，继续闪烁
- 537   4                      {
- 538   5                          blink_ms_cnt++;
- 539   5                          if (blink_ms_cnt <= 500)
- 540   5                          {
- 541   6                              // 熄灭LED 500ms
- 542   6                              if (CUR_SEL_LED_RED == cur_sel_led)
- 543   6                              {
- 544   7                                  // 如果要让红灯闪烁
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 10  
+ 483   2              { // 控制灯光闪烁的效果
+ 484   3      
+ 485   3                  static volatile u16 blink_ms_cnt = 0; // 计数值，控制灯光闪烁的时间间隔
+ 486   3      
+ 487   3                  // 状态机，
+ 488   3                  // 0--初始值、无状态，
+ 489   3                  // 1--准备进入闪烁，
+ 490   3                  // 2--正在闪烁
+ 491   3                  static volatile u8 cur_blink_status = 0;
+ 492   3                  static u8 __blink_cnt = 0; // 一开始存放要闪烁的次数，后面控制当前剩余闪烁次数
+ 493   3      
+ 494   3                  if (flag_ctl_led_blink)
+ 495   3                  {
+ 496   4                      // 如果使能了灯光闪烁
+ 497   4                      if (0 == cur_blink_status)
+ 498   4                      {
+ 499   5                          // 如果当前灯光状态处于初始值，没有在闪烁
+ 500   5                          cur_blink_status = 1;
+ 501   5                      }
+ 502   4                  }
+ 503   3                  else
+ 504   3                  {
+ 505   4                      // 如果不使能灯光闪烁，立即停止当前灯光闪烁的效果
+ 506   4                      cur_blink_status = 0;
+ 507   4                      blink_ms_cnt = 0;
+ 508   4                      __blink_cnt = 0;
+ 509   4                  }
+ 510   3      
+ 511   3                  if (1 == cur_blink_status)
+ 512   3                  {
+ 513   4                      // 准备进入闪烁，判断要闪烁的是红灯还是绿灯，是要表示当前电机的挡位还是加热的挡位
+ 514   4      
+ 515   4                      // 可以在闪烁前先关闭灯光，再点亮要闪烁的LED，
+ 516   4                      // 最后再使能闪烁的效果，这样就不用加入下面的判断：
+ 517   4                      // if (CUR_SEL_LED_RED == cur_sel_led)
+ 518   4                      // {
+ 519   4                      //     // 如果要让红灯闪烁
+ 520   4                      //     // LED_GREEN_OFF();
+ 521   4                      //     // LED_RED_ON();
+ 522   4                      // }
+ 523   4                      // else if (CUR_SEL_LED_GREEN == cur_sel_led)
+ 524   4                      // {
+ 525   4                      //     // 如果要让绿灯闪烁
+ 526   4                      //     // LED_RED_OFF();
+ 527   4                      //     // LED_GREEN_ON();
+ 528   4                      // }
+ 529   4      
+ 530   4                      // 让灯光保持点亮500ms
+ 531   4                      blink_ms_cnt++;
+ 532   4                      if (blink_ms_cnt >= 500)
+ 533   4                      {
+ 534   5                          blink_ms_cnt = 0;
+ 535   5                          cur_blink_status = 2; // 表示正式进入LED闪烁状态
+ 536   5                      }
+ 537   4                  }
+ 538   3                  else if (2 == cur_blink_status)
+ 539   3                  {
+ 540   4                      // 如果正在进行LED闪烁
+ 541   4                      if (0 == __blink_cnt)
+ 542   4                      {
+ 543   5                          __blink_cnt = cur_ctl_led_blink_cnt; // 存放当前要闪烁的次数
+ 544   5                      }
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 10  
 
- 545   7                                  LED_RED_OFF();
- 546   7                              }
- 547   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 548   6                              {
- 549   7                                  // 如果要让绿灯闪烁
- 550   7                                  LED_GREEN_OFF();
- 551   7                              }
- 552   6                          }
- 553   5                          else if (blink_ms_cnt < 1000)
- 554   5                          {
- 555   6                              // 点亮LED 500ms
- 556   6                              if (CUR_SEL_LED_RED == cur_sel_led)
- 557   6                              {
- 558   7                                  // 如果要让红灯闪烁
- 559   7                                  LED_RED_ON();
- 560   7                              }
- 561   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 562   6                              {
- 563   7                                  // 如果要让绿灯闪烁
- 564   7                                  LED_GREEN_ON();
- 565   7                              }
- 566   6                          }
- 567   5                          else
- 568   5                          {
- 569   6                              blink_ms_cnt = 0;
- 570   6                              __blink_cnt--; // 完成了一次闪烁，计数值减一
- 571   6                              if (0 == __blink_cnt)
+ 545   4      
+ 546   4                      if (__blink_cnt) // 如果闪烁次数不为0，继续闪烁
+ 547   4                      {
+ 548   5                          blink_ms_cnt++;
+ 549   5                          if (blink_ms_cnt <= 500)
+ 550   5                          {
+ 551   6                              // 熄灭LED 500ms
+ 552   6                              if (CUR_SEL_LED_RED == cur_sel_led)
+ 553   6                              {
+ 554   7                                  // 如果要让红灯闪烁
+ 555   7                                  LED_RED_OFF();
+ 556   7                              }
+ 557   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
+ 558   6                              {
+ 559   7                                  // 如果要让绿灯闪烁
+ 560   7                                  LED_GREEN_OFF();
+ 561   7                              }
+ 562   6                          }
+ 563   5                          else if (blink_ms_cnt < 1000)
+ 564   5                          {
+ 565   6                              // 点亮LED 500ms
+ 566   6                              if (CUR_SEL_LED_RED == cur_sel_led)
+ 567   6                              {
+ 568   7                                  // 如果要让红灯闪烁
+ 569   7                                  LED_RED_ON();
+ 570   7                              }
+ 571   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
  572   6                              {
- 573   7                                  // 如果剩余闪烁次数为0，结束闪烁
- 574   7                                  flag_ctl_led_blink = 0; // 不使能闪烁
- 575   7                                  cur_blink_status = 0;   // 恢复到初始值，表示没有在闪烁
- 576   7                              }
- 577   6                          }
- 578   5                      }
- 579   4                  }
- 580   3              } // 控制灯光闪烁的效果
- 581   2      #endif // 控制灯光闪烁的效果
- 582   2      
- 583   2      #if 1 // 控制加热
- 584   2      
- 585   2              { // 控制加热
- 586   3                  static volatile u8 __ctl_heat_ms_cnt = 0;
- 587   3      
- 588   3                  if (1 == cur_ctl_heat_status)
- 589   3                  {
- 590   4                      // 一档加热
- 591   4                      HEATING_ON();
- 592   4                  }
- 593   3                  else if (2 == cur_ctl_heat_status)
- 594   3                  {
- 595   4                      // 二档加热
- 596   4                      __ctl_heat_ms_cnt++;
- 597   4                      if (__ctl_heat_ms_cnt <= 5)
- 598   4                      {
- 599   5                          HEATING_ON();
- 600   5                      }
- 601   4                      else if (__ctl_heat_ms_cnt < 10)
- 602   4                      {
- 603   5                          HEATING_OFF();
- 604   5                      }
- 605   4                      else
- 606   4                      {
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 11  
+ 573   7                                  // 如果要让绿灯闪烁
+ 574   7                                  LED_GREEN_ON();
+ 575   7                              }
+ 576   6                          }
+ 577   5                          else
+ 578   5                          {
+ 579   6                              blink_ms_cnt = 0;
+ 580   6                              __blink_cnt--; // 完成了一次闪烁，计数值减一
+ 581   6                              if (0 == __blink_cnt)
+ 582   6                              {
+ 583   7                                  // 如果剩余闪烁次数为0，结束闪烁
+ 584   7                                  flag_ctl_led_blink = 0; // 不使能闪烁
+ 585   7                                  cur_blink_status = 0;   // 恢复到初始值，表示没有在闪烁
+ 586   7                              }
+ 587   6                          }
+ 588   5                      }
+ 589   4                  }
+ 590   3              } // 控制灯光闪烁的效果
+ 591   2      #endif // 控制灯光闪烁的效果
+ 592   2      
+ 593   2      #if 1 // 控制加热
+ 594   2      
+ 595   2              { // 控制加热
+ 596   3                  static volatile u8 __ctl_heat_ms_cnt = 0;
+ 597   3      
+ 598   3                  if (1 == cur_ctl_heat_status)
+ 599   3                  {
+ 600   4                      // 一档加热
+ 601   4                      HEATING_ON();
+ 602   4                  }
+ 603   3                  else if (2 == cur_ctl_heat_status)
+ 604   3                  {
+ 605   4                      // 二档加热
+ 606   4                      __ctl_heat_ms_cnt++;
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 11  
 
- 607   5                          __ctl_heat_ms_cnt = 0;
- 608   5                      }
- 609   4                  }
- 610   3                  else
- 611   3                  {
- 612   4                      // 无状态，关闭加热
- 613   4                      HEATING_OFF();
- 614   4                      __ctl_heat_ms_cnt = 0;
- 615   4                  }
- 616   3      
- 617   3              } // 控制加热
- 618   2      #endif // 控制加热
- 619   2      
- 620   2      #if 1 // 控制自动关机
- 621   2      
- 622   2              { // 自动关机
- 623   3                  static volatile u32 shut_down_ms_cnt = 0;
- 624   3      
- 625   3                  if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
- 626   3                       0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
- 627   3                      0 == flag_is_in_charging      /* 当前没有在充电 */
- 628   3                  )
- 629   3                  {
- 630   4                      shut_down_ms_cnt++;
- 631   4                      if (shut_down_ms_cnt >= 600000) // xx ms 后，关机
- 632   4                      {
- 633   5                          shut_down_ms_cnt = 0;
- 634   5                          flag_ctl_dev_close = 1;
- 635   5                      }
- 636   4                  }
- 637   3                  else
- 638   3                  {
- 639   4                      shut_down_ms_cnt = 0;
- 640   4                  }
- 641   3              } // 自动关机
- 642   2      #endif // 控制自动关机
- 643   2      
- 644   2      #if 1 // 控制电机自动换方向
- 645   2      
- 646   2              { // 自动换方向
- 647   3      
- 648   3                  static volatile u16 turn_dir_ms_cnt = 0; // 控制在运行时每 xx min切换一次转向的计时变量
- 649   3      
- 650   3                  if ((0 != cur_motor_status) &&       /* 如果电机不是关闭的 */
- 651   3                      0 == flag_is_turn_dir_by_speech) /* 如果没有通过语音调节过方向 */
- 652   3      
- 653   3                  {
- 654   4                      turn_dir_ms_cnt++;
- 655   4                      if (turn_dir_ms_cnt >= 60000) // xx ms 后，换方向
- 656   4                      // if (turn_dir_ms_cnt >= 60) // xx ms 后，换方向（测试用）
- 657   4                      {
- 658   5                          turn_dir_ms_cnt = 0;
- 659   5                          // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
- 660   5                          flag_ctl_turn_dir = 1;
- 661   5                      }
- 662   4                  }
- 663   3                  else
- 664   3                  {
- 665   4                      turn_dir_ms_cnt = 0;
- 666   4      
- 667   4                      if (flag_is_turn_dir_by_speech)
- 668   4                      {
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 12  
+ 607   4                      if (__ctl_heat_ms_cnt <= 5)
+ 608   4                      {
+ 609   5                          HEATING_ON();
+ 610   5                      }
+ 611   4                      else if (__ctl_heat_ms_cnt < 10)
+ 612   4                      {
+ 613   5                          HEATING_OFF();
+ 614   5                      }
+ 615   4                      else
+ 616   4                      {
+ 617   5                          __ctl_heat_ms_cnt = 0;
+ 618   5                      }
+ 619   4                  }
+ 620   3                  else
+ 621   3                  {
+ 622   4                      // 无状态，关闭加热
+ 623   4                      HEATING_OFF();
+ 624   4                      __ctl_heat_ms_cnt = 0;
+ 625   4                  }
+ 626   3      
+ 627   3              } // 控制加热
+ 628   2      #endif // 控制加热
+ 629   2      
+ 630   2      #if 1 // 控制自动关机
+ 631   2      
+ 632   2              { // 自动关机
+ 633   3                  static volatile u32 shut_down_ms_cnt = 0;
+ 634   3      
+ 635   3                  if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
+ 636   3                       0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
+ 637   3                      0 == flag_is_in_charging      /* 当前没有在充电 */
+ 638   3                  )
+ 639   3                  {
+ 640   4                      shut_down_ms_cnt++;
+ 641   4                      if (shut_down_ms_cnt >= 600000) // xx ms 后，关机
+ 642   4                      {
+ 643   5                          shut_down_ms_cnt = 0;
+ 644   5                          flag_ctl_dev_close = 1;
+ 645   5                      }
+ 646   4                  }
+ 647   3                  else
+ 648   3                  {
+ 649   4                      shut_down_ms_cnt = 0;
+ 650   4                  }
+ 651   3              } // 自动关机
+ 652   2      #endif // 控制自动关机
+ 653   2      
+ 654   2      #if 1 // 控制电机自动换方向
+ 655   2      
+ 656   2              { // 自动换方向
+ 657   3      
+ 658   3                  static volatile u16 turn_dir_ms_cnt = 0; // 控制在运行时每 xx min切换一次转向的计时变量
+ 659   3      
+ 660   3                  if ((0 != cur_motor_status) &&       /* 如果电机不是关闭的 */
+ 661   3                      0 == flag_is_turn_dir_by_speech) /* 如果没有通过语音调节过方向 */
+ 662   3      
+ 663   3                  {
+ 664   4                      turn_dir_ms_cnt++;
+ 665   4                      if (turn_dir_ms_cnt >= 60000) // xx ms 后，换方向
+ 666   4                      // if (turn_dir_ms_cnt >= 60) // xx ms 后，换方向（测试用）
+ 667   4                      {
+ 668   5                          turn_dir_ms_cnt = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 12  
 
- 669   5                          flag_is_turn_dir_by_speech = 0; // 已经清除自动换方向的计时，便清除该标志位
- 670   5                      }
- 671   4                  }
- 672   3      
- 673   3              } // 自动换方向
- 674   2      #endif // 控制电机自动换方向
- 675   2      
- 676   2      #if 1 // 检测是否快充满电
- 677   2      
- 678   2              {
- 679   3                  static volatile u16 bat_is_near_full_ms_cnt = 0;
- 680   3                  // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_near_full ，
- 681   3                  //  |-- 可以不加这个判断条件：
- 682   3                  // if (flag_is_in_charging)
- 683   3                  {
- 684   4                      if (flag_tim_scan_bat_maybe_near_full)
- 685   4                      {
- 686   5                          // 正在充电，且检测到快充满电，进行计时
- 687   5                          bat_is_near_full_ms_cnt++;
- 688   5                          if (bat_is_near_full_ms_cnt >= 5000) // xx ms
- 689   5                          {
- 690   6                              bat_is_near_full_ms_cnt = 0;
- 691   6                              flag_bat_is_near_full = 1;
- 692   6                          }
- 693   5                      }
- 694   4                      else
+ 669   5                          // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
+ 670   5                          flag_ctl_turn_dir = 1;
+ 671   5                      }
+ 672   4                  }
+ 673   3                  else
+ 674   3                  {
+ 675   4                      turn_dir_ms_cnt = 0;
+ 676   4      
+ 677   4                      if (flag_is_turn_dir_by_speech)
+ 678   4                      {
+ 679   5                          flag_is_turn_dir_by_speech = 0; // 已经清除自动换方向的计时，便清除该标志位
+ 680   5                      }
+ 681   4                  }
+ 682   3      
+ 683   3              } // 自动换方向
+ 684   2      #endif // 控制电机自动换方向
+ 685   2      
+ 686   2      #if 1 // 检测是否快充满电
+ 687   2      
+ 688   2              {
+ 689   3                  static volatile u16 bat_is_near_full_ms_cnt = 0;
+ 690   3                  // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_near_full ，
+ 691   3                  //  |-- 可以不加这个判断条件：
+ 692   3                  // if (flag_is_in_charging)
+ 693   3                  {
+ 694   4                      if (flag_tim_scan_bat_maybe_near_full)
  695   4                      {
- 696   5                          // 正在充电，但是有一次没有检测到快充满电，清除计时和标志位
- 697   5                          bat_is_near_full_ms_cnt = 0;
- 698   5                          flag_tim_set_bat_is_near_full = 0;
- 699   5                      }
- 700   4                  }
- 701   3              }
- 702   2      
- 703   2      #endif // 检测是否快充满电
- 704   2      
- 705   2      #if 1 // 检测是否充满电
- 706   2      
- 707   2              { // 检测是否充满电
- 708   3                  static volatile u16 bat_is_full_ms_cnt = 0;
- 709   3                  // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_full ，
- 710   3                  //  |-- 可以不加这个判断条件：
- 711   3                  // if (flag_is_in_charging)
- 712   3                  {
- 713   4                      if (flag_tim_scan_bat_maybe_full)
- 714   4                      {
- 715   5                          // 正在充电，并且有检测到电池满电，进行累计：
- 716   5                          bat_is_full_ms_cnt++;
- 717   5                          if (bat_is_full_ms_cnt >= 5000) // xx ms
- 718   5                          {
- 719   6                              bat_is_full_ms_cnt = 0;
- 720   6                              flag_tim_set_bat_is_full = 1;
- 721   6                          }
- 722   5                      }
- 723   4                      else
+ 696   5                          // 正在充电，且检测到快充满电，进行计时
+ 697   5                          bat_is_near_full_ms_cnt++;
+ 698   5                          if (bat_is_near_full_ms_cnt >= 5000) // xx ms
+ 699   5                          {
+ 700   6                              bat_is_near_full_ms_cnt = 0;
+ 701   6                              flag_bat_is_near_full = 1;
+ 702   6                          }
+ 703   5                      }
+ 704   4                      else
+ 705   4                      {
+ 706   5                          // 正在充电，但是有一次没有检测到快充满电，清除计时和标志位
+ 707   5                          bat_is_near_full_ms_cnt = 0;
+ 708   5                          flag_tim_set_bat_is_near_full = 0;
+ 709   5                      }
+ 710   4                  }
+ 711   3              }
+ 712   2      
+ 713   2      #endif // 检测是否快充满电
+ 714   2      
+ 715   2      #if 1 // 检测是否充满电
+ 716   2      
+ 717   2              { // 检测是否充满电
+ 718   3                  static volatile u16 bat_is_full_ms_cnt = 0;
+ 719   3                  // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_full ，
+ 720   3                  //  |-- 可以不加这个判断条件：
+ 721   3                  // if (flag_is_in_charging)
+ 722   3                  {
+ 723   4                      if (flag_tim_scan_bat_maybe_full)
  724   4                      {
- 725   5                          // 正在充电，但是没有检测到电池满电：
- 726   5                          bat_is_full_ms_cnt = 0;
- 727   5                          flag_tim_set_bat_is_full = 0;
- 728   5                      }
- 729   4                  }
- 730   3              } // 检测是否充满电
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 13  
+ 725   5                          // 正在充电，并且有检测到电池满电，进行累计：
+ 726   5                          bat_is_full_ms_cnt++;
+ 727   5                          if (bat_is_full_ms_cnt >= 5000) // xx ms
+ 728   5                          {
+ 729   6                              bat_is_full_ms_cnt = 0;
+ 730   6                              flag_tim_set_bat_is_full = 1;
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 13  
 
- 731   2      #endif // 检测是否充满电
- 732   2      
- 733   2      #if 1 // 检测是否要低电量报警
- 734   2      
- 735   2              {
- 736   3                  static u16 low_bat_ms_cnt = 0;
- 737   3                  if (flag_tim_scan_maybe_low_bat)
- 738   3                  {
- 739   4                      // 如果可能检测到了低电量，进行连续计时
- 740   4                      low_bat_ms_cnt++;
- 741   4                      if (low_bat_ms_cnt >= LOW_BAT_SCAN_TIMES_MS)
- 742   4                      {
- 743   5                          low_bat_ms_cnt = 0;
- 744   5                          flag_tim_set_bat_is_low = 1;
- 745   5                      }
- 746   4                  }
- 747   3                  else
+ 731   6                          }
+ 732   5                      }
+ 733   4                      else
+ 734   4                      {
+ 735   5                          // 正在充电，但是没有检测到电池满电：
+ 736   5                          bat_is_full_ms_cnt = 0;
+ 737   5                          flag_tim_set_bat_is_full = 0;
+ 738   5                      }
+ 739   4                  }
+ 740   3              } // 检测是否充满电
+ 741   2      #endif // 检测是否充满电
+ 742   2      
+ 743   2      #if 1 // 检测是否要低电量报警
+ 744   2      
+ 745   2              {
+ 746   3                  static u16 low_bat_ms_cnt = 0;
+ 747   3                  if (flag_tim_scan_maybe_low_bat)
  748   3                  {
- 749   4                      // 如果没有检测到低电量
- 750   4                      low_bat_ms_cnt = 0;
- 751   4                      flag_tim_set_bat_is_low = 0;
- 752   4                  }
- 753   3              }
- 754   2      
- 755   2              { // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
- 756   3      
- 757   3                  static bit __flag_is_in_low_bat_alarm = 0;   // 标志位，是否正在执行低电量报警的功能
- 758   3                  static u16 __blink_cnt_in_low_bat_alarm = 0; // 低电量报警时，LED闪烁时间计数
- 759   3      
- 760   3                  /* 如果使能了低电量报警，并且设备正在运行 */
- 761   3                  if (flag_ctl_low_bat_alarm &&
- 762   3                      (0 != cur_motor_status || 0 != cur_ctl_heat_status))
- 763   3                  {
- 764   4                      if (0 == __flag_is_in_low_bat_alarm)
- 765   4                      {
- 766   5                          __flag_is_in_low_bat_alarm = 1; // 在该语句块内部，使能低电量报警的功能
- 767   5                      }
- 768   4                  }
- 769   3                  else
- 770   3                  {
- 771   4                      __blink_cnt_in_low_bat_alarm = 0;
- 772   4                      __flag_is_in_low_bat_alarm = 0;
- 773   4                  }
- 774   3      
- 775   3                  if (__flag_is_in_low_bat_alarm)
- 776   3                  {
- 777   4                      __blink_cnt_in_low_bat_alarm++;
- 778   4                      if (__blink_cnt_in_low_bat_alarm <= 300)
- 779   4                      {
- 780   5                          LED_RED_ON();
- 781   5                      }
- 782   4                      else if (__blink_cnt_in_low_bat_alarm < 600)
- 783   4                      {
- 784   5                          LED_RED_OFF();
- 785   5                      }
- 786   4                      else
- 787   4                      {
- 788   5                          __blink_cnt_in_low_bat_alarm = 0;
- 789   5                      }
- 790   4                  }
- 791   3              } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
- 792   2      #endif // 检测是否要低电量报警
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 14  
+ 749   4                      // 如果可能检测到了低电量，进行连续计时
+ 750   4                      low_bat_ms_cnt++;
+ 751   4                      if (low_bat_ms_cnt >= LOW_BAT_SCAN_TIMES_MS)
+ 752   4                      {
+ 753   5                          low_bat_ms_cnt = 0;
+ 754   5                          flag_tim_set_bat_is_low = 1;
+ 755   5                      }
+ 756   4                  }
+ 757   3                  else
+ 758   3                  {
+ 759   4                      // 如果没有检测到低电量
+ 760   4                      low_bat_ms_cnt = 0;
+ 761   4                      flag_tim_set_bat_is_low = 0;
+ 762   4                  }
+ 763   3              }
+ 764   2      
+ 765   2              { // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
+ 766   3      
+ 767   3                  static bit __flag_is_in_low_bat_alarm = 0;   // 标志位，是否正在执行低电量报警的功能
+ 768   3                  static u16 __blink_cnt_in_low_bat_alarm = 0; // 低电量报警时，LED闪烁时间计数
+ 769   3      
+ 770   3                  /* 如果使能了低电量报警，并且设备正在运行 */
+ 771   3                  if (flag_ctl_low_bat_alarm &&
+ 772   3                      (0 != cur_motor_status || 0 != cur_ctl_heat_status))
+ 773   3                  {
+ 774   4                      if (0 == __flag_is_in_low_bat_alarm)
+ 775   4                      {
+ 776   5                          __flag_is_in_low_bat_alarm = 1; // 在该语句块内部，使能低电量报警的功能
+ 777   5                      }
+ 778   4                  }
+ 779   3                  else
+ 780   3                  {
+ 781   4                      __blink_cnt_in_low_bat_alarm = 0;
+ 782   4                      __flag_is_in_low_bat_alarm = 0;
+ 783   4                  }
+ 784   3      
+ 785   3                  if (__flag_is_in_low_bat_alarm)
+ 786   3                  {
+ 787   4                      __blink_cnt_in_low_bat_alarm++;
+ 788   4                      if (__blink_cnt_in_low_bat_alarm <= 300)
+ 789   4                      {
+ 790   5                          LED_RED_ON();
+ 791   5                      }
+ 792   4                      else if (__blink_cnt_in_low_bat_alarm < 600)
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 14  
 
- 793   2      
- 794   2      #if 1 // 工作时，检测电池电量是否一直低于关机电压
- 795   2      
- 796   2              {
- 797   3                  static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
- 798   3      
- 799   3                  if (flag_tim_scan_maybe_shut_down)
- 800   3                  {
- 801   4                      // 如果检测到在工作时，电池电压低于关机电压，进行连续计时
- 802   4                      __shut_down_cnt++;
- 803   4                      if (__shut_down_cnt >= SHUT_DOWN_SCAN_TIMES_MS)
- 804   4                      {
- 805   5                          __shut_down_cnt = 0;
- 806   5                          flag_tim_set_shut_down = 1;
- 807   5                      }
- 808   4                  }
- 809   3                  else
+ 793   4                      {
+ 794   5                          LED_RED_OFF();
+ 795   5                      }
+ 796   4                      else
+ 797   4                      {
+ 798   5                          __blink_cnt_in_low_bat_alarm = 0;
+ 799   5                      }
+ 800   4                  }
+ 801   3              } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
+ 802   2      #endif // 检测是否要低电量报警
+ 803   2      
+ 804   2      #if 1 // 工作时，检测电池电量是否一直低于关机电压
+ 805   2      
+ 806   2              {
+ 807   3                  static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
+ 808   3      
+ 809   3                  if (flag_tim_scan_maybe_shut_down)
  810   3                  {
- 811   4                      // 如果在工作时，没有检测到 电池电压低于关机电压
- 812   4                      __shut_down_cnt = 0;
- 813   4                      flag_tim_set_shut_down = 0;
- 814   4                  }
- 815   3              }
- 816   2      #endif // 工作时，检测电池电量是否一直低于关机电压
- 817   2      
- 818   2      #if 1 // 电机过流检测，超过10s便认为电机堵转
- 819   2      
- 820   2              {
- 821   3                  // 检测到电机堵转后，进行连续计时
- 822   3                  static u16 __detect_motor_stalling_cnt = 0;
- 823   3      
- 824   3                  if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
- 825   3                  {
- 826   4                      // 如果检测到有电机堵转的情况
- 827   4                      // P00 = 1; // 方便测试过流检测时间
- 828   4      
- 829   4                      __detect_motor_stalling_cnt++;
- 830   4                      if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
- 831   4                      {
- 832   5                          __detect_motor_stalling_cnt = 0;
- 833   5                          flag_tim_set_motor_stalling = 1;
- 834   5                      }
- 835   4                  }
- 836   3                  else
- 837   3                  {
- 838   4                      // 如果没有检测到有电机堵转的情况
- 839   4                      // P00 = 0; // 方便测试过流检测时间
- 840   4      
- 841   4                      __detect_motor_stalling_cnt = 0;
- 842   4                      flag_tim_set_motor_stalling = 0;
- 843   4                  }
- 844   3              }
- 845   2      #endif // 电机过流检测，超过10s便认为电机堵转
- 846   2      
- 847   2      #if 1 // 控制语音IC关机后，无操作而关机
- 848   2      
- 849   2              {
- 850   3                  static u32 no_operation_shut_down_cnt = 0; // 无操作自动关机的计时
- 851   3      
- 852   3                  if (0 == flag_is_new_operation && /* 如果没有新的操作 */
- 853   3                      0 == cur_motor_status &&      /* 如果电机关闭 */
- 854   3                      0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 15  
+ 811   4                      // 如果检测到在工作时，电池电压低于关机电压，进行连续计时
+ 812   4                      __shut_down_cnt++;
+ 813   4                      if (__shut_down_cnt >= SHUT_DOWN_SCAN_TIMES_MS)
+ 814   4                      {
+ 815   5                          __shut_down_cnt = 0;
+ 816   5                          flag_tim_set_shut_down = 1;
+ 817   5                      }
+ 818   4                  }
+ 819   3                  else
+ 820   3                  {
+ 821   4                      // 如果在工作时，没有检测到 电池电压低于关机电压
+ 822   4                      __shut_down_cnt = 0;
+ 823   4                      flag_tim_set_shut_down = 0;
+ 824   4                  }
+ 825   3              }
+ 826   2      #endif // 工作时，检测电池电量是否一直低于关机电压
+ 827   2      
+ 828   2      #if 1 // 电机过流检测，超过10s便认为电机堵转
+ 829   2      
+ 830   2              {
+ 831   3                  // 检测到电机堵转后，进行连续计时
+ 832   3                  static u16 __detect_motor_stalling_cnt = 0;
+ 833   3      
+ 834   3                  if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
+ 835   3                  {
+ 836   4                      // 如果检测到有电机堵转的情况
+ 837   4                      // P00 = 1; // 方便测试过流检测时间
+ 838   4      
+ 839   4                      __detect_motor_stalling_cnt++;
+ 840   4                      if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
+ 841   4                      {
+ 842   5                          __detect_motor_stalling_cnt = 0;
+ 843   5                          flag_tim_set_motor_stalling = 1;
+ 844   5                      }
+ 845   4                  }
+ 846   3                  else
+ 847   3                  {
+ 848   4                      // 如果没有检测到有电机堵转的情况
+ 849   4                      // P00 = 0; // 方便测试过流检测时间
+ 850   4      
+ 851   4                      __detect_motor_stalling_cnt = 0;
+ 852   4                      flag_tim_set_motor_stalling = 0;
+ 853   4                  }
+ 854   3              }
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 15  
 
- 855   3                      0 == flag_is_enter_low_power) /* 如果没有使能进入低功耗 */
- 856   3                  {
- 857   4                      no_operation_shut_down_cnt++;
- 858   4                      if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
- 859   4                      {
- 860   5                          no_operation_shut_down_cnt = 0;
- 861   5                          flag_is_enter_low_power = 1;
- 862   5                      }
- 863   4                  }
- 864   3                  else
- 865   3                  {
- 866   4                      no_operation_shut_down_cnt = 0;
- 867   4                      flag_is_new_operation = 0;
- 868   4                  }
- 869   3              }
- 870   2      #endif // 控制语音IC关机后，无操作而关机
- 871   2      
- 872   2      #if 1 // 控制呼吸灯效果
- 873   2      
- 874   2              {
- 875   3                  // 0 -- 初始状态
- 876   3                  // 1 -- 刚进入呼吸灯状态
- 877   3                  // 2 -- 从亮到灭
- 878   3                  // 3 -- 从灭到亮
- 879   3                  static u8 cur_breathing_status = 0;
- 880   3                  static u16 pwm_duty = 0;
- 881   3      
- 882   3                  if (flag_is_in_charging &&
- 883   3                      (0 == flag_bat_is_near_full) &&
- 884   3                      (0 == flag_bat_is_full))
- 885   3                  {
- 886   4                      if (0 == cur_breathing_status)
- 887   4                      {
- 888   5                          cur_breathing_status = 1; 
- 889   5                      }
- 890   4                  }
- 891   3                  else
- 892   3                  {
- 893   4                      cur_breathing_status = 0;
- 894   4                      pwm_duty = 0;
- 895   4                  }
- 896   3      
- 897   3                  if (1 == cur_breathing_status)
- 898   3                  {
- 899   4                      pwm_duty = (STMR2_PRE + 1);
- 900   4                      cur_breathing_status = 2;
- 901   4                      LED_RED_ON();
- 902   4                  }
- 903   3                  else if (2 == cur_breathing_status)
- 904   3                  {
- 905   4                      if (pwm_duty > 0)
- 906   4                      {
- 907   5                          pwm_duty--;
- 908   5                      }
- 909   4                      else
- 910   4                      {
- 911   5                          cur_breathing_status = 3;
- 912   5                          pwm_duty = 0;
- 913   5                      }
- 914   4      
- 915   4      #ifdef USE_P13_RLED_USE_P12_GLED
- 916   4                      STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
-C51 COMPILER V9.60.7.0   MAIN                                                              02/19/2025 18:55:16 PAGE 16  
+ 855   2      #endif // 电机过流检测，超过10s便认为电机堵转
+ 856   2      
+ 857   2      #if 1 // 控制语音IC关机后，无操作而关机
+ 858   2      
+ 859   2              {
+ 860   3                  static u32 no_operation_shut_down_cnt = 0; // 无操作自动关机的计时
+ 861   3      
+ 862   3                  if (0 == flag_is_new_operation && /* 如果没有新的操作 */
+ 863   3                      0 == cur_motor_status &&      /* 如果电机关闭 */
+ 864   3                      0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
+ 865   3                      0 == flag_is_enter_low_power) /* 如果没有使能进入低功耗 */
+ 866   3                  {
+ 867   4                      no_operation_shut_down_cnt++;
+ 868   4                      if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
+ 869   4                      {
+ 870   5                          no_operation_shut_down_cnt = 0;
+ 871   5                          flag_is_enter_low_power = 1;
+ 872   5                      }
+ 873   4                  }
+ 874   3                  else
+ 875   3                  {
+ 876   4                      no_operation_shut_down_cnt = 0;
+ 877   4                      flag_is_new_operation = 0;
+ 878   4                  }
+ 879   3              }
+ 880   2      #endif // 控制语音IC关机后，无操作而关机
+ 881   2      
+ 882   2      #if 1 // 控制呼吸灯效果
+ 883   2      
+ 884   2              {
+ 885   3                  // 0 -- 初始状态
+ 886   3                  // 1 -- 刚进入呼吸灯状态
+ 887   3                  // 2 -- 从亮到灭
+ 888   3                  // 3 -- 从灭到亮
+ 889   3                  static u8 cur_breathing_status = 0;
+ 890   3                  static u16 pwm_duty = 0;
+ 891   3      
+ 892   3                  if (flag_is_in_charging &&
+ 893   3                      (0 == flag_bat_is_near_full) &&
+ 894   3                      (0 == flag_bat_is_full))
+ 895   3                  {
+ 896   4                      if (0 == cur_breathing_status)
+ 897   4                      {
+ 898   5                          cur_breathing_status = 1;
+ 899   5                      }
+ 900   4                  }
+ 901   3                  else
+ 902   3                  {
+ 903   4                      cur_breathing_status = 0;
+ 904   4                      pwm_duty = 0;
+ 905   4                  }
+ 906   3      
+ 907   3                  if (1 == cur_breathing_status)
+ 908   3                  {
+ 909   4                      pwm_duty = (STMR2_PRE + 1);
+ 910   4                      cur_breathing_status = 2;
+ 911   4                      LED_RED_ON();
+ 912   4                  }
+ 913   3                  else if (2 == cur_breathing_status)
+ 914   3                  {
+ 915   4                      if (pwm_duty > 0)
+ 916   4                      {
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 16  
 
- 917   4                      STMR2_CMPAL = (pwm_duty) % 256;
- 918   4      #endif
- 919   4      
- 920   4      #ifdef USE_P12_RLED_USE_P13_GLED
+ 917   5                          pwm_duty--;
+ 918   5                      }
+ 919   4                      else
+ 920   4                      {
+ 921   5                          cur_breathing_status = 3;
+ 922   5                          pwm_duty = 0;
+ 923   5                      }
+ 924   4      
+ 925   4      #ifdef USE_P13_RLED_USE_P12_GLED
+ 926   4                      STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
+ 927   4                      STMR2_CMPAL = (pwm_duty) % 256;
+ 928   4      #endif
+ 929   4      
+ 930   4      #ifdef USE_P12_RLED_USE_P13_GLED
                               STMR2_CMPBH = (pwm_duty) / 256; // 通道B占空比  100%
                               STMR2_CMPBL = (pwm_duty) % 256;
               #endif
- 924   4                  }
- 925   3                  else if (3 == cur_breathing_status)
- 926   3                  {
- 927   4                      if (pwm_duty < (STMR2_PRE + 1))
- 928   4                      {
- 929   5                          pwm_duty++;
- 930   5                      }
- 931   4                      else
- 932   4                      {
- 933   5                          cur_breathing_status = 2;
- 934   5                          pwm_duty = (STMR2_PRE + 1);
- 935   5                      }
- 936   4      
- 937   4      #ifdef USE_P13_RLED_USE_P12_GLED
- 938   4                      STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
- 939   4                      STMR2_CMPAL = (pwm_duty) % 256;
- 940   4      #endif
- 941   4      
- 942   4      #ifdef USE_P12_RLED_USE_P13_GLED
+ 934   4                  }
+ 935   3                  else if (3 == cur_breathing_status)
+ 936   3                  {
+ 937   4                      if (pwm_duty < (STMR2_PRE + 1))
+ 938   4                      {
+ 939   5                          pwm_duty++;
+ 940   5                      }
+ 941   4                      else
+ 942   4                      {
+ 943   5                          cur_breathing_status = 2;
+ 944   5                          pwm_duty = (STMR2_PRE + 1);
+ 945   5                      }
+ 946   4      
+ 947   4      #ifdef USE_P13_RLED_USE_P12_GLED
+ 948   4                      STMR2_CMPAH = (pwm_duty) / 256; // 通道A占空比
+ 949   4                      STMR2_CMPAL = (pwm_duty) % 256;
+ 950   4      #endif
+ 951   4      
+ 952   4      #ifdef USE_P12_RLED_USE_P13_GLED
                               STMR2_CMPBH = (pwm_duty) / 256; // 通道B占空比
                               STMR2_CMPBL = (pwm_duty) % 256;
               #endif
- 946   4                  }
- 947   3              }
- 948   2      
- 949   2      #endif // 控制呼吸灯效果
- 950   2          }
- 951   1      }
- 952          
- 953          /**
- 954           * @}
- 955           */
- 956          
- 957          /*************************** (C) COPYRIGHT 2021 HUGE-IC ***** END OF FILE *****/
+ 956   4                  }
+ 957   3              }
+ 958   2      
+ 959   2      #endif // 控制呼吸灯效果
+ 960   2          }
+ 961   1      }
+ 962          
+ 963          /**
+ 964           * @}
+ 965           */
+ 966          
+ 967          /*************************** (C) COPYRIGHT 2021 HUGE-IC ***** END OF FILE *****/
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1187    ----
+   CODE SIZE        =   1228    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -1012,6 +1022,8 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    IDATA SIZE       =   ----    ----
    BIT SIZE         =     28    ----
 END OF MODULE INFORMATION.
+
+C51 COMPILER V9.60.7.0   MAIN                                                              02/21/2025 16:22:26 PAGE 17  
 
 
 C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

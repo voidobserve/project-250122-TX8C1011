@@ -5,8 +5,14 @@ extern void user_config(void);
 void low_power(void)
 {
     // 如果一直按着开机/模式按键，返回
+    // if (P15 || 0 == P07)
+    // if (0 == P07)
+    // {
+    //     return;
+    // }
 
 label_low_power_begin: // 标签，刚开始进入低功耗
+
     // 关闭片上外设:
     __DisableIRQ(TMR0_IRQn);  // 屏蔽TMR0中断
     TMR0_CONL &= ~0x03;       // 关闭tmr0
@@ -15,7 +21,8 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     motor_pwm_disable();      // 关闭驱动电机的定时器(pwm)，相应的两个引脚输出低电平
     __DisableIRQ(UART1_IRQn); // 屏蔽接收控制命令的串口中断
     UART1_CON &= ~(0x11);     // 关闭接收控制命令的串口，关闭RX中断
-                              // 接收控制命令的引脚配置为输出模式，输出低电平:
+
+    // 接收控制命令的引脚配置为输出模式，输出低电平:
     P0_MD0 &= ~0x03;
     P0_MD0 |= 0x01; // 输出模式
     P00 = 0;
@@ -34,29 +41,27 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     P0_MD1 |= 0x15; // P04 P05 P06 输出模式
     P0 &= ~0x70;    // P04 P05 P06 输出低电平
 
-    // 使用TMR2产生1s的中断来触发唤醒（但是打开这个，在低功耗下耗电约300uA）
-    // 配置1s定时器唤醒sleep
-    // TMR2_PRL = (16000 - 1) % 256; // 周期值
-    // TMR2_PRH = (16000 - 1) / 256;
-    // TMR2_CNTL = 0x00; // 清除计数值
-    // TMR2_CNTH = 0x00;
-    // TMR2_CONH = 0xA0;                                                           // 使能计数中断
-    // TMR2_CONL = (((0x2 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 4分频，系统时钟，count模式
-    // WKUP_CON0 |= 0x04; // 使能通道2，上升沿唤醒
-
 // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
 #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
+    // 关闭检测按键的上拉
+    // P0_PU &= ~(0x01 << 7);
+    P1_PU &= ~0x01;
+
     // 将检测加热按键的引脚配置为输出模式，输出低电平：
     P1_MD0 &= ~0x03; //
     P1_MD0 |= 0x01;  // P10 输出模式
     P10 = 0;
 
     // 检测 开关/模式按键 的引脚配置为输入上拉，检测到低电平触发中断，唤醒CPU
+    WDT_KEY = 0x55; // 解除写保护
+    IO_MAP |= 0x01 << 4;
+    WDT_KEY = 0xBB;
     // P1_TRG0 |= ; // 好像不用配置触发边沿，默认就是双边沿触发
     P0_IMK |= 0x01 << 7;  // 使能 P07 中断
     __EnableIRQ(P0_IRQn); // 在总中断使能P0中断
     // 使能对应的唤醒通道：
     WKUP_CON0 |= 0x11; // P07 连接到的唤醒单元使能，低电平触发唤醒
+    // WKUP_CON0 |= 0x01; // P07 连接到的唤醒单元使能，高电平触发唤醒
 #endif
 
 // 如果是 使用第 10 脚检测 开关/模式按键 使用第 07 脚检测 加热按键
@@ -72,16 +77,10 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     WKUP_CON0 |= 0x22; // P10 连接到的唤醒单元使能，低电平触发唤醒
 #endif
 
-    // WDT_KEY = 0x55;
-    // WDT_KEY = 0xEE; // 使能WDT唤醒
-    // WDT_KEY = 0x5A; // 使能WDT中断
-    // WDT_KEY = 0xA5; // 关闭WDT中断
-    SYS_CON2 |= 0x04;     // ISD模式下允许WDT复位
-    WDT_KEY = 0x55; // 访问 wdt
-    WDT_CON = 0x07; // 配置1s
-    WDT_KEY = 0xAA; // 喂狗，清除计数
-    WDT_KEY = 0xCC; // 启动看门狗工作
-    // WKUP_CON0 |= 0x0F; // 使能唤醒通道，上升沿唤醒
+    P1_IMK |= 0x01 << 5;  // 使能P15中断
+    __EnableIRQ(P1_IRQn); // 在总中断使能P1中断
+    // 使能对应的唤醒通道：
+    WKUP_CON0 |= 0x01 << 1; // P15 连接到的唤醒单元1使能，高电平触发唤醒
 
     // ======================================================================
     WKPND = 0xFF;          // 唤醒前清除pending
@@ -90,13 +89,19 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     __SLEEP_AFTER_WAKE_UP; // SLEEP唤醒后
     // ======================================================================
 
-    WDT_KEY = 0xDD; // Close WDT
+    P1_IMK &= ~(0x01 << 5);    // 关闭P15中断
+    __DisableIRQ(P1_IRQn);     // 在总中断关闭P1中断
+    WKUP_CON0 &= ~(0x01 << 1); // 关闭P15连接到的唤醒单元
 
     // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
 #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
     // 关闭检测 开关/模式 按键引脚的中断
     P0_IMK &= ~(0x01 << 7); // 使能 P07 中断
-    __DisableIRQ(P0_IRQn);  // 在总中断使能P0中断
+    __DisableIRQ(P0_IRQn);  // 在总中断不使能P0中断
+    WKUP_CON0 &= ~(0x11);   // 关闭P07连接到的唤醒单元
+    WDT_KEY = 0x55;         // 解除写保护
+    IO_MAP &= ~(0x01 << 4);
+    WDT_KEY = 0xBB;
 #endif
 
 // 如果是 使用第 10 脚检测 开关/模式按键 使用第 07 脚检测 加热按键
@@ -110,19 +115,40 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     // WKUP_CON0 &= ~(0x01 << 2); // 关闭TMR2连接到的唤醒单元
 
     // 唤醒后，如果没有检测到 充电或是按着开机/模式按键，重新回到低功耗
-    if (0)
+    if (0 == P07 || P15)
     {
-        goto label_low_power_begin;
+        u8 i = 0;
+        u8 cnt = 0;
+
+        for (i = 0; i < 200; i++)
+        {
+            if (0 == P07 || P15)
+            {
+                cnt++;
+            }
+
+            delay_ms(1);
+        }
+
+        if (cnt >= 180)
+        {
+        }
+        else
+        {
+            goto label_low_power_begin;
+        }
     }
 
     // 重新初始化
     user_config();
+
+    LED_GREEN_ON();
 }
 
-void WDT_IRQHandler(void) interrupt WDT_IRQn
-{
-    if (WDT_CON & 0x40)
-    {
-        WDT_KEY = 0xAA; // feed wdt
-    }
-}
+// void WDT_IRQHandler(void) interrupt WDT_IRQn
+// {
+//     if (WDT_CON & 0x40)
+//     {
+//         WDT_KEY = 0xAA; // feed wdt
+//     }
+// }

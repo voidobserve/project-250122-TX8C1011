@@ -210,9 +210,9 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
 #endif
 
 void user_config(void)
-{ 
+{
 #if 1
-    IE_EA = 1;              // 使能总中断
+    IE_EA = 1; // 使能总中断
     key_config();
     heating_pin_config();    // 加热控制引脚
     speech_ctl_pin_config(); // 控制语音IC电源的引脚
@@ -227,9 +227,14 @@ void user_config(void)
 
     uart1_config();
 
+    // P1_PU |= 0x01 << 5;
+#if 0
     // 不使用的引脚配置为输出，输出低电平
     P1_MD1 |= 0x01 << 2;
     P15 = 0;
+#endif
+
+    // P1_MD1
 }
 
 void main(void)
@@ -249,11 +254,13 @@ void main(void)
 
     user_config();
 
-#if 0
+#if 1
     // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
     LED_GREEN_ON();
+    // LED_RED_ON();
     delay_ms(1000);
     LED_GREEN_OFF();
+    // LED_RED_OFF();
 #endif
 
 #if 0 // 上电时检测电池是否正确安装(测试通过):
@@ -287,13 +294,16 @@ void main(void)
 
 #endif // 上电时检测电池是否正确安装
 
+    // flag_is_enter_low_power = 1;
+
     while (1)
     {
-        // LED_RED_ON();
-        // P15 = 1;
-        low_power();
+
         // LED_RED_OFF();
-        // P15 = 0;
+        // // P15 = 0;
+        // low_power();
+        // // P15 = 1;
+        // LED_RED_ON();
 
 #if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
         if (flag_bat_is_empty)
@@ -307,8 +317,8 @@ void main(void)
         }
 #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
 
-#if 0
-        charge_scan_handle();
+#if 1
+        // charge_scan_handle();
 
         if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
             0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
@@ -367,7 +377,7 @@ void main(void)
 
 #endif // 电机过流检测和处理
 
-#if 0 // 根据控制标志位来控制关机
+#if 1 // 根据控制标志位来控制关机
         if (flag_ctl_dev_close)
         {
             // 如果要关闭设备
@@ -384,7 +394,7 @@ void main(void)
         }
 #endif // 根据控制标志位来控制关机
 
-#if 0  // 低功耗
+#if 1 // 低功耗
 
         {
             if (flag_is_enter_low_power)
@@ -885,7 +895,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             {
                 if (0 == cur_breathing_status)
                 {
-                    cur_breathing_status = 1; 
+                    cur_breathing_status = 1;
                 }
             }
             else
