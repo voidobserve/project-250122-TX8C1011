@@ -33,7 +33,6 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 //     P1_MD0 |= 0x01 << 2; // 输出模式
 // }
 
- 
 void speech_scan_process(void)
 {
     if (flag_is_recv_ctl)
@@ -44,7 +43,8 @@ void speech_scan_process(void)
         cmd = recv_ctl; // 从缓冲区取出控制命名
 
         // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计时
-        flag_is_new_operation = 1; 
+        flag_is_new_operation = 1;
+        delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和标志位
 
         // (用 if-else if 语句会比switch语句更省空间)
         // 根据当前设备的情况，对指令进行处理
@@ -85,10 +85,20 @@ void speech_scan_process(void)
             {
                 // 电机正在运行，不做处理
             }
-        } 
+        }
         else if (CMD_CLOSE_DEV == cmd) // 关闭按摩/按摩枕/按摩器
         {
-            flag_ctl_dev_close = 1;
+            // flag_ctl_dev_close = 1;
+            cur_ctl_heat_status = 0; // 关闭加热
+            motor_pwm_disable();     // 关闭驱动电机的PWM输出：
+            cur_motor_status = 0;    // 表示电机已经关闭
+            cur_motor_dir = 0;       // (记录电机转动方向的变量)清零，回到初始状态
+            interrupt_led_blink();   // 关闭灯光闪烁的动画
+            LED_GREEN_ON(); // 点亮绿灯
+            delay_ms(500);
+            cur_sel_led = CUR_SEL_LED_GREEN; // 选中绿灯，准备让它闪烁
+            cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_1; // 闪烁一次
+            flag_ctl_led_blink = 1; // 使能灯光闪烁
         }
         else if (CMD_OPEN_HEAT == cmd) // 打开加热
         {
@@ -104,9 +114,69 @@ void speech_scan_process(void)
             if (0 != cur_ctl_heat_status)
             {
                 // 如果加热已经开启
-                flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
-                delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
+                // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+                // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
+                interrupt_led_blink();
                 fun_ctl_close_heat();
+            }
+        }
+        else if (CMD_HEAT_FIRST == cmd) // 加热一档
+        {
+            if (0 != cur_ctl_heat_status)
+            {
+                fun_ctl_heat_status(1);
+            }
+        }
+        else if (CMD_HEAT_SECOND == cmd) // 加热二档
+        {
+            if (0 != cur_ctl_heat_status)
+            {
+                fun_ctl_heat_status(2);
+            }
+        }
+        else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
+        {
+            if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+            {
+                fun_ctl_motor_status(1);
+            }
+            else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+            {
+                fun_ctl_motor_status(2);
+            }
+            else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+            {
+                fun_ctl_motor_status(3);
+            }
+            else if (CMD_CHANGE_DIR == cmd) // 换个方向
+            {
+                // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
+                flag_ctl_turn_dir = 1;
+                // 给另外一个标志位置一，让定时器清除自动换方向的计时
+                flag_is_turn_dir_by_speech = 1;
+            }
+        }
+
+#if 0
+        else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+        {
+            if (0 != cur_motor_status)
+            {
+                fun_ctl_motor_status(1);
+            }
+        }
+        else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+        {
+            if (0 != cur_motor_status)
+            {
+                fun_ctl_motor_status(2);
+            }
+        }
+        else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+        {
+            if (0 != cur_motor_status)
+            {
+                fun_ctl_motor_status(3);
             }
         }
         else if (CMD_CHANGE_DIR == cmd) // 换个方向
@@ -120,41 +190,6 @@ void speech_scan_process(void)
                 flag_is_turn_dir_by_speech = 1;
             }
         }
-        else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
-        {
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(1);
-            }
-        }
-        else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
-        { 
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(2);
-            }
-        }
-        else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
-        {
-            if (0 != cur_motor_status)
-            {
-                fun_ctl_motor_status(3);
-            }
-        }
-        else if (CMD_HEAT_FIRST == cmd) // 加热一档
-        {
-            if (0 != cur_ctl_heat_status)
-            {
-                fun_ctl_heat_status(1);
-            }
-        }
-        else if (CMD_HEAT_SECOND == cmd) // 加热二档
-        { 
-            if (0 != cur_ctl_heat_status)
-            {
-                fun_ctl_heat_status(2);
-            }
-        }
+#endif
     }
 }
- 

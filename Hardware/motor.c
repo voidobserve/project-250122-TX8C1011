@@ -1,7 +1,4 @@
 #include "motor.h"
- 
-
-
 
 // ===================================================
 // 电机相关配置                                    //
@@ -19,10 +16,10 @@ volatile u8 cur_motor_dir = 0;
 extern volatile bit flag_tim_scan_maybe_motor_stalling; // 用于给定时器扫描的标志位，可能检测到了电机堵转
 extern volatile bit flag_tim_set_motor_stalling;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
 extern volatile bit flag_ctl_dev_close;                 // 控制标志位，是否要关闭设备
-extern volatile bit flag_is_enter_low_power ; // 标志位，是否要进入低功耗
+extern volatile bit flag_is_enter_low_power;            // 标志位，是否要进入低功耗
 
 // void motor_config(void)
-// { 
+// {
 //     P0_AF0 &= ~0xF0; // P02 复用为 STMR1_PWMB，P03 复用为 STMR1_PWMA
 
 //     // 配置STIMER1
@@ -33,7 +30,7 @@ extern volatile bit flag_is_enter_low_power ; // 标志位，是否要进入低�
 //     // STMR1_CMPAH = STMR1_PRE / 2 / 256;
 //     // STMR1_CMPAL = STMR1_PRE / 2 % 256;
 //     // STMR1_CMPBH = STMR1_PRE / 4 / 256;
-//     // STMR1_CMPBL = STMR1_PRE / 4 % 256; 
+//     // STMR1_CMPBL = STMR1_PRE / 4 % 256;
 //     STMR1_PCONRA = 0x10; // 使能CHA，计数值大于CHA比较值输出0，小于输出1
 //     STMR1_PCONRB = 0x10; // 使能CHB，计数值大于CHA比较值输出0，小于输出1
 //     STMR1_CR |= 0x01;    // 使能高级定时器
@@ -148,14 +145,13 @@ void motor_over_current_detect_handle(void)
 
     if (0 == cur_motor_status)
     {
+        // 清空对应的标志位，不让定时器进行连续计时
+        flag_tim_scan_maybe_motor_stalling = 0;
         return; // 电机没有运行，函数直接返回
     }
 
     adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
-    // adc_val = adc_get_val_once();
     adc_val = adc_get_val();
-    
-
     if (adc_val >= MOTOR_STALLING_AD_VAL)
     {
         // 让定时器进行连续计时
@@ -170,8 +166,7 @@ void motor_over_current_detect_handle(void)
     if (flag_tim_set_motor_stalling)
     {
         // 如果确实检测到了电机堵转
-        flag_ctl_dev_close = 1; // 让主循环关闭设备
+        flag_ctl_dev_close = 1;      // 让主循环关闭设备
         flag_is_enter_low_power = 1; // 允许进入低功耗
     }
 }
- 

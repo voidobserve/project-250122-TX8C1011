@@ -13,10 +13,16 @@
 	检测电池电压的分压系数 == 330K / (1M + 330K)
 	约为 0.24812030075187969924812030075188
 */
+
+/*
+	当前检测是否充电的ad，使用外部3.3K上拉，2.2K下拉，
+	分压系数 == 2.2 / (2.2 + 3.3)
+	为 0.4
+*/
 #define ADCDETECT_CHARING_THRESHOLD 2048 // 检测是否充电的adc值
  
 // 充电时，检测到电池满电时对应的ad值
-#define ADCDETECT_BAT_FULL (3557) //  
+#define ADCDETECT_BAT_FULL (3557) //  8.4V对应的ad值
 #define ADCDETECT_BAT_NULL_EX (280)
   
 

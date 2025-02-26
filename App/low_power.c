@@ -3,9 +3,10 @@
 extern void user_config(void);
 
 void low_power(void)
-{
+{   
+    // 如果是长按关机，下面的判断会导致无法进入低功耗
     // 如果一直按着开机/模式按键，返回
-    // if (P15 || 0 == P07)
+    // if (P15 || 0 == P07) // 如果检测到在充电或是按着开机按键
     // if (0 == P07)
     // {
     //     return;
@@ -45,7 +46,7 @@ label_low_power_begin: // 标签，刚开始进入低功耗
 #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
     // 关闭检测按键的上拉
     // P0_PU &= ~(0x01 << 7); // 不能关闭这个上拉电阻，会无法唤醒
-    P1_PU &= ~0x01;
+    P1_PU &= ~0x01; // 关闭P10的上拉
 
     // 将检测加热按键的引脚配置为输出模式，输出低电平：
     P1_MD0 &= ~0x03; //
@@ -56,7 +57,7 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     WDT_KEY = 0x55; // 解除写保护
     IO_MAP |= 0x01 << 4;
     WDT_KEY = 0xBB;
-    // P1_TRG0 |= ; // 好像不用配置触发边沿，默认就是双边沿触发
+    // P1_TRG0 |= ; // 不用配置触发边沿，默认就是双边沿触发
     P0_IMK |= 0x01 << 7;  // 使能 P07 中断
     __EnableIRQ(P0_IRQn); // 在总中断使能P0中断
     // 使能对应的唤醒通道：
@@ -96,7 +97,7 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
 #ifdef USE_P07_DETECT_MODE_USE_P10_DETECT_HEAT
     // 关闭检测 开关/模式 按键引脚的中断
-    P0_IMK &= ~(0x01 << 7); // 使能 P07 中断
+    P0_IMK &= ~(0x01 << 7); // 不使能 P07 中断
     __DisableIRQ(P0_IRQn);  // 在总中断不使能P0中断
     WKUP_CON0 &= ~(0x11);   // 关闭P07连接到的唤醒单元
     WDT_KEY = 0x55;         // 解除写保护
@@ -110,9 +111,6 @@ label_low_power_begin: // 标签，刚开始进入低功耗
     P1_IMK &= ~0x01;       // 关闭P10中断
     __DisableIRQ(P1_IRQn); // 在总中断关闭P1中断
 #endif
-
-    // 关闭TMR2的中断
-    // WKUP_CON0 &= ~(0x01 << 2); // 关闭TMR2连接到的唤醒单元
 
     // 唤醒后，如果没有检测到 充电或是按着开机/模式按键，重新回到低功耗
     if (0 == P07 || P15)
@@ -152,3 +150,19 @@ label_low_power_begin: // 标签，刚开始进入低功耗
 //         WDT_KEY = 0xAA; // feed wdt
 //     }
 // }
+
+void P0_IRQHandler(void) interrupt P0_IRQn
+{
+    // if (P0_PND)
+    {
+        P0_PND = 0; // 清 中断标志位
+    }
+}
+
+void P1_IRQHandler(void) interrupt P1_IRQn
+{
+    // if (P1_PND)
+    {
+        P1_PND = 0; // 清 中断标志位
+    }
+}

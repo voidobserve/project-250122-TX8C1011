@@ -1,0 +1,36 @@
+[02-26 14:16:15]Log start
+[02-26 14:16:15]Serial init start!
+[02-26 14:16:15]Serial close ok!
+[02-26 14:16:15]Serial init start!
+[02-26 14:16:15]Download driver ok!
+[02-26 14:16:15]uart_txm8c1010_set_driver:0x0
+[02-26 14:16:15]user uart set driver ok!
+[02-26 14:16:15]TXLink ready ok!
+[02-26 14:16:16]TXLink init failed!
+[02-26 14:16:19]DllUv3Cap:0x2
+[02-26 14:16:19]DllUv3Cap:0x6d
+[02-26 14:16:19]DllUv3Cap:0x1
+[02-26 14:16:19]Serial init start!
+[02-26 14:16:19]Serial close ok!
+[02-26 14:16:19]Serial init start!
+[02-26 14:16:19]uart_txm8c1010_set_driver:0x0
+[02-26 14:16:19]user uart set driver ok!
+[02-26 14:16:19]TXLink ready ok!
+[02-26 14:16:20]TXLink init failed!
+[02-26 14:16:20]Serial close ok!
+[02-26 14:16:21]Serial init start!
+[02-26 14:16:21]Serial close ok!
+[02-26 14:16:21]Serial init start!
+[02-26 14:16:21]uart_txm8c1010_set_driver:0x0
+[02-26 14:16:21]user uart set driver ok!
+[02-26 14:16:21]TXLink ready ok!
+[02-26 14:16:22]TXLink init failed!
+[02-26 14:16:22]Serial close ok!
+[02-26 14:16:23]Serial init start!
+[02-26 14:16:23]Serial close ok!
+[02-26 14:16:23]Serial init start!
+[02-26 14:16:23]uart_txm8c1010_set_driver:0x0
+[02-26 14:16:23]user uart set driver ok!
+[02-26 14:16:23]TXLink ready ok!
+[02-26 14:16:23]TXLink init failed!
+[02-26 14:16:23]Serial close ok!

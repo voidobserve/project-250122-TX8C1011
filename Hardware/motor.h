@@ -12,7 +12,7 @@ extern volatile u8 cur_motor_status;
 extern volatile u8 cur_motor_dir;
 
 // void motor_config(void);
-void motor_pwm_enable(void);
+// void motor_pwm_enable(void);
 void motor_pwm_a_enable(void);
 void motor_pwm_b_enable(void);
 

@@ -1,1 +1,0 @@
-"..\..\Hardware\tmr1.c" OPTIMIZE (9,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\tmr1.lst) OBJECT(.\Release\Objects\tmr1.obj)

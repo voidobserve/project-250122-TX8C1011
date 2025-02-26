@@ -6,8 +6,10 @@
 volatile u8 cur_sel_led = CUR_SEL_LED_NONE;
 volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要控制灯光闪烁的次数
 
+extern volatile bit flag_ctl_led_blink; // 控制标志位，是否控制指示灯闪烁
+
 // void led_config(void)
-// { 
+// {
 //     // P12、P13对应的LED都使用PWM来驱动
 //     P1_MD0 |= 0xA0; // P12、P13都配置为多功能IO模式
 //     // P1_AF0 &= ~(0x0F); // (可以不写，默认就是0)P12复用为 STMR2_CHB 、P13复用为 STMR2_CHA
@@ -27,6 +29,13 @@ volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要�
 //     STMR2_CR |= 0x01;    // 使能高级定时器
 // }
 
+// 打断LED闪烁 
+void interrupt_led_blink(void)
+{
+    flag_ctl_led_blink = 0;
+    delay_ms(1);
+}
+
 void led_red_on(void)
 {
 #ifdef USE_P13_RLED_USE_P12_GLED
@@ -34,7 +43,7 @@ void led_red_on(void)
     P1_MD0 |= 0x02 << 6;                 // 多功能IO模式
     P1_AF0 &= ~(0x03 << 6);              // 复用为 STMR2_CHA
     STMR2_CMPAH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
-    STMR2_CMPAL = (STMR2_PRE + 1) % 256; 
+    STMR2_CMPAL = (STMR2_PRE + 1) % 256;
 #endif
 
 #ifdef USE_P12_RLED_USE_P13_GLED
@@ -63,7 +72,7 @@ void led_red_off(void)
 
 void led_green_on(void)
 {
-#ifdef USE_P13_RLED_USE_P12_GLED 
+#ifdef USE_P13_RLED_USE_P12_GLED
     P1_MD0 &= ~(0x03 << 4);
     P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
     P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
@@ -76,13 +85,13 @@ void led_green_on(void)
     P1_MD0 |= 0x02 << 6;                 // 多功能IO模式
     P1_AF0 &= ~(0x03 << 6);              // 复用为 STMR2_CHA
     STMR2_CMPAH = (STMR2_PRE + 1) / 256; // 通道A占空比  100%
-    STMR2_CMPAL = (STMR2_PRE + 1) % 256; 
+    STMR2_CMPAL = (STMR2_PRE + 1) % 256;
 #endif
 }
 
 void led_green_off(void)
 {
-#ifdef USE_P13_RLED_USE_P12_GLED 
+#ifdef USE_P13_RLED_USE_P12_GLED
     P1_MD0 &= ~(0x03 << 4);
     P1_MD0 |= 0x01 << 4; // 输出模式
     P12 = 0;             // 输出低电平

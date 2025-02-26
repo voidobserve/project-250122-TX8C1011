@@ -29,6 +29,7 @@ enum
 };
 extern volatile u8 cur_ctl_led_blink_cnt; // 记录当前要控制灯光闪烁的次数
 
+void interrupt_led_blink(void); 
 // void led_config(void);
 void led_red_on(void);
 void led_red_off(void);
