@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/26/2025 17:57:49 PAGE 1   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 09:03:51 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LOW_POWER
@@ -62,7 +62,7 @@ line level    source
   48   1          // P0_PU &= ~(0x01 << 7); // 不能关闭这个上拉电阻，会无法唤醒
   49   1          P1_PU &= ~0x01; // 关闭P10的上拉
   50   1      
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/26/2025 17:57:49 PAGE 2   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 09:03:51 PAGE 2   
 
   51   1          // 将检测加热按键的引脚配置为输出模式，输出低电平：
   52   1          P1_MD0 &= ~0x03; //
@@ -126,7 +126,7 @@ line level    source
  108   1      // 如果是 使用第 10 脚检测 开关/模式按键 使用第 07 脚检测 加热按键
  109   1      #ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
                   // 关闭检测 开关/模式 按键引脚的中断
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/26/2025 17:57:49 PAGE 3   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 09:03:51 PAGE 3   
 
                   P1_IMK &= ~0x01;       // 关闭P10中断
                   __DisableIRQ(P1_IRQn); // 在总中断关闭P1中断
@@ -190,7 +190,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    328    ----
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/26/2025 17:57:49 PAGE 4   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 09:03:51 PAGE 4   
 
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----

@@ -63,8 +63,8 @@ void charge_scan_handle(void)
     {
         flag_is_disable_to_open = 1;
     }
-    else if (adc_bat_val > (LOW_BAT_ALARM_AD_VAL + 15))
-    // else
+    // else if (adc_bat_val > (LOW_BAT_ALARM_AD_VAL + 15))
+    else
     {
         flag_is_disable_to_open = 0;
         flag_tim_scan_maybe_low_bat = 0;

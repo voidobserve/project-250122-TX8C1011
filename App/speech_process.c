@@ -23,6 +23,8 @@ extern volatile bit flag_is_turn_dir_by_speech;
 */
 extern volatile bit flag_is_new_operation;
 
+extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
+
 extern void fun_ctl_motor_status(u8 adjust_motor_status);
 extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
@@ -93,12 +95,13 @@ void speech_scan_process(void)
             motor_pwm_disable();     // 关闭驱动电机的PWM输出：
             cur_motor_status = 0;    // 表示电机已经关闭
             cur_motor_dir = 0;       // (记录电机转动方向的变量)清零，回到初始状态
-            interrupt_led_blink();   // 关闭灯光闪烁的动画
-            LED_GREEN_ON(); // 点亮绿灯
-            delay_ms(500);
-            cur_sel_led = CUR_SEL_LED_GREEN; // 选中绿灯，准备让它闪烁
+            LED_RED_OFF();
+            interrupt_led_blink(); // 关闭灯光闪烁的动画
+            LED_GREEN_ON();        // 点亮绿灯
+            delay_ms(100);
+            cur_sel_led = CUR_SEL_LED_GREEN;             // 选中绿灯，准备让它闪烁
             cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_1; // 闪烁一次
-            flag_ctl_led_blink = 1; // 使能灯光闪烁
+            flag_ctl_led_blink = 1;                      // 使能灯光闪烁
         }
         else if (CMD_OPEN_HEAT == cmd) // 打开加热
         {
@@ -117,77 +120,107 @@ void speech_scan_process(void)
                 // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
                 // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
                 interrupt_led_blink();
-                fun_ctl_close_heat();
+                fun_ctl_close_heat(); 
+                delay_ms(100);
+                cur_sel_led = CUR_SEL_LED_GREEN;
+                cur_ctl_led_blink_cnt = 1;
+                flag_ctl_led_blink = 1;
             }
         }
         else if (CMD_HEAT_FIRST == cmd) // 加热一档
         {
-            if (0 != cur_ctl_heat_status)
+            // if (0 != cur_ctl_heat_status)
             {
                 fun_ctl_heat_status(1);
             }
         }
         else if (CMD_HEAT_SECOND == cmd) // 加热二档
         {
-            if (0 != cur_ctl_heat_status)
+            // if (0 != cur_ctl_heat_status)
             {
                 fun_ctl_heat_status(2);
             }
         }
-        else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
-        {
-            if (CMD_INTENSITY_FIRST == cmd) // 力度一档
-            {
-                fun_ctl_motor_status(1);
-            }
-            else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
-            {
-                fun_ctl_motor_status(2);
-            }
-            else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
-            {
-                fun_ctl_motor_status(3);
-            }
-            else if (CMD_CHANGE_DIR == cmd) // 换个方向
-            {
-                // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
-                flag_ctl_turn_dir = 1;
-                // 给另外一个标志位置一，让定时器清除自动换方向的计时
-                flag_is_turn_dir_by_speech = 1;
-            }
-        }
+        // else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
+        // {
+        //     if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+        //     {
+        //         fun_ctl_motor_status(1);
+        //     }
+        //     else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+        //     {
+        //         fun_ctl_motor_status(2);
+        //     }
+        //     else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+        //     {
+        //         fun_ctl_motor_status(3);
+        //     }
+        //     else if (CMD_CHANGE_DIR == cmd) // 换个方向
+        //     {
+        //         // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
+        //         flag_ctl_turn_dir = 1;
+        //         // 给另外一个标志位置一，让定时器清除自动换方向的计时
+        //         flag_is_turn_dir_by_speech = 1;
+        //     }
+        // }
 
-#if 0
+#if 1
         else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
         {
-            if (0 != cur_motor_status)
+            // if (0 != cur_motor_status)
             {
                 fun_ctl_motor_status(1);
             }
         }
         else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
         {
-            if (0 != cur_motor_status)
+            // if (0 != cur_motor_status)
             {
                 fun_ctl_motor_status(2);
             }
         }
         else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
         {
-            if (0 != cur_motor_status)
+            // if (0 != cur_motor_status)
             {
                 fun_ctl_motor_status(3);
             }
         }
         else if (CMD_CHANGE_DIR == cmd) // 换个方向
         {
-            if (0 != cur_motor_status)
+            // if (0 != cur_motor_status)
+            if (cur_motor_status) // 电机还在运行，才执行下面语句块
             {
                 // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
                 flag_ctl_turn_dir = 1;
 
                 // 给另外一个标志位置一，让定时器清除自动换方向的计时
                 flag_is_turn_dir_by_speech = 1;
+
+                // 让灯光闪烁一次
+                interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
+
+                // 如果不处于低电量报警状态，才使能LED闪烁功能：
+                if (0 == flag_ctl_low_bat_alarm)
+                {
+                    if (0 == cur_ctl_heat_status)
+                    {
+                        // 如果没有打开加热，让绿灯闪烁
+                        LED_RED_OFF();
+                        LED_GREEN_ON();
+                        cur_sel_led = CUR_SEL_LED_GREEN;
+                    }
+                    else
+                    {
+                        // 如果打开了加热，让红灯闪烁
+                        LED_GREEN_OFF();
+                        LED_RED_ON();
+                        cur_sel_led = CUR_SEL_LED_RED;
+                    }
+
+                    cur_ctl_led_blink_cnt = 1; // 指定led闪烁次数
+                    flag_ctl_led_blink = 1;    // 打开LED闪烁的功能
+                }
             }
         }
 #endif

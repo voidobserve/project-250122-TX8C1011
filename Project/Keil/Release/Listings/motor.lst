@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/26/2025 17:57:48 PAGE 1   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   47          //     // P0_AF0 &= ~0xF0;
   48          //     STMR1_CR |= 0x01; // 使能高级定时器
   49          // }
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/26/2025 17:57:48 PAGE 2   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 2   
 
   50          
   51          void motor_pwm_a_enable(void)
@@ -126,75 +126,76 @@ line level    source
  109          #define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
  110          #define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
  111          void alter_motor_speed(u8 adjust_motor_status)
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/26/2025 17:57:48 PAGE 3   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 3   
 
  112          {
- 113   1          if (0 == adjust_motor_status)
- 114   1          {
- 115   2              // T0DATA = 0;
- 116   2              // T1DATA = 0;
- 117   2          }
- 118   1          else if (1 == adjust_motor_status)
- 119   1          {
- 120   2              STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
- 121   2              STMR1_CMPAL = __MOTOR_LEVEL_1 % 256;
- 122   2              STMR1_CMPBH = __MOTOR_LEVEL_1 / 256;
- 123   2              STMR1_CMPBL = __MOTOR_LEVEL_1 % 256;
- 124   2          }
- 125   1          else if (2 == adjust_motor_status)
- 126   1          {
- 127   2              STMR1_CMPAH = __MOTOR_LEVEL_2 / 256;
- 128   2              STMR1_CMPAL = __MOTOR_LEVEL_2 % 256;
- 129   2              STMR1_CMPBH = __MOTOR_LEVEL_2 / 256;
- 130   2              STMR1_CMPBL = __MOTOR_LEVEL_2 % 256;
- 131   2          }
- 132   1          else if (3 == adjust_motor_status)
- 133   1          {
- 134   2              STMR1_CMPAH = __MOTOR_LEVEL_3 / 256;
- 135   2              STMR1_CMPAL = __MOTOR_LEVEL_3 % 256;
- 136   2              STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
- 137   2              STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
- 138   2          }
- 139   1      }
- 140          
- 141          // 电机过流检测和相关处理
- 142          void motor_over_current_detect_handle(void)
- 143          {
- 144   1          u16 adc_val = 0;
- 145   1      
- 146   1          if (0 == cur_motor_status)
- 147   1          {
- 148   2              // 清空对应的标志位，不让定时器进行连续计时
- 149   2              flag_tim_scan_maybe_motor_stalling = 0;
- 150   2              return; // 电机没有运行，函数直接返回
- 151   2          }
- 152   1      
- 153   1          adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
- 154   1          adc_val = adc_get_val();
- 155   1          if (adc_val >= MOTOR_STALLING_AD_VAL)
- 156   1          {
- 157   2              // 让定时器进行连续计时
- 158   2              flag_tim_scan_maybe_motor_stalling = 1;
- 159   2          }
- 160   1          else
- 161   1          {
- 162   2              // 清空对应的标志位，不让定时器进行连续计时
- 163   2              flag_tim_scan_maybe_motor_stalling = 0;
- 164   2          }
- 165   1      
- 166   1          if (flag_tim_set_motor_stalling)
- 167   1          {
- 168   2              // 如果确实检测到了电机堵转
- 169   2              flag_ctl_dev_close = 1;      // 让主循环关闭设备
- 170   2              flag_is_enter_low_power = 1; // 允许进入低功耗
- 171   2          }
- 172   1      }
+ 113   1          // if (0 == adjust_motor_status)
+ 114   1          // {
+ 115   1          //     // T0DATA = 0;
+ 116   1          //     // T1DATA = 0;
+ 117   1          // }
+ 118   1          // else if (1 == adjust_motor_status)
+ 119   1          if (1 == adjust_motor_status)
+ 120   1          {
+ 121   2              STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
+ 122   2              STMR1_CMPAL = __MOTOR_LEVEL_1 % 256;
+ 123   2              STMR1_CMPBH = __MOTOR_LEVEL_1 / 256;
+ 124   2              STMR1_CMPBL = __MOTOR_LEVEL_1 % 256;
+ 125   2          }
+ 126   1          else if (2 == adjust_motor_status)
+ 127   1          {
+ 128   2              STMR1_CMPAH = __MOTOR_LEVEL_2 / 256;
+ 129   2              STMR1_CMPAL = __MOTOR_LEVEL_2 % 256;
+ 130   2              STMR1_CMPBH = __MOTOR_LEVEL_2 / 256;
+ 131   2              STMR1_CMPBL = __MOTOR_LEVEL_2 % 256;
+ 132   2          }
+ 133   1          else if (3 == adjust_motor_status)
+ 134   1          {
+ 135   2              STMR1_CMPAH = __MOTOR_LEVEL_3 / 256;
+ 136   2              STMR1_CMPAL = __MOTOR_LEVEL_3 % 256;
+ 137   2              STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
+ 138   2              STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
+ 139   2          }
+ 140   1      }
+ 141          
+ 142          // 电机过流检测和相关处理
+ 143          void motor_over_current_detect_handle(void)
+ 144          {
+ 145   1          u16 adc_val = 0;
+ 146   1      
+ 147   1          if (0 == cur_motor_status)
+ 148   1          {
+ 149   2              // 清空对应的标志位，不让定时器进行连续计时
+ 150   2              flag_tim_scan_maybe_motor_stalling = 0;
+ 151   2              return; // 电机没有运行，函数直接返回
+ 152   2          }
+ 153   1      
+ 154   1          adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
+ 155   1          adc_val = adc_get_val();
+ 156   1          if (adc_val >= MOTOR_STALLING_AD_VAL)
+ 157   1          {
+ 158   2              // 让定时器进行连续计时
+ 159   2              flag_tim_scan_maybe_motor_stalling = 1;
+ 160   2          }
+ 161   1          else
+ 162   1          {
+ 163   2              // 清空对应的标志位，不让定时器进行连续计时
+ 164   2              flag_tim_scan_maybe_motor_stalling = 0;
+ 165   2          }
+ 166   1      
+ 167   1          if (flag_tim_set_motor_stalling)
+ 168   1          {
+ 169   2              // 如果确实检测到了电机堵转
+ 170   2              flag_ctl_dev_close = 1;      // 让主循环关闭设备
+ 171   2              flag_is_enter_low_power = 1; // 允许进入低功耗
+ 172   2          }
+ 173   1      }
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 4   
 
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/26/2025 17:57:48 PAGE 4   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    175    ----
+   CODE SIZE        =    172    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

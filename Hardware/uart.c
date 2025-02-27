@@ -71,6 +71,7 @@ void UART1_IRQHandler(void) interrupt UART1_IRQn
             // 如果已经接收了格式头和控制命令，开始计算校验
             // 校验 == (格式头 + 控制命令) & 0xFF
             if (((FORMAT_HEAD + recv_data) & 0xFF) == UART1_DATA)
+            // if ((u8)(FORMAT_HEAD + recv_data)  == UART1_DATA)
             {
                 // 给对应的标志位置一，让主循环来扫描并处理对应的控制命令
                 // 将控制命令存放到另外的变量中，不占用串口接收的缓冲

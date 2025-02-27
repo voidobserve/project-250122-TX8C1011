@@ -46,14 +46,13 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 // ad按键扫描检测函数，需要放到周期为10ms的循环内执行
 void key_scan_10ms_isr(void)
 {
-    u8 i = 0; // 循环计数值
     static volatile u8 last_key_id = KEY_ID_NONE;
     static volatile u8 press_cnt = 0; // 按键按下的时间计数
     // static volatile u8 filter_cnt = 0;              // 按键消抖，使用的变量
     // static volatile u8 filter_key_id = KEY_ID_NONE; // 按键消抖时使用的变量
     volatile u8 cur_key_id = KEY_ID_NONE;
 
-    static volatile bit flag_is_key_mode_hold = 0;
+    static volatile bit flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
 
 #ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
     if (0 == P10) // 开关/模式 按键 优先级要高于 加热 按键
@@ -209,6 +208,7 @@ void key_event_handle(void)
             }
             else
             {
+                SPEECH_POWER_ENABLE();
                 fun_ctl_power_on();                     
             } 
         }

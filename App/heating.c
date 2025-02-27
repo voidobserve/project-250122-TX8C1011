@@ -27,7 +27,7 @@ void fun_ctl_close_heat(void)
     {
         LED_RED_OFF(); // 关闭红色指示灯
 
-        if (0 != cur_motor_status)
+        // if (0 != cur_motor_status)
         {
             // 如果电机还在运行，才显示绿灯
             // 防止关闭了电机，打开了加热，又关闭加热的情况

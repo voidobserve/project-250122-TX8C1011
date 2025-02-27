@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/26/2025 17:57:49 PAGE 1   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 10:20:48 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SPEECH_PROCESS
@@ -37,193 +37,228 @@ line level    source
   23          */
   24          extern volatile bit flag_is_new_operation;
   25          
-  26          extern void fun_ctl_motor_status(u8 adjust_motor_status);
-  27          extern void fun_ctl_heat_status(u8 adjust_heat_status);
-  28          
-  29          // 初始化控制语音IC电源的引脚
-  30          // void speech_ctl_pin_config(void)
-  31          // {
-  32          //     // P11
-  33          //     P1_MD0 |= 0x01 << 2; // 输出模式
-  34          // }
-  35          
-  36          void speech_scan_process(void)
-  37          {
-  38   1          if (flag_is_recv_ctl)
-  39   1          {
-  40   2              // 如果接收到了正确的控制命令
-  41   2              volatile u8 cmd = 0;
-  42   2              flag_is_recv_ctl = 0;
-  43   2              cmd = recv_ctl; // 从缓冲区取出控制命名
-  44   2      
-  45   2              // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计�
+  26          extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
+  27          
+  28          extern void fun_ctl_motor_status(u8 adjust_motor_status);
+  29          extern void fun_ctl_heat_status(u8 adjust_heat_status);
+  30          
+  31          // 初始化控制语音IC电源的引脚
+  32          // void speech_ctl_pin_config(void)
+  33          // {
+  34          //     // P11
+  35          //     P1_MD0 |= 0x01 << 2; // 输出模式
+  36          // }
+  37          
+  38          void speech_scan_process(void)
+  39          {
+  40   1          if (flag_is_recv_ctl)
+  41   1          {
+  42   2              // 如果接收到了正确的控制命令
+  43   2              volatile u8 cmd = 0;
+  44   2              flag_is_recv_ctl = 0;
+  45   2              cmd = recv_ctl; // 从缓冲区取出控制命名
+  46   2      
+  47   2              // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计�
              -�
-  46   2              flag_is_new_operation = 1;
-  47   2              delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和
+  48   2              flag_is_new_operation = 1;
+  49   2              delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 10:20:48 PAGE 2   
+
              -标志位
-  48   2      
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/26/2025 17:57:49 PAGE 2   
-
-  49   2              // (用 if-else if 语句会比switch语句更省空间)
-  50   2              // 根据当前设备的情况，对指令进行处理
-  51   2              if (CMD_OPEN_DEV == cmd) // 打开按摩/按摩枕/按摩器
-  52   2              {
-  53   3                  // 如果当前电机是关闭的，才对 开机控制命令进行处理
-  54   3                  if (0 == cur_motor_status)
-  55   3                  {
-  56   4                      alter_motor_speed(2); // 开机后，电机进入二档
-  57   4                      motor_pwm_b_enable(); // 电机正向转动
-  58   4      
-  59   4                      cur_motor_dir = 1;    // 表示当前电机在正转
-  60   4                      cur_motor_status = 2; // 更新电机挡位状态
-  61   4      
-  62   4                      // 如果不处于低电量报警状态，才使能LED闪烁功能：
-  63   4                      if (0 == flag_tim_set_bat_is_low)
-  64   4                      {
-  65   5                          if (0 == cur_ctl_heat_status)
-  66   5                          {
-  67   6                              // 如果没有打开加热，让绿灯闪烁
-  68   6                              LED_RED_OFF();
-  69   6                              LED_GREEN_ON();
-  70   6                              cur_sel_led = CUR_SEL_LED_GREEN;
-  71   6                          }
-  72   5                          else
-  73   5                          {
-  74   6                              // 如果打开了加热，让红灯闪烁
-  75   6                              LED_GREEN_OFF();
-  76   6                              LED_RED_ON();
-  77   6                              cur_sel_led = CUR_SEL_LED_RED;
-  78   6                          }
-  79   5      
-  80   5                          cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位�
+  50   2      
+  51   2              // (用 if-else if 语句会比switch语句更省空间)
+  52   2              // 根据当前设备的情况，对指令进行处理
+  53   2              if (CMD_OPEN_DEV == cmd) // 打开按摩/按摩枕/按摩器
+  54   2              {
+  55   3                  // 如果当前电机是关闭的，才对 开机控制命令进行处理
+  56   3                  if (0 == cur_motor_status)
+  57   3                  {
+  58   4                      alter_motor_speed(2); // 开机后，电机进入二档
+  59   4                      motor_pwm_b_enable(); // 电机正向转动
+  60   4      
+  61   4                      cur_motor_dir = 1;    // 表示当前电机在正转
+  62   4                      cur_motor_status = 2; // 更新电机挡位状态
+  63   4      
+  64   4                      // 如果不处于低电量报警状态，才使能LED闪烁功能：
+  65   4                      if (0 == flag_tim_set_bat_is_low)
+  66   4                      {
+  67   5                          if (0 == cur_ctl_heat_status)
+  68   5                          {
+  69   6                              // 如果没有打开加热，让绿灯闪烁
+  70   6                              LED_RED_OFF();
+  71   6                              LED_GREEN_ON();
+  72   6                              cur_sel_led = CUR_SEL_LED_GREEN;
+  73   6                          }
+  74   5                          else
+  75   5                          {
+  76   6                              // 如果打开了加热，让红灯闪烁
+  77   6                              LED_GREEN_OFF();
+  78   6                              LED_RED_ON();
+  79   6                              cur_sel_led = CUR_SEL_LED_RED;
+  80   6                          }
+  81   5      
+  82   5                          cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位�
              -�关
-  81   5                          flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
-  82   5                      }
-  83   4                  }
-  84   3                  else
-  85   3                  {
-  86   4                      // 电机正在运行，不做处理
-  87   4                  }
-  88   3              }
-  89   2              else if (CMD_CLOSE_DEV == cmd) // 关闭按摩/按摩枕/按摩器
-  90   2              {
-  91   3                  // flag_ctl_dev_close = 1;
-  92   3                  cur_ctl_heat_status = 0; // 关闭加热
-  93   3                  motor_pwm_disable();     // 关闭驱动电机的PWM输出：
-  94   3                  cur_motor_status = 0;    // 表示电机已经关闭
-  95   3                  cur_motor_dir = 0;       // (记录电机转动方向的变量)清零，回到初始状态
-  96   3                  interrupt_led_blink();   // 关闭灯光闪烁的动画
-  97   3                  LED_GREEN_ON(); // 点亮绿灯
-  98   3                  delay_ms(500);
-  99   3                  cur_sel_led = CUR_SEL_LED_GREEN; // 选中绿灯，准备让它闪烁
- 100   3                  cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_1; // 闪烁一次
- 101   3                  flag_ctl_led_blink = 1; // 使能灯光闪烁
- 102   3              }
- 103   2              else if (CMD_OPEN_HEAT == cmd) // 打开加热
- 104   2              {
- 105   3                  if (0 == cur_ctl_heat_status)
- 106   3                  {
- 107   4                      // 如果加热没有开启
- 108   4                      // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
- 109   4                      fun_ctl_heat_status(0);
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/26/2025 17:57:49 PAGE 3   
+  83   5                          flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
+  84   5                      }
+  85   4                  }
+  86   3                  else
+  87   3                  {
+  88   4                      // 电机正在运行，不做处理
+  89   4                  }
+  90   3              }
+  91   2              else if (CMD_CLOSE_DEV == cmd) // 关闭按摩/按摩枕/按摩器
+  92   2              {
+  93   3                  // flag_ctl_dev_close = 1;
+  94   3                  cur_ctl_heat_status = 0; // 关闭加热
+  95   3                  motor_pwm_disable();     // 关闭驱动电机的PWM输出：
+  96   3                  cur_motor_status = 0;    // 表示电机已经关闭
+  97   3                  cur_motor_dir = 0;       // (记录电机转动方向的变量)清零，回到初始状态
+  98   3                  LED_RED_OFF();
+  99   3                  interrupt_led_blink(); // 关闭灯光闪烁的动画
+ 100   3                  LED_GREEN_ON();        // 点亮绿灯
+ 101   3                  delay_ms(100);
+ 102   3                  cur_sel_led = CUR_SEL_LED_GREEN;             // 选中绿灯，准备让它闪烁
+ 103   3                  cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_1; // 闪烁一次
+ 104   3                  flag_ctl_led_blink = 1;                      // 使能灯光闪烁
+ 105   3              }
+ 106   2              else if (CMD_OPEN_HEAT == cmd) // 打开加热
+ 107   2              {
+ 108   3                  if (0 == cur_ctl_heat_status)
+ 109   3                  {
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 10:20:48 PAGE 3   
 
- 110   4                  }
- 111   3              }
- 112   2              else if (CMD_CLOSE_HEAT == cmd) // 关闭加热
- 113   2              {
- 114   3                  if (0 != cur_ctl_heat_status)
- 115   3                  {
- 116   4                      // 如果加热已经开启
- 117   4                      // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
- 118   4                      // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志
+ 110   4                      // 如果加热没有开启
+ 111   4                      // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
+ 112   4                      fun_ctl_heat_status(0);
+ 113   4                  }
+ 114   3              }
+ 115   2              else if (CMD_CLOSE_HEAT == cmd) // 关闭加热
+ 116   2              {
+ 117   3                  if (0 != cur_ctl_heat_status)
+ 118   3                  {
+ 119   4                      // 如果加热已经开启
+ 120   4                      // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+ 121   4                      // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志
              -和变量，否则打断闪灯的效果会变差
- 119   4                      interrupt_led_blink();
- 120   4                      fun_ctl_close_heat();
- 121   4                  }
- 122   3              }
- 123   2              else if (CMD_HEAT_FIRST == cmd) // 加热一档
- 124   2              {
- 125   3                  if (0 != cur_ctl_heat_status)
- 126   3                  {
- 127   4                      fun_ctl_heat_status(1);
+ 122   4                      interrupt_led_blink();
+ 123   4                      fun_ctl_close_heat(); 
+ 124   4                      delay_ms(100);
+ 125   4                      cur_sel_led = CUR_SEL_LED_GREEN;
+ 126   4                      cur_ctl_led_blink_cnt = 1;
+ 127   4                      flag_ctl_led_blink = 1;
  128   4                  }
  129   3              }
- 130   2              else if (CMD_HEAT_SECOND == cmd) // 加热二档
+ 130   2              else if (CMD_HEAT_FIRST == cmd) // 加热一档
  131   2              {
- 132   3                  if (0 != cur_ctl_heat_status)
+ 132   3                  // if (0 != cur_ctl_heat_status)
  133   3                  {
- 134   4                      fun_ctl_heat_status(2);
+ 134   4                      fun_ctl_heat_status(1);
  135   4                  }
  136   3              }
- 137   2              else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的�
-             -�况下，再做处理，否则不会进入 */
+ 137   2              else if (CMD_HEAT_SECOND == cmd) // 加热二档
  138   2              {
- 139   3                  if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+ 139   3                  // if (0 != cur_ctl_heat_status)
  140   3                  {
- 141   4                      fun_ctl_motor_status(1);
+ 141   4                      fun_ctl_heat_status(2);
  142   4                  }
- 143   3                  else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
- 144   3                  {
- 145   4                      fun_ctl_motor_status(2);
- 146   4                  }
- 147   3                  else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
- 148   3                  {
- 149   4                      fun_ctl_motor_status(3);
- 150   4                  }
- 151   3                  else if (CMD_CHANGE_DIR == cmd) // 换个方向
- 152   3                  {
- 153   4                      // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500
-             -ms
- 154   4                      flag_ctl_turn_dir = 1;
- 155   4                      // 给另外一个标志位置一，让定时器清除自动换方向的计时
- 156   4                      flag_is_turn_dir_by_speech = 1;
- 157   4                  }
- 158   3              }
- 159   2      
- 160   2      #if 0
-                      else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
-                      {
-                          if (0 != cur_motor_status)
-                          {
-                              fun_ctl_motor_status(1);
-                          }
-                      }
-                      else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/26/2025 17:57:49 PAGE 4   
+ 143   3              }
+ 144   2              // else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作�
+             -�情况下，再做处理，否则不会进入 */
+ 145   2              // {
+ 146   2              //     if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+ 147   2              //     {
+ 148   2              //         fun_ctl_motor_status(1);
+ 149   2              //     }
+ 150   2              //     else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+ 151   2              //     {
+ 152   2              //         fun_ctl_motor_status(2);
+ 153   2              //     }
+ 154   2              //     else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+ 155   2              //     {
+ 156   2              //         fun_ctl_motor_status(3);
+ 157   2              //     }
+ 158   2              //     else if (CMD_CHANGE_DIR == cmd) // 换个方向
+ 159   2              //     {
+ 160   2              //         // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔
+             -500ms
+ 161   2              //         flag_ctl_turn_dir = 1;
+ 162   2              //         // 给另外一个标志位置一，让定时器清除自动换方向的计时
+ 163   2              //         flag_is_turn_dir_by_speech = 1;
+ 164   2              //     }
+ 165   2              // }
+ 166   2      
+ 167   2      #if 1
+ 168   2              else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 10:20:48 PAGE 4   
 
-                      {
-                          if (0 != cur_motor_status)
-                          {
-                              fun_ctl_motor_status(2);
-                          }
-                      }
-                      else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
-                      {
-                          if (0 != cur_motor_status)
-                          {
-                              fun_ctl_motor_status(3);
-                          }
-                      }
-                      else if (CMD_CHANGE_DIR == cmd) // 换个方向
-                      {
-                          if (0 != cur_motor_status)
-                          {
-                              // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500
+ 169   2              {
+ 170   3                  // if (0 != cur_motor_status)
+ 171   3                  {
+ 172   4                      fun_ctl_motor_status(1);
+ 173   4                  }
+ 174   3              }
+ 175   2              else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+ 176   2              {
+ 177   3                  // if (0 != cur_motor_status)
+ 178   3                  {
+ 179   4                      fun_ctl_motor_status(2);
+ 180   4                  }
+ 181   3              }
+ 182   2              else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+ 183   2              {
+ 184   3                  // if (0 != cur_motor_status)
+ 185   3                  {
+ 186   4                      fun_ctl_motor_status(3);
+ 187   4                  }
+ 188   3              }
+ 189   2              else if (CMD_CHANGE_DIR == cmd) // 换个方向
+ 190   2              {
+ 191   3                  // if (0 != cur_motor_status)
+ 192   3                  if (cur_motor_status) // 电机还在运行，才执行下面语句块
+ 193   3                  {
+ 194   4                      // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500
              -ms
-                              flag_ctl_turn_dir = 1;
-              
-                              // 给另外一个标志位置一，让定时器清除自动换方向的计时
-                              flag_is_turn_dir_by_speech = 1;
-                          }
-                      }
-              #endif
- 194   2          }
- 195   1      }
+ 195   4                      flag_ctl_turn_dir = 1;
+ 196   4      
+ 197   4                      // 给另外一个标志位置一，让定时器清除自动换方向的计时
+ 198   4                      flag_is_turn_dir_by_speech = 1;
+ 199   4      
+ 200   4                      // 让灯光闪烁一次
+ 201   4                      interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
+ 202   4      
+ 203   4                      // 如果不处于低电量报警状态，才使能LED闪烁功能：
+ 204   4                      if (0 == flag_ctl_low_bat_alarm)
+ 205   4                      {
+ 206   5                          if (0 == cur_ctl_heat_status)
+ 207   5                          {
+ 208   6                              // 如果没有打开加热，让绿灯闪烁
+ 209   6                              LED_RED_OFF();
+ 210   6                              LED_GREEN_ON();
+ 211   6                              cur_sel_led = CUR_SEL_LED_GREEN;
+ 212   6                          }
+ 213   5                          else
+ 214   5                          {
+ 215   6                              // 如果打开了加热，让红灯闪烁
+ 216   6                              LED_GREEN_OFF();
+ 217   6                              LED_RED_ON();
+ 218   6                              cur_sel_led = CUR_SEL_LED_RED;
+ 219   6                          }
+ 220   5      
+ 221   5                          cur_ctl_led_blink_cnt = 1; // 指定led闪烁次数
+ 222   5                          flag_ctl_led_blink = 1;    // 打开LED闪烁的功能
+ 223   5                      }
+ 224   4                  }
+ 225   3              }
+ 226   2      #endif
+ 227   2          }
+ 228   1      }
+
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 10:20:48 PAGE 5   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    219    ----
+   CODE SIZE        =    251    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

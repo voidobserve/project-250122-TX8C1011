@@ -110,12 +110,13 @@ void motor_pwm_disable(void)
 #define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
 void alter_motor_speed(u8 adjust_motor_status)
 {
-    if (0 == adjust_motor_status)
-    {
-        // T0DATA = 0;
-        // T1DATA = 0;
-    }
-    else if (1 == adjust_motor_status)
+    // if (0 == adjust_motor_status)
+    // {
+    //     // T0DATA = 0;
+    //     // T1DATA = 0;
+    // }
+    // else if (1 == adjust_motor_status)
+    if (1 == adjust_motor_status)
     {
         STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
         STMR1_CMPAL = __MOTOR_LEVEL_1 % 256;

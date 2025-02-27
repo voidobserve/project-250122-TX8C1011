@@ -193,9 +193,9 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
     // 每次切换挡位，都让定时器加载动画
     // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
     // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
-    interrupt_led_blink();
+    interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
 
-    // 如果不处于低电量报警状态，才使能LED闪烁功能： 
+    // 如果不处于低电量报警状态，才使能LED闪烁功能：
     if (0 == flag_ctl_low_bat_alarm)
     {
         if (0 == cur_ctl_heat_status)
@@ -498,7 +498,7 @@ void main(void)
     // LED_RED_OFF();
 #endif
 
-#if 0 // 上电时检测电池是否正确安装(测试通过):
+#if 0 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
 
     /*
         如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
@@ -514,7 +514,7 @@ void main(void)
     {
         u8 i = 0;
         u16 adc_val = 0;
-        for (i = 0; i < 10; i++) // 每55ms进入一次，循环内每次间隔约4.8ms
+        for (i = 0; i < 10; i++) //  
         {
             adc_val = adc_get_val();
             if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
@@ -534,7 +534,7 @@ void main(void)
     while (1)
     {
 
-#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
+#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
@@ -547,19 +547,8 @@ void main(void)
 #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
 
 #if 1
-        // charge_scan_handle();
+        charge_scan_handle();
 
-        // if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
-        //     0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
-        // {
-        //     if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
-        //     {
-        //         flag_is_enable_key_scan = 0;
-        //         key_scan_10ms_isr();
-        //     }
-
-        //     key_event_handle();
-        // }
         if (flag_is_enable_key_scan) // 每10ms，该标志位会被定时器置位一次
         {
             flag_is_enable_key_scan = 0;
@@ -576,34 +565,31 @@ void main(void)
         {
             // 如果要切换电机转向
             flag_ctl_turn_dir = 0;
-            if (0 == cur_motor_dir)
-            {
-                // 如果当前电机为初始状态，不调节
-            }
-            else if (1 == cur_motor_dir)
+            // if (0 == cur_motor_dir)
+            // {
+            //     // 如果当前电机为初始状态，不调节
+            // }
+            // else if (1 == cur_motor_dir)
+            if (1 == cur_motor_dir)
             {
                 // 如果当前电机为正转，调节为反转
-                // PWM0EC = 0; // 关闭正转的PWM输出
                 motor_pwm_b_disable(); // 关闭正转的PWM输出
                 delay_ms(500);
-                // PWM1EC = 1;        // 打开反转的PWM输出
                 motor_pwm_a_enable(); // 打开反转的PWM输出
                 cur_motor_dir = 2;    // 表示电机当前转向为 反转
             }
             else if (2 == cur_motor_dir)
             {
                 // 如果当前电机为反转，调节为正转
-                // PWM1EC = 0; // 关闭反转的PWM输出
                 motor_pwm_a_disable(); // 关闭反转的PWM输出
                 delay_ms(500);
-                // PWM0EC = 1;        // 打开正转的PWM输出
                 motor_pwm_b_enable();
                 cur_motor_dir = 1; // 表示电机当前转向为 正转
             }
-            else
-            {
-                // 其他情况，不考虑，不做处理
-            }
+            // else
+            // {
+            //     // 其他情况，不考虑，不做处理
+            // }
         }
 #endif // 电机自动转向
 
@@ -635,8 +621,6 @@ void main(void)
         if (flag_is_enter_low_power)
         {
             flag_is_enter_low_power = 0;
-
-            // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(现在低功耗函数内部会关闭语音IC的电源)
             low_power();
         }
 
@@ -867,9 +851,11 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         { // 自动关机
             static volatile u32 shut_down_ms_cnt = 0;
 
-            if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
-                 0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
-                0 == flag_is_in_charging      /* 当前没有在充电 */
+            // if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
+            //      0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
+            //     0 == flag_is_in_charging      /* 当前没有在充电 */
+            if ((SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) && /* 如果语音IC的电源开启，说明设备正在工作 */
+                0 == flag_is_in_charging                   /* 当前没有在充电 */
             )
             {
                 shut_down_ms_cnt++;
@@ -924,7 +910,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         {
             static volatile u16 bat_is_near_full_ms_cnt = 0;
             // 如果不在充电就清空了标志位 flag_tim_scan_bat_maybe_near_full ，
-            //  |-- 可以不加这个判断条件：
+            //  |-- 可以不加下面这个判断条件：
             // if (flag_is_in_charging)
             {
                 if (flag_tim_scan_bat_maybe_near_full)
@@ -1094,10 +1080,17 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         {
             static u32 no_operation_shut_down_cnt = 0; // 无操作自动关机的计时
 
+            // if (0 == flag_is_new_operation && /* 如果没有新的操作 */
+            //     0 == cur_motor_status &&      /* 如果电机关闭 */
+            //     // 0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
+            //     0 == flag_is_enter_low_power  /* 如果没有使能进入低功耗 */
+            // )
             if (0 == flag_is_new_operation && /* 如果没有新的操作 */
+                (0 == flag_is_in_charging) && /* 如果不是在充电 */
                 0 == cur_motor_status &&      /* 如果电机关闭 */
-                // 0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
-                0 == flag_is_enter_low_power) /* 如果没有使能进入低功耗 */
+                0 == cur_ctl_heat_status &&   /* 如果加热关闭 */
+                0 == flag_is_enter_low_power  /* 如果没有使能进入低功耗 */
+            )
             {
                 no_operation_shut_down_cnt++;
                 if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
