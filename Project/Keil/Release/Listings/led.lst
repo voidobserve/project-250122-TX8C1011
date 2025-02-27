@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 09:03:51 PAGE 1   
+C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 15:08:52 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   48   1      
   49   1      #ifdef USE_P12_RLED_USE_P13_GLED
                   P1_MD0 &= ~(0x03 << 4);
-C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 09:03:51 PAGE 2   
+C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 15:08:52 PAGE 2   
 
                   P1_MD0 |= 0x02 << 4;                 // 多功能IO模式
                   P1_AF0 &= ~(0x03 << 4);              // 复用为 STMR2_CHB
@@ -126,7 +126,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 09:03:51 PAGE 3   
+C51 COMPILER V9.60.7.0   LED                                                               02/27/2025 15:08:52 PAGE 3   
 
    DATA SIZE        =      2    ----
    IDATA SIZE       =   ----    ----

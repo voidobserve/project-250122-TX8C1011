@@ -201,24 +201,33 @@ void key_event_handle(void)
             flag_is_enter_low_power = 1; // 允许进入低功耗
         }
         else /* 如果语音IC不在工作，可能是从低功耗下唤醒 */
-        { 
+        {
             if (flag_is_disable_to_open)
             {
                 // 等待松手后，回到低功耗
+                while (0 == P07)
+                    ;
+                flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+                flag_is_enter_low_power = 1; // 允许进入低功耗
             }
             else
             {
                 SPEECH_POWER_ENABLE();
-                fun_ctl_power_on();                     
-            } 
+                fun_ctl_power_on();
+            }
         }
     }
     else if (KEY_EVENT_MODE_CLICK == key_event) /* 开机/模式按键短按 */
     {
         if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
         {
+            if (0 == cur_motor_status)
+            {
+                // motor_forward();
+                motor_pwm_b_enable(); // 电机正向转动
+            }
             // 参数填0，根据全局变量 cur_motor_status 的状态来自动调节
-            fun_ctl_motor_status(0);
+            fun_ctl_motor_status(0); 
         }
         else /* 如果语音IC不在工作 */
         {
@@ -233,7 +242,7 @@ void key_event_handle(void)
         {
             // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
             fun_ctl_heat_status(0);
-        } 
+        }
     }
 
 #if 0

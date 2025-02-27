@@ -55,6 +55,7 @@ void motor_pwm_a_enable(void)
     P0_MD0 |= 0x02 << 6;
     P0_AF0 &= ~(0x03 << 6); // 复用为 STMR1_PWMA
     STMR1_CR |= 0x01;       // 使能高级定时器
+    cur_motor_dir = 2;    // 表示电机反转
 }
 
 void motor_pwm_b_enable(void)
@@ -64,6 +65,7 @@ void motor_pwm_b_enable(void)
     P0_MD0 |= 0x02 << 4;
     P0_AF0 &= ~(0x03 << 4); // 复用为 STMR1_PWMB
     STMR1_CR |= 0x01;       // 使能高级定时器
+    cur_motor_dir = 1;    // 表示电机正转
 }
 
 // 关闭PWM通道A的输出，对应IO输出0，但是不会关闭定时器
@@ -92,7 +94,16 @@ void motor_pwm_disable(void)
     P0_MD0 |= 0x50;
     P02 = 0;
     P03 = 0;
+    cur_motor_status = 0; // 表示电机已经关闭
+    cur_motor_dir = 0;    // (记录电机转动方向的变量)清零，回到初始状态
 }
+
+// // 在电机关闭、并且语音IC还在工作时，如果短按开关按键/语音调节了电机挡位，打开该功能
+// void motor_forward(void)
+// {
+//     motor_pwm_b_enable(); // 电机正向转动
+//     // cur_motor_dir = 1;    // 表示电机正转
+// }
 
 /**
  * @brief 修改电机转速（函数内部只修改占空比，不开/关pwm输出）

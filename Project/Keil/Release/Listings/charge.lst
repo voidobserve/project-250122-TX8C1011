@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 1   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CHARGE
@@ -62,7 +62,7 @@ line level    source
   41                       除了定时器，可供外部检测的标志位：
   42                          flag_is_in_charging
   43                          flag_bat_is_full
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 2   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 2   
 
   44           */
   45          void charge_scan_handle(void)
@@ -126,7 +126,7 @@ line level    source
   98   3                  else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
   99   3                  {
  100   4                      // 如果电池快充满电
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 3   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 3   
 
  101   4                      flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
  102   4                  }
@@ -190,7 +190,7 @@ line level    source
  154   3      
  155   3                  // 清空充电时使用的标志位和变量：
  156   3                  flag_tim_scan_bat_maybe_full = 0;
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 4   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 4   
 
  157   3                  flag_tim_scan_bat_maybe_near_full = 0;
  158   3                  // flag_tim_set_bat_is_full = 0; // 可以不用清零这个变量，定时器后续会自动�
@@ -254,7 +254,7 @@ line level    source
  212   3                  {
  213   4                      flag_ctl_dev_close = 1;
  214   4                      // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(在低功耗函数内关闭)
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 5   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 5   
 
  215   4                      flag_is_enter_low_power = 1; // 允许进入低功耗
  216   4                  }
@@ -318,7 +318,7 @@ line level    source
  270   1      
  271   1          // if (flag_is_in_charging && 0 == flag_bat_is_full)
  272   1          if (flag_is_in_charging)
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 6   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 6   
 
  273   1          {
  274   2              u8 i = 0;            // 循环计数值
@@ -382,7 +382,7 @@ line level    source
  326   2              // tmp_bat_val += 18;// 后面会到1.5A
  327   2              tmp_bat_val += 10; // A
  328   2              // tmp_bat_val +=0;//1.28A
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 7   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 7   
 
  329   2      
  330   2              // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)
@@ -446,7 +446,7 @@ line level    source
  378   3              }
  379   2      
  380   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
-C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 10:59:10 PAGE 8   
+C51 COMPILER V9.60.7.0   CHARGE                                                            02/27/2025 15:08:52 PAGE 8   
 
  381   2              tmp_val_cnt++;
  382   2              tmp_val_cnt &= 0x07;

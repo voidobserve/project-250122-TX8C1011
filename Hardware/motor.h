@@ -21,6 +21,9 @@ void motor_pwm_b_disable(void); // 关闭PWM通道B的输出，对应IO输出0�
 
 void motor_pwm_disable(void);
 
+// 在电机关闭、并且语音IC还在工作时，如果短按开关按键/语音调节了电机挡位，打开该功能
+// void motor_forward(void);
+
 void alter_motor_speed(u8 adjust_motor_status);
 void motor_over_current_detect_handle(void);
  

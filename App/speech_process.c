@@ -93,8 +93,6 @@ void speech_scan_process(void)
             // flag_ctl_dev_close = 1;
             cur_ctl_heat_status = 0; // 关闭加热
             motor_pwm_disable();     // 关闭驱动电机的PWM输出：
-            cur_motor_status = 0;    // 表示电机已经关闭
-            cur_motor_dir = 0;       // (记录电机转动方向的变量)清零，回到初始状态
             LED_RED_OFF();
             interrupt_led_blink(); // 关闭灯光闪烁的动画
             LED_GREEN_ON();        // 点亮绿灯
@@ -120,7 +118,7 @@ void speech_scan_process(void)
                 // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
                 // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
                 interrupt_led_blink();
-                fun_ctl_close_heat(); 
+                fun_ctl_close_heat();
                 delay_ms(100);
                 cur_sel_led = CUR_SEL_LED_GREEN;
                 cur_ctl_led_blink_cnt = 1;
@@ -167,22 +165,37 @@ void speech_scan_process(void)
 #if 1
         else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
         {
-            // if (0 != cur_motor_status)
+            if (0 != cur_motor_status)
             {
+                // if (0 == cur_motor_status)
+                // {
+                //     // motor_forward();
+                //     motor_pwm_b_enable(); // 电机正向转动
+                // }
                 fun_ctl_motor_status(1);
             }
         }
         else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
         {
-            // if (0 != cur_motor_status)
+            if (0 != cur_motor_status)
             {
+                // if (0 == cur_motor_status)
+                // {
+                //     // motor_forward();
+                //     motor_pwm_b_enable(); // 电机正向转动
+                // }
                 fun_ctl_motor_status(2);
             }
         }
         else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
         {
-            // if (0 != cur_motor_status)
+            if (0 != cur_motor_status)
             {
+                // if (0 == cur_motor_status)
+                // {
+                //     // motor_forward();
+                //     motor_pwm_b_enable(); // 电机正向转动
+                // }
                 fun_ctl_motor_status(3);
             }
         }

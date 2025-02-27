@@ -79,7 +79,7 @@ void fun_ctl_power_on(void)
 
     motor_pwm_b_enable(); // 电机正向转动
 
-    cur_motor_dir = 1;    // 表示当前电机在正转
+    // cur_motor_dir = 1;    // 表示当前电机在正转
     cur_motor_status = 2; // 更新电机挡位状态
 
     // 让绿灯闪烁
@@ -113,9 +113,6 @@ void fun_ctl_power_off(void)
 
     // 关闭驱动电机的PWM输出：
     motor_pwm_disable();
-
-    cur_motor_status = 0; // 表示电机已经关闭
-    cur_motor_dir = 0;    // 清零，回到初始状态
 
     // 关机可能是 充电时进入了关机、低电量进入了关机、手动关机、自动进入了关机
     // 如果是 充电时进入了关机，不应该清除相应的标志位
@@ -576,7 +573,7 @@ void main(void)
                 motor_pwm_b_disable(); // 关闭正转的PWM输出
                 delay_ms(500);
                 motor_pwm_a_enable(); // 打开反转的PWM输出
-                cur_motor_dir = 2;    // 表示电机当前转向为 反转
+                // cur_motor_dir = 2;    // 表示电机当前转向为 反转
             }
             else if (2 == cur_motor_dir)
             {
@@ -584,7 +581,7 @@ void main(void)
                 motor_pwm_a_disable(); // 关闭反转的PWM输出
                 delay_ms(500);
                 motor_pwm_b_enable();
-                cur_motor_dir = 1; // 表示电机当前转向为 正转
+                // cur_motor_dir = 1; // 表示电机当前转向为 正转
             }
             // else
             // {
@@ -1186,6 +1183,11 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         }
 
 #endif // 控制呼吸灯效果
+
+#if 0 // 充电时，只让红灯闪烁
+
+#endif // 充电时，只让红灯闪烁
+
     }
 }
 

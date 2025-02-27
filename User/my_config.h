@@ -70,7 +70,7 @@
 #define SHUT_DOWN_BAT_AD_VAL (2894) /*(2879)*/ // 关机电量对应的ad值 6.8V 计算得出的有误差，这里要加上补偿
 
 // 低电量报警的连续扫描时间，单位：ms（超过该时间，启动低电量报警）
-#define LOW_BAT_SCAN_TIMES_MS (5000)
+#define LOW_BAT_SCAN_TIMES_MS (1000)
 // #define LOW_BAT_SCAN_TIMES_MS (50) // 测试时使用
 // 关机电量的连续扫描时间，单位：ms（超过该时间，关机）
 #define SHUT_DOWN_SCAN_TIMES_MS (2000)

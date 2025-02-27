@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   UART                                                              02/27/2025 11:58:11 PAGE 1   
+C51 COMPILER V9.60.7.0   UART                                                              02/27/2025 15:08:52 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
                   }
                   UART1_STA |= 0x08; // 清中断请求标志位
               #endif
-C51 COMPILER V9.60.7.0   UART                                                              02/27/2025 11:58:11 PAGE 2   
+C51 COMPILER V9.60.7.0   UART                                                              02/27/2025 15:08:52 PAGE 2   
 
   52   1      
   53   1          if (UART1_STA & 0x20)
@@ -93,11 +93,11 @@ line level    source
   78   4                      recv_ctl = recv_data;
   79   4                      flag_is_recv_ctl = 1;
   80   4                  }
-  81   3                  // else
-  82   3                  // {
-  83   3                  //     // 校验不通过
-  84   3                  //     // flag_is_recv_ctl = 0; // 好像可以不加这一句
-  85   3                  // }
+  81   3                  else
+  82   3                  {
+  83   4                      // 校验不通过
+  84   4                      // flag_is_recv_ctl = 0; // 好像可以不加这一句
+  85   4                  }
   86   3      
   87   3                  cur_recv_status = RECV_NONE;
   88   3              }

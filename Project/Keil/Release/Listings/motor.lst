@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 1   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 15:08:52 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   47          //     // P0_AF0 &= ~0xF0;
   48          //     STMR1_CR |= 0x01; // 使能高级定时器
   49          // }
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 2   
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 15:08:52 PAGE 2   
 
   50          
   51          void motor_pwm_a_enable(void)
@@ -72,130 +72,142 @@ line level    source
   55   1          P0_MD0 |= 0x02 << 6;
   56   1          P0_AF0 &= ~(0x03 << 6); // 复用为 STMR1_PWMA
   57   1          STMR1_CR |= 0x01;       // 使能高级定时器
-  58   1      }
-  59          
-  60          void motor_pwm_b_enable(void)
-  61          {
-  62   1          // 正转PWM P02 STMR1_PWMB
-  63   1          P0_MD0 &= ~(0x03 << 4);
-  64   1          P0_MD0 |= 0x02 << 4;
-  65   1          P0_AF0 &= ~(0x03 << 4); // 复用为 STMR1_PWMB
-  66   1          STMR1_CR |= 0x01;       // 使能高级定时器
-  67   1      }
-  68          
-  69          // 关闭PWM通道A的输出，对应IO输出0，但是不会关闭定时器
-  70          void motor_pwm_a_disable(void)
-  71          {
-  72   1          // 反转PWM P03 STMR1_PWMA
-  73   1          P0_MD0 &= ~(0x03 << 6);
-  74   1          P0_MD0 |= 0x01 << 6; // 输出模式
-  75   1          P03 = 0;
-  76   1      }
-  77          
-  78          // 关闭PWM通道B的输出，对应IO输出0，但是不会关闭定时器
-  79          void motor_pwm_b_disable(void)
-  80          {
-  81   1          // 正转PWM P02 STMR1_PWMB
-  82   1          P0_MD0 &= ~(0x03 << 4);
-  83   1          P0_MD0 |= 0x01 << 4; // 输出模式
-  84   1          P02 = 0;
-  85   1      }
-  86          
-  87          void motor_pwm_disable(void)
-  88          {
-  89   1          STMR1_CR &= ~0x01; // 关闭高级定时器
-  90   1          // IO配置为输出模式，输出0
-  91   1          P0_MD0 &= ~0xF0;
-  92   1          P0_MD0 |= 0x50;
-  93   1          P02 = 0;
-  94   1          P03 = 0;
-  95   1      }
-  96          
-  97          /**
-  98           * @brief 修改电机转速（函数内部只修改占空比，不开/关pwm输出）
-  99           *
- 100           * @param adjust_motor_status 要调节的电机挡位
- 101           *          0 -- 关闭电机 0%占空比
- 102           *          1 -- 一档 86.8% 占空比
- 103           *          2 -- 二档 92.8% 占空比
- 104           *          3 -- 三档 100% 占空比
- 105           *          其余参数值不做处理
- 106           */
- 107          // 根据 STMR1_PRE 的值来计算占空比：
- 108          #define __MOTOR_LEVEL_1 (1395)          // 一档 86.8% 占空比
- 109          #define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
- 110          #define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
- 111          void alter_motor_speed(u8 adjust_motor_status)
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 3   
+  58   1          cur_motor_dir = 2;    // 表示电机反转
+  59   1      }
+  60          
+  61          void motor_pwm_b_enable(void)
+  62          {
+  63   1          // 正转PWM P02 STMR1_PWMB
+  64   1          P0_MD0 &= ~(0x03 << 4);
+  65   1          P0_MD0 |= 0x02 << 4;
+  66   1          P0_AF0 &= ~(0x03 << 4); // 复用为 STMR1_PWMB
+  67   1          STMR1_CR |= 0x01;       // 使能高级定时器
+  68   1          cur_motor_dir = 1;    // 表示电机正转
+  69   1      }
+  70          
+  71          // 关闭PWM通道A的输出，对应IO输出0，但是不会关闭定时器
+  72          void motor_pwm_a_disable(void)
+  73          {
+  74   1          // 反转PWM P03 STMR1_PWMA
+  75   1          P0_MD0 &= ~(0x03 << 6);
+  76   1          P0_MD0 |= 0x01 << 6; // 输出模式
+  77   1          P03 = 0;
+  78   1      }
+  79          
+  80          // 关闭PWM通道B的输出，对应IO输出0，但是不会关闭定时器
+  81          void motor_pwm_b_disable(void)
+  82          {
+  83   1          // 正转PWM P02 STMR1_PWMB
+  84   1          P0_MD0 &= ~(0x03 << 4);
+  85   1          P0_MD0 |= 0x01 << 4; // 输出模式
+  86   1          P02 = 0;
+  87   1      }
+  88          
+  89          void motor_pwm_disable(void)
+  90          {
+  91   1          STMR1_CR &= ~0x01; // 关闭高级定时器
+  92   1          // IO配置为输出模式，输出0
+  93   1          P0_MD0 &= ~0xF0;
+  94   1          P0_MD0 |= 0x50;
+  95   1          P02 = 0;
+  96   1          P03 = 0;
+  97   1          cur_motor_status = 0; // 表示电机已经关闭
+  98   1          cur_motor_dir = 0;    // (记录电机转动方向的变量)清零，回到初始状态
+  99   1      }
+ 100          
+ 101          // // 在电机关闭、并且语音IC还在工作时，如果短按开关按键/语音调节了电机挡�
+             -��，打开该功能
+ 102          // void motor_forward(void)
+ 103          // {
+ 104          //     motor_pwm_b_enable(); // 电机正向转动
+ 105          //     // cur_motor_dir = 1;    // 表示电机正转
+ 106          // }
+ 107          
+ 108          /**
+ 109           * @brief 修改电机转速（函数内部只修改占空比，不开/关pwm输出）
+ 110           *
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 15:08:52 PAGE 3   
 
- 112          {
- 113   1          // if (0 == adjust_motor_status)
- 114   1          // {
- 115   1          //     // T0DATA = 0;
- 116   1          //     // T1DATA = 0;
- 117   1          // }
- 118   1          // else if (1 == adjust_motor_status)
- 119   1          if (1 == adjust_motor_status)
- 120   1          {
- 121   2              STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
- 122   2              STMR1_CMPAL = __MOTOR_LEVEL_1 % 256;
- 123   2              STMR1_CMPBH = __MOTOR_LEVEL_1 / 256;
- 124   2              STMR1_CMPBL = __MOTOR_LEVEL_1 % 256;
- 125   2          }
- 126   1          else if (2 == adjust_motor_status)
- 127   1          {
- 128   2              STMR1_CMPAH = __MOTOR_LEVEL_2 / 256;
- 129   2              STMR1_CMPAL = __MOTOR_LEVEL_2 % 256;
- 130   2              STMR1_CMPBH = __MOTOR_LEVEL_2 / 256;
- 131   2              STMR1_CMPBL = __MOTOR_LEVEL_2 % 256;
- 132   2          }
- 133   1          else if (3 == adjust_motor_status)
- 134   1          {
- 135   2              STMR1_CMPAH = __MOTOR_LEVEL_3 / 256;
- 136   2              STMR1_CMPAL = __MOTOR_LEVEL_3 % 256;
- 137   2              STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
- 138   2              STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
- 139   2          }
- 140   1      }
- 141          
- 142          // 电机过流检测和相关处理
- 143          void motor_over_current_detect_handle(void)
- 144          {
- 145   1          u16 adc_val = 0;
- 146   1      
- 147   1          if (0 == cur_motor_status)
- 148   1          {
- 149   2              // 清空对应的标志位，不让定时器进行连续计时
- 150   2              flag_tim_scan_maybe_motor_stalling = 0;
- 151   2              return; // 电机没有运行，函数直接返回
- 152   2          }
- 153   1      
- 154   1          adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
- 155   1          adc_val = adc_get_val();
- 156   1          if (adc_val >= MOTOR_STALLING_AD_VAL)
- 157   1          {
- 158   2              // 让定时器进行连续计时
- 159   2              flag_tim_scan_maybe_motor_stalling = 1;
- 160   2          }
- 161   1          else
- 162   1          {
- 163   2              // 清空对应的标志位，不让定时器进行连续计时
- 164   2              flag_tim_scan_maybe_motor_stalling = 0;
- 165   2          }
- 166   1      
- 167   1          if (flag_tim_set_motor_stalling)
+ 111           * @param adjust_motor_status 要调节的电机挡位
+ 112           *          0 -- 关闭电机 0%占空比
+ 113           *          1 -- 一档 86.8% 占空比
+ 114           *          2 -- 二档 92.8% 占空比
+ 115           *          3 -- 三档 100% 占空比
+ 116           *          其余参数值不做处理
+ 117           */
+ 118          // 根据 STMR1_PRE 的值来计算占空比：
+ 119          #define __MOTOR_LEVEL_1 (1395)          // 一档 86.8% 占空比
+ 120          #define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
+ 121          #define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
+ 122          void alter_motor_speed(u8 adjust_motor_status)
+ 123          {
+ 124   1          // if (0 == adjust_motor_status)
+ 125   1          // {
+ 126   1          //     // T0DATA = 0;
+ 127   1          //     // T1DATA = 0;
+ 128   1          // }
+ 129   1          // else if (1 == adjust_motor_status)
+ 130   1          if (1 == adjust_motor_status)
+ 131   1          {
+ 132   2              STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
+ 133   2              STMR1_CMPAL = __MOTOR_LEVEL_1 % 256;
+ 134   2              STMR1_CMPBH = __MOTOR_LEVEL_1 / 256;
+ 135   2              STMR1_CMPBL = __MOTOR_LEVEL_1 % 256;
+ 136   2          }
+ 137   1          else if (2 == adjust_motor_status)
+ 138   1          {
+ 139   2              STMR1_CMPAH = __MOTOR_LEVEL_2 / 256;
+ 140   2              STMR1_CMPAL = __MOTOR_LEVEL_2 % 256;
+ 141   2              STMR1_CMPBH = __MOTOR_LEVEL_2 / 256;
+ 142   2              STMR1_CMPBL = __MOTOR_LEVEL_2 % 256;
+ 143   2          }
+ 144   1          else if (3 == adjust_motor_status)
+ 145   1          {
+ 146   2              STMR1_CMPAH = __MOTOR_LEVEL_3 / 256;
+ 147   2              STMR1_CMPAL = __MOTOR_LEVEL_3 % 256;
+ 148   2              STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
+ 149   2              STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
+ 150   2          }
+ 151   1      }
+ 152          
+ 153          // 电机过流检测和相关处理
+ 154          void motor_over_current_detect_handle(void)
+ 155          {
+ 156   1          u16 adc_val = 0;
+ 157   1      
+ 158   1          if (0 == cur_motor_status)
+ 159   1          {
+ 160   2              // 清空对应的标志位，不让定时器进行连续计时
+ 161   2              flag_tim_scan_maybe_motor_stalling = 0;
+ 162   2              return; // 电机没有运行，函数直接返回
+ 163   2          }
+ 164   1      
+ 165   1          adc_sel_channel(ADC_CHANNEL_MOTOR); // 切换到检测电机电流的引脚
+ 166   1          adc_val = adc_get_val();
+ 167   1          if (adc_val >= MOTOR_STALLING_AD_VAL)
  168   1          {
- 169   2              // 如果确实检测到了电机堵转
- 170   2              flag_ctl_dev_close = 1;      // 让主循环关闭设备
- 171   2              flag_is_enter_low_power = 1; // 允许进入低功耗
- 172   2          }
- 173   1      }
-C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 11:55:11 PAGE 4   
+ 169   2              // 让定时器进行连续计时
+ 170   2              flag_tim_scan_maybe_motor_stalling = 1;
+ 171   2          }
+ 172   1          else
+C51 COMPILER V9.60.7.0   MOTOR                                                             02/27/2025 15:08:52 PAGE 4   
 
+ 173   1          {
+ 174   2              // 清空对应的标志位，不让定时器进行连续计时
+ 175   2              flag_tim_scan_maybe_motor_stalling = 0;
+ 176   2          }
+ 177   1      
+ 178   1          if (flag_tim_set_motor_stalling)
+ 179   1          {
+ 180   2              // 如果确实检测到了电机堵转
+ 181   2              flag_ctl_dev_close = 1;      // 让主循环关闭设备
+ 182   2              flag_is_enter_low_power = 1; // 允许进入低功耗
+ 183   2          }
+ 184   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    172    ----
+   CODE SIZE        =    183    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
