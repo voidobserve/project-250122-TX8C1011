@@ -27,8 +27,8 @@ extern volatile bit flag_tim_scan_maybe_low_bat;
 extern volatile bit flag_tim_set_bat_is_low; // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
 extern volatile bit flag_ctl_low_bat_alarm;  // 控制标志位，是否使能低电量报警
 
-extern volatile bit flag_tim_scan_maybe_shut_down; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
-extern volatile bit flag_tim_set_shut_down;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
+// extern volatile bit flag_tim_scan_maybe_shut_down; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
+// extern volatile bit flag_tim_set_shut_down;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
 
 extern volatile bit flag_is_disable_to_open; // 标志位，是否不使能开机(低电量不允许开机)
 
@@ -183,44 +183,45 @@ void charge_scan_handle(void)
 
 #if 1 // 在设备工作时，检测是否处于低电量，并进行相应处理
 
-        if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
+        // if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
+        if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作，说明没有进入低功耗 */
         {
             // 如果设备在工作
 
-            if (adc_bat_val <= SHUT_DOWN_BAT_AD_VAL)
-            {
-                // 如果电池电压 小于等于 关机对应的电压
-                flag_tim_scan_maybe_shut_down = 1;
-                flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电压，而是处于关机电压，让定时器只执行关机电压的连续检测部分
-            }
-            else if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
-            // if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL) // 还没有添加低电量关机功能时，用于测试低电量报警的功能
+            // if (adc_bat_val <= SHUT_DOWN_BAT_AD_VAL)
+            // {
+            //     // 如果电池电压 小于等于 关机对应的电压
+            //     flag_tim_scan_maybe_shut_down = 1;
+            //     flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电压，而是处于关机电压，让定时器只执行关机电压的连续检测部分
+            // }
+            // else if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
+            if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
             {
                 // 如果电池电压 小于等于 低电量报警对应的电压
                 flag_tim_scan_maybe_low_bat = 1;
-                flag_tim_scan_maybe_shut_down = 0; // 当前电池电压正处于 关机电压 ~ 低电量之间，还没到要关机的情况
+                // flag_tim_scan_maybe_shut_down = 0; // 当前电池电压正处于 关机电压 ~ 低电量之间，还没到要关机的情况
             }
             else
             {
                 // 如果电池电压 大于 低电量报警对应的电压
                 flag_tim_scan_maybe_low_bat = 0;
-                flag_tim_scan_maybe_shut_down = 0;
+                // flag_tim_scan_maybe_shut_down = 0;
             }
 
             // 如果连续一段时间检测到电池电压低于关机电压
-            if (flag_tim_set_shut_down)
-            {
-                flag_ctl_dev_close = 1;
-                // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(在低功耗函数内关闭)
-                flag_is_enter_low_power = 1; // 允许进入低功耗
-            }
-            else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
-            // if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm) // 还没有添加低电量关机功能时，用于测试低电量报警的功能
+            // if (flag_tim_set_shut_down)
+            // {
+            //     flag_ctl_dev_close = 1;
+            //     // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(在低功耗函数内关闭)
+            //     flag_is_enter_low_power = 1; // 允许进入低功耗
+            // }
+            // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
+            if (flag_tim_set_bat_is_low &&
+                0 == flag_ctl_low_bat_alarm &&
+                0 == flag_is_enter_low_power)
             {
                 // 如果连续一段时间检测到电池电压处于低电量，并且没有打开低电量报警
-                // flag_ctl_led_blink = 0; // 先打断当前的灯光闪烁效果，在进行其他处理
-                // delay_ms(1);
-                interrupt_led_blink();
+                interrupt_led_blink(); // 关闭LED闪烁
                 LED_GREEN_OFF();
                 LED_RED_OFF();
                 flag_ctl_low_bat_alarm = 1; // 使能低电量报警
@@ -321,10 +322,11 @@ void charge_scan_handle(void)
             tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522);
         }
 
-        // tmp_bat_val += 30;
+        // tmp_bat_val += 30; // 1.5~1.55A
         // tmp_bat_val += 22; // 后面会到1.5A
         // tmp_bat_val += 18;// 后面会到1.5A
-        tmp_bat_val += 10; // A
+        tmp_bat_val += 15; //
+        // tmp_bat_val += 10; // A
         // tmp_bat_val +=0;//1.28A
 
         // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)

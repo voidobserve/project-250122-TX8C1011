@@ -34,8 +34,8 @@ volatile bit flag_tim_set_bat_is_near_full = 0;     // 由定时器置位/复位的，表示
 volatile bit flag_tim_scan_maybe_low_bat = 0; // 用于给定时器扫描的标志位，可能检测到了低电量
 volatile bit flag_tim_set_bat_is_low = 0;     // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
 
-volatile bit flag_tim_scan_maybe_shut_down = 0; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
-volatile bit flag_tim_set_shut_down = 0;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
+// volatile bit flag_tim_scan_maybe_shut_down = 0; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
+// volatile bit flag_tim_set_shut_down = 0;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
 
 volatile bit flag_tim_scan_maybe_motor_stalling = 0; // 用于给定时器扫描的标志位，可能检测到了电机堵转
 volatile bit flag_tim_set_motor_stalling = 0;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
@@ -126,7 +126,7 @@ void fun_ctl_power_off(void)
         // flag_tim_scan_maybe_in_charging = 0;
         flag_tim_scan_bat_maybe_full = 0;
         flag_tim_scan_maybe_low_bat = 0;
-        flag_tim_scan_maybe_shut_down = 0;
+        // flag_tim_scan_maybe_shut_down = 0;
         flag_is_enable_key_scan = 0;
         flag_ctl_low_bat_alarm = 0;
     }
@@ -495,7 +495,7 @@ void main(void)
     // LED_RED_OFF();
 #endif
 
-#if 0 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
+#if 1 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
 
     /*
         如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
@@ -511,7 +511,7 @@ void main(void)
     {
         u8 i = 0;
         u16 adc_val = 0;
-        for (i = 0; i < 10; i++) //  
+        for (i = 0; i < 10; i++) //
         {
             adc_val = adc_get_val();
             if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
@@ -531,7 +531,7 @@ void main(void)
     while (1)
     {
 
-#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
+#if 1 // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
@@ -985,10 +985,14 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 
             static volatile bit __flag_is_in_low_bat_alarm = 0;   // 标志位，是否正在执行低电量报警的功能
             static volatile u16 __blink_cnt_in_low_bat_alarm = 0; // 低电量报警时，LED闪烁时间计数
+            static volatile u8 __shut_down_cnt = 0;               // 关机计数，低电量报警时，每1s加一次，累计5s便使能关机，进低功耗
 
             /* 如果使能了低电量报警，并且设备正在运行 */
-            if (flag_ctl_low_bat_alarm &&
-                (0 != cur_motor_status || 0 != cur_ctl_heat_status))
+            // if (flag_ctl_low_bat_alarm &&
+            //     (0 != cur_motor_status || 0 != cur_ctl_heat_status))
+            if (flag_ctl_low_bat_alarm && /* 如果使能了低电量报警 */
+                0 == flag_tim_scan_maybe_motor_stalling && /* 如果没有检测到堵转 */
+                SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作，说明没有进入低功耗 */
             {
                 if (0 == __flag_is_in_low_bat_alarm)
                 {
@@ -999,28 +1003,38 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             {
                 __blink_cnt_in_low_bat_alarm = 0;
                 __flag_is_in_low_bat_alarm = 0;
+                __shut_down_cnt = 0;
             }
 
             if (__flag_is_in_low_bat_alarm)
             {
                 __blink_cnt_in_low_bat_alarm++;
-                if (__blink_cnt_in_low_bat_alarm <= 300)
+                if (__blink_cnt_in_low_bat_alarm <= 500)
                 {
                     LED_RED_ON();
                 }
-                else if (__blink_cnt_in_low_bat_alarm < 600)
+                else if (__blink_cnt_in_low_bat_alarm < 1000)
                 {
                     LED_RED_OFF();
                 }
                 else
                 {
                     __blink_cnt_in_low_bat_alarm = 0;
+                    __shut_down_cnt++;
+                    if (__shut_down_cnt >= 5)
+                    {
+                        __shut_down_cnt = 0;
+                        __flag_is_in_low_bat_alarm = 0;
+                        flag_ctl_low_bat_alarm = 0;
+                        flag_ctl_dev_close = 1;
+                        flag_is_enter_low_power = 1; // 允许进入低功耗
+                    }
                 }
             }
         } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
 #endif // 检测是否要低电量报警
 
-#if 1 // 工作时，检测电池电量是否一直低于关机电压
+#if 0  // 工作时，检测电池电量是否一直低于关机电压
 
         {
             static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
@@ -1187,7 +1201,6 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 #if 0 // 充电时，只让红灯闪烁
 
 #endif // 充电时，只让红灯闪烁
-
     }
 }
 

@@ -127,14 +127,14 @@ void speech_scan_process(void)
         }
         else if (CMD_HEAT_FIRST == cmd) // 加热一档
         {
-            // if (0 != cur_ctl_heat_status)
+            if (0 != cur_ctl_heat_status)
             {
                 fun_ctl_heat_status(1);
             }
         }
         else if (CMD_HEAT_SECOND == cmd) // 加热二档
         {
-            // if (0 != cur_ctl_heat_status)
+            if (0 != cur_ctl_heat_status)
             {
                 fun_ctl_heat_status(2);
             }

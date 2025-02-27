@@ -65,15 +65,17 @@
     ADC使用内部2.4V参考电压
 */
 // #define LOW_BAT_ALARM_AD_VAL (2964 + 65) // 低电量报警对应的ad值 7V（计算得出的有误差，这里要加上补偿）
-#define LOW_BAT_ALARM_AD_VAL (2979) /*(2964 + 15)*/ // 低电量报警对应的ad值 7V（计算得出的有误差，这里要加上补偿，这里约为7.03V）
+// #define LOW_BAT_ALARM_AD_VAL (2979) /*(2964 + 15)*/ // 低电量报警对应的ad值 7V（计算得出的有误差，这里要加上补偿，这里约为7.03V）
+#define LOW_BAT_ALARM_AD_VAL (2894) /* (2879 + 15) */ // 低电量报警对应的ad值  V（计算得出的有误差，这里要加上补偿，这里约为7.03V）
 // #define LOW_BAT_ALARM_AD_VAL (2964) // 低电量报警对应的ad值 7V
-#define SHUT_DOWN_BAT_AD_VAL (2894) /*(2879)*/ // 关机电量对应的ad值 6.8V 计算得出的有误差，这里要加上补偿
+
+// #define SHUT_DOWN_BAT_AD_VAL (2894) /*(2879)*/ // 关机电量对应的ad值 6.8V 计算得出的有误差，这里要加上补偿
 
 // 低电量报警的连续扫描时间，单位：ms（超过该时间，启动低电量报警）
 #define LOW_BAT_SCAN_TIMES_MS (1000)
 // #define LOW_BAT_SCAN_TIMES_MS (50) // 测试时使用
 // 关机电量的连续扫描时间，单位：ms（超过该时间，关机）
-#define SHUT_DOWN_SCAN_TIMES_MS (2000)
+// #define SHUT_DOWN_SCAN_TIMES_MS (2000)
 
 // 电机堵转时，对应的ad值
 #define MOTOR_STALLING_AD_VAL (188) // 2.4V参考电压、12位精度下，这里对应110mV

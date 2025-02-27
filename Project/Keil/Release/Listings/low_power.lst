@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 16:27:31 PAGE 1   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 17:01:02 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LOW_POWER
@@ -62,7 +62,7 @@ line level    source
   48   1          // P0 &= ~0x70;    // P04 P05 P06 输出低电平
   49   1      
   50   1          P0 &= ~0x71; // P04 P05 P06 输出低电平
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 16:27:31 PAGE 2   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 17:01:02 PAGE 2   
 
   51   1      
   52   1      // 如果是 使用第 07 脚检测 开关/模式按键 使用第 10 脚检测 加热按键
@@ -126,7 +126,7 @@ line level    source
  108   1          __DisableIRQ(P0_IRQn);  // 在总中断不使能P0中断
  109   1          WKUP_CON0 &= ~(0x11);   // 关闭P07连接到的唤醒单元
  110   1          WDT_KEY = 0x55;         // 解除写保护
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 16:27:31 PAGE 3   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 17:01:02 PAGE 3   
 
  111   1          IO_MAP &= ~(0x01 << 4);
  112   1          WDT_KEY = 0xBB;
@@ -190,7 +190,7 @@ line level    source
  170          {
  171   1          // if (P1_PND)
  172   1          // {
-C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 16:27:31 PAGE 4   
+C51 COMPILER V9.60.7.0   LOW_POWER                                                         02/27/2025 17:01:02 PAGE 4   
 
  173   1          P1_PND = 0; // 清 中断标志位
  174   1          // }

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 15:23:16 PAGE 1   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 17:34:11 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SPEECH_PROCESS
@@ -62,7 +62,7 @@ line level    source
              -�
   48   2              flag_is_new_operation = 1;
   49   2              delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 15:23:16 PAGE 2   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 17:34:11 PAGE 2   
 
              -标志位
   50   2      
@@ -126,7 +126,7 @@ line level    source
  107   3                  {
  108   4                      // 如果加热没有开启
  109   4                      // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 15:23:16 PAGE 3   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 17:34:11 PAGE 3   
 
  110   4                      fun_ctl_heat_status(0);
  111   4                  }
@@ -149,14 +149,14 @@ line level    source
  127   3              }
  128   2              else if (CMD_HEAT_FIRST == cmd) // 加热一档
  129   2              {
- 130   3                  // if (0 != cur_ctl_heat_status)
+ 130   3                  if (0 != cur_ctl_heat_status)
  131   3                  {
  132   4                      fun_ctl_heat_status(1);
  133   4                  }
  134   3              }
  135   2              else if (CMD_HEAT_SECOND == cmd) // 加热二档
  136   2              {
- 137   3                  // if (0 != cur_ctl_heat_status)
+ 137   3                  if (0 != cur_ctl_heat_status)
  138   3                  {
  139   4                      fun_ctl_heat_status(2);
  140   4                  }
@@ -190,7 +190,7 @@ line level    source
  166   2              else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
  167   2              {
  168   3                  if (0 != cur_motor_status)
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 15:23:16 PAGE 4   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 17:34:11 PAGE 4   
 
  169   3                  {
  170   4                      // if (0 == cur_motor_status)
@@ -254,7 +254,7 @@ line level    source
  227   5                          {
  228   6                              // 如果打开了加热，让红灯闪烁
  229   6                              LED_GREEN_OFF();
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 15:23:16 PAGE 5   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    02/27/2025 17:34:11 PAGE 5   
 
  230   6                              LED_RED_ON();
  231   6                              cur_sel_led = CUR_SEL_LED_RED;
@@ -271,7 +271,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    261    ----
+   CODE SIZE        =    269    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
