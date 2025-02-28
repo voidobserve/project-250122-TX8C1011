@@ -34,6 +34,9 @@ extern volatile bit flag_is_disable_to_open; // 标志位，是否不使能开�
 
 extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 
+extern volatile bit flag_tim_scan_maybe_motor_stalling; // 用于给定时器扫描的标志位，可能检测到了电机堵转
+ 
+
 // 充电扫描与检测
 /**
  * @brief    充电、电池的扫描和相关处理
@@ -218,7 +221,8 @@ void charge_scan_handle(void)
             // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
             if (flag_tim_set_bat_is_low &&
                 0 == flag_ctl_low_bat_alarm &&
-                0 == flag_is_enter_low_power)
+                0 == flag_is_enter_low_power &&
+                0 == flag_tim_scan_maybe_motor_stalling) /* 如果电机未堵转 */
             {
                 // 如果连续一段时间检测到电池电压处于低电量，并且没有打开低电量报警
                 interrupt_led_blink(); // 关闭LED闪烁
@@ -255,9 +259,9 @@ void charge_scan_handle(void)
 #endif // #if USE_MY_DEBUG
 
             // 在测试时关闭
-            tmr2_pwm_enable();           // 使能PWM输出
+            tmr2_pwm_enable(); // 使能PWM输出
             flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
-            flag_is_enter_low_power = 0; // 不进入低功耗
+            flag_is_enter_low_power = 0; // 不进入低功耗 
 
             // flag_ctl_led_blink = 0; // 打断当前的灯光闪烁效果
             // delay_ms(1);

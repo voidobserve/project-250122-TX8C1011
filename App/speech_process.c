@@ -5,8 +5,7 @@ extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
 extern volatile bit flag_tim_set_bat_is_low; // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
 extern volatile bit flag_ctl_led_blink;      // 控制标志位，是否控制指示灯闪烁
 extern volatile bit flag_ctl_turn_dir;       // 控制标志位，是否更换电机的方向
-
-extern volatile bit flag_ctl_dev_close; // 控制标志位，是否要关闭设备
+ 
 
 /*
     标志位，是否通过语音来切换方向.
@@ -40,9 +39,9 @@ void speech_scan_process(void)
     if (flag_is_recv_ctl)
     {
         // 如果接收到了正确的控制命令
-        volatile u8 cmd = 0;
+        volatile u8 cmd = recv_ctl;// 从缓冲区取出控制命名
         flag_is_recv_ctl = 0;
-        cmd = recv_ctl; // 从缓冲区取出控制命名
+        // cmd = recv_ctl; // 从缓冲区取出控制命名
 
         // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计时
         flag_is_new_operation = 1;
@@ -89,8 +88,7 @@ void speech_scan_process(void)
             }
         }
         else if (CMD_CLOSE_DEV == cmd) // 关闭按摩/按摩枕/按摩器
-        {
-            // flag_ctl_dev_close = 1;
+        { 
             cur_ctl_heat_status = 0; // 关闭加热
             motor_pwm_disable();     // 关闭驱动电机的PWM输出：
             LED_RED_OFF();
@@ -103,7 +101,7 @@ void speech_scan_process(void)
         }
         else if (CMD_OPEN_HEAT == cmd) // 打开加热
         {
-            if (0 == cur_ctl_heat_status)
+            if (0 == cur_ctl_heat_status && cur_motor_status) /* 如果加热关闭，并且电机正在运行 */
             {
                 // 如果加热没有开启
                 // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
@@ -139,63 +137,70 @@ void speech_scan_process(void)
                 fun_ctl_heat_status(2);
             }
         }
-        // else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
-        // {
-        //     if (CMD_INTENSITY_FIRST == cmd) // 力度一档
-        //     {
-        //         fun_ctl_motor_status(1);
-        //     }
-        //     else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
-        //     {
-        //         fun_ctl_motor_status(2);
-        //     }
-        //     else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
-        //     {
-        //         fun_ctl_motor_status(3);
-        //     }
-        //     else if (CMD_CHANGE_DIR == cmd) // 换个方向
-        //     {
-        //         // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
-        //         flag_ctl_turn_dir = 1;
-        //         // 给另外一个标志位置一，让定时器清除自动换方向的计时
-        //         flag_is_turn_dir_by_speech = 1;
-        //     }
-        // }
+        else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
+        {
+            if (CMD_INTENSITY_FIRST == cmd) // 力度一档
+            {
+                fun_ctl_motor_status(1);
+            }
+            else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
+            {
+                fun_ctl_motor_status(2);
+            }
+            else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
+            {
+                fun_ctl_motor_status(3);
+            }
+            else if (CMD_CHANGE_DIR == cmd) // 换个方向
+            {
+                // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
+                flag_ctl_turn_dir = 1;
+                // 给另外一个标志位置一，让定时器清除自动换方向的计时
+                flag_is_turn_dir_by_speech = 1;  
+                interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能 
+                // 如果不处于低电量报警状态，才使能LED闪烁功能：
+                if (0 == flag_ctl_low_bat_alarm)
+                {
+                    if (0 == cur_ctl_heat_status)
+                    {
+                        // 如果没有打开加热，让绿灯闪烁
+                        LED_RED_OFF();
+                        LED_GREEN_ON();
+                        cur_sel_led = CUR_SEL_LED_GREEN;
+                    }
+                    else
+                    {
+                        // 如果打开了加热，让红灯闪烁
+                        LED_GREEN_OFF();
+                        LED_RED_ON();
+                        cur_sel_led = CUR_SEL_LED_RED;
+                    }
 
-#if 1
+                    cur_ctl_led_blink_cnt = 1; // 指定led闪烁次数
+                    flag_ctl_led_blink = 1;    // 打开LED闪烁的功能
+                }
+            }
+        }
+
+#if 0
         else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
         {
             if (0 != cur_motor_status)
-            {
-                // if (0 == cur_motor_status)
-                // {
-                //     // motor_forward();
-                //     motor_pwm_b_enable(); // 电机正向转动
-                // }
+            { 
                 fun_ctl_motor_status(1);
             }
         }
         else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
         {
             if (0 != cur_motor_status)
-            {
-                // if (0 == cur_motor_status)
-                // {
-                //     // motor_forward();
-                //     motor_pwm_b_enable(); // 电机正向转动
-                // }
+            { 
                 fun_ctl_motor_status(2);
             }
         }
         else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
         {
             if (0 != cur_motor_status)
-            {
-                // if (0 == cur_motor_status)
-                // {
-                //     // motor_forward();
-                //     motor_pwm_b_enable(); // 电机正向转动
-                // }
+            { 
                 fun_ctl_motor_status(3);
             }
         }

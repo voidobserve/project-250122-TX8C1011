@@ -9,9 +9,11 @@
 // 1--一档
 // 2--二档
 // 3--三档
-volatile u8 cur_motor_status = 0;
+// volatile u8 cur_motor_status = 0;
+volatile u8 cur_motor_status;
 // 记录当前电机的转向，0--初始值，无状态，1--正转，2--反转
-volatile u8 cur_motor_dir = 0;
+// volatile u8 cur_motor_dir = 0;
+volatile u8 cur_motor_dir;
 
 extern volatile bit flag_tim_scan_maybe_motor_stalling; // 用于给定时器扫描的标志位，可能检测到了电机堵转
 extern volatile bit flag_tim_set_motor_stalling;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
@@ -55,7 +57,7 @@ void motor_pwm_a_enable(void)
     P0_MD0 |= 0x02 << 6;
     P0_AF0 &= ~(0x03 << 6); // 复用为 STMR1_PWMA
     STMR1_CR |= 0x01;       // 使能高级定时器
-    cur_motor_dir = 2;    // 表示电机反转
+    cur_motor_dir = 2;      // 表示电机反转
 }
 
 void motor_pwm_b_enable(void)
@@ -65,7 +67,7 @@ void motor_pwm_b_enable(void)
     P0_MD0 |= 0x02 << 4;
     P0_AF0 &= ~(0x03 << 4); // 复用为 STMR1_PWMB
     STMR1_CR |= 0x01;       // 使能高级定时器
-    cur_motor_dir = 1;    // 表示电机正转
+    cur_motor_dir = 1;      // 表示电机正转
 }
 
 // 关闭PWM通道A的输出，对应IO输出0，但是不会关闭定时器

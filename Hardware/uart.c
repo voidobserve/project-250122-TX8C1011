@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 
-
-
 extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
 
 // void uart1_config(void)
@@ -32,11 +30,13 @@ enum
     RECV_CTL,
     RECV_TAIL,
 };
-volatile u8 cur_recv_status = RECV_NONE;
+// volatile u8 cur_recv_status = RECV_NONE;
+volatile u8 cur_recv_status;
 
- 
-static volatile u8 recv_data = 0; // 串口接收数据缓冲区，只在当前文件内使用
-volatile u8 recv_ctl = 0;         // 存放接收完成的控制命令
+// static volatile u8 recv_data = 0; // 串口接收数据缓冲区，只在当前文件内使用
+// volatile u8 recv_ctl = 0;         // 存放接收完成的控制命令
+static volatile u8 recv_data; // 串口接收数据缓冲区，只在当前文件内使用
+volatile u8 recv_ctl;         // 存放接收完成的控制命令
 void UART1_IRQHandler(void) interrupt UART1_IRQn
 {
 // RX接收完成中断

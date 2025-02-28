@@ -43,16 +43,27 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 //     P1_MD0 &= ~0x03;        // P10 输入模式
 // }
 
+// static volatile bit flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
+// static volatile u8 last_key_id = KEY_ID_NONE;
+// static volatile u8 press_cnt = 0; // 按键按下的时间计数 
+static volatile bit flag_is_key_mode_hold; // 标志位，按键是否按住，没有松手
+static volatile u8 last_key_id;
+static volatile u8 press_cnt; // 按键按下的时间计数
+
+// 清除按键扫描使用的全局变量
+void clear_key_scan(void)
+{
+    flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
+    last_key_id = KEY_ID_NONE;
+    press_cnt = 0; // 按键按下的时间计数
+}
+
 // ad按键扫描检测函数，需要放到周期为10ms的循环内执行
 void key_scan_10ms_isr(void)
 {
-    static volatile u8 last_key_id = KEY_ID_NONE;
-    static volatile u8 press_cnt = 0; // 按键按下的时间计数
     // static volatile u8 filter_cnt = 0;              // 按键消抖，使用的变量
     // static volatile u8 filter_key_id = KEY_ID_NONE; // 按键消抖时使用的变量
     volatile u8 cur_key_id = KEY_ID_NONE;
-
-    static volatile bit flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
 
 #ifdef USE_P10_DETECT_MODE_USE_P07_DETECT_HEAT
     if (0 == P10) // 开关/模式 按键 优先级要高于 加热 按键
@@ -227,7 +238,7 @@ void key_event_handle(void)
                 motor_pwm_b_enable(); // 电机正向转动
             }
             // 参数填0，根据全局变量 cur_motor_status 的状态来自动调节
-            fun_ctl_motor_status(0); 
+            fun_ctl_motor_status(0);
         }
         else /* 如果语音IC不在工作 */
         {
@@ -244,61 +255,6 @@ void key_event_handle(void)
             fun_ctl_heat_status(0);
         }
     }
-
-#if 0
-    // if (flag_is_dev_open)
-    // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
-    if (cur_motor_status || cur_ctl_heat_status)
-    {
-        // 如果设备正在运行
-        if (KEY_EVENT_MODE_HOLD == key_event)
-        {
-            // 关机：
-            // fun_ctl_power_off();
-            flag_ctl_dev_close = 1; // 控制标志位置一，让主函数扫描到，并关机
-            // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(让低功耗函数来处理)
-            flag_is_enter_low_power = 1; // 允许进入低功耗
-        }
-        else if (KEY_EVENT_MODE_CLICK == key_event)
-        {
-            // 设备运行时，检测到 开关/模式 按键短按
-            // 参数填0，根据全局变量 cur_motor_status 的状态来自动调节
-            fun_ctl_motor_status(0);
-        }
-        else if (KEY_EVENT_HEAT_CLICK == key_event)
-        {
-            // 设备运行时，检测到 加热 按键短按
-            // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
-            fun_ctl_heat_status(0);
-        }
-    }
-    else
-    {
-        // 如果设备没有运行
-
-        if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN)
-        {
-            // 语音IC还在工作时
-        }
-        else
-        {
-            // 语音IC没有在工作，说明可能是低功耗唤醒了CPU，或者是在充电
-            if (0 == flag_is_in_charging &&   /* 不充电时，才对按键做检测和处理 */
-                0 == flag_is_disable_to_open) /* 不处于低电量不能开机的状态时 */
-            {
-                // 如果设备没有在运行
-                // if (KEY_EVENT_MODE_HOLD == key_event && /* 长按了 开关/模式按键 */
-                //     0 == flag_is_in_charging)           /* 当前没有在充电 */
-                if (KEY_EVENT_MODE_HOLD == key_event) /* 长按了 开关/模式按键 */
-                {
-                    // fun_ctl_power_on(); // 函数内部会将 flag_is_dev_open 置一
-                    fun_ctl_power_on();
-                    SPEECH_POWER_ENABLE();
-                }
-            }
-        }
-    }
-#endif
 
     // 处理完成后，清除按键事件
     key_event = KEY_EVENT_NONE;

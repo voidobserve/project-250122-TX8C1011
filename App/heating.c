@@ -4,7 +4,8 @@
 // 0--初始值，无状态（会关闭加热）
 // 1--加热一档
 // 2--加热二档
-volatile u8 cur_ctl_heat_status = 0;
+// volatile u8 cur_ctl_heat_status = 0;
+volatile u8 cur_ctl_heat_status;
 
 extern volatile bit flag_ctl_led_blink;
 extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警

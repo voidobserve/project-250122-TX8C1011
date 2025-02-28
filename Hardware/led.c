@@ -3,8 +3,10 @@
 // 20KHz
 // #define STMR2_PRE (SYSCLK / 1 / (20000 - 100) - 1) // 值 == 1608
 
-volatile u8 cur_sel_led = CUR_SEL_LED_NONE;
-volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要控制灯光闪烁的次数
+// volatile u8 cur_sel_led = CUR_SEL_LED_NONE;
+// volatile u8 cur_ctl_led_blink_cnt = CUR_CTL_LED_BLINK_NONE; // 记录当前要控制灯光闪烁的次数
+volatile u8 cur_sel_led;           // 默认就是 CUR_SEL_LED_NONE
+volatile u8 cur_ctl_led_blink_cnt; // 记录当前要控制灯光闪烁的次数，默认就是 CUR_CTL_LED_BLINK_NONE
 
 extern volatile bit flag_ctl_led_blink; // 控制标志位，是否控制指示灯闪烁
 
@@ -29,7 +31,7 @@ extern volatile bit flag_ctl_led_blink; // 控制标志位，是否控制指示�
 //     STMR2_CR |= 0x01;    // 使能高级定时器
 // }
 
-// 打断LED闪烁 
+// 打断LED闪烁
 void interrupt_led_blink(void)
 {
     flag_ctl_led_blink = 0;
