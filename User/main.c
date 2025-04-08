@@ -127,7 +127,7 @@ volatile bit flag_is_new_operation;
 
 volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 
-#endif                                // 不给全局变量赋值，默认就是0
+#endif // 不给全局变量赋值，默认就是0
 
 #if 1
 // 控制函数，开机
@@ -564,7 +564,8 @@ void main(void)
     // 但是这里不能去掉下面这一条，会导致电流异常跳动，设备会反复重启：
     // TMR2_PWMH = 93 / 256;
     TMR2_PWMH = 0;
-    tmr2_pwm_enable();                // 打开控制升压电路的pwm
+    tmr2_pwm_enable(); // 打开控制升压电路的pwm
+    delay_ms(100);
     adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
     {
         u8 i = 0;
@@ -584,7 +585,18 @@ void main(void)
 
 #endif // 上电时检测电池是否正确安装
 
-    flag_is_enter_low_power = 1; // 上电之后就进入低功耗
+    {
+        u16 adc_charging_val;
+        adc_sel_channel(ADC_CHANNEL_CHARGE);                 // 切换到检测充电的电压检测引脚(检测到的充电电压 == USB-C口电压 / 2)
+        adc_charging_val = adc_get_val();                    // 更新当前检测到的充电电压对应的ad值
+        if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD) // 如果刚上电检测到还在充电，不进入低功耗
+        {
+        }
+        else
+        {
+            flag_is_enter_low_power = 1; // 上电之后就进入低功耗
+        }
+    }
 
     while (1)
     {
