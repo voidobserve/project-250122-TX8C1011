@@ -314,8 +314,14 @@ void charge_scan_handle(void)
         {
             // tmp_bat_val = (adc_bat_val + (27)); /* 实际测试，在最后减去215的补偿下， 在 0.496 附近 */
             // tmp_bat_val = (adc_bat_val + (127)); /* 实际测试，在最后减去215的补偿下， 在  1A 附近 */
-            // tmp_bat_val = (adc_bat_val + (140)); /* 实际测试，在最后减去215的补偿下， 从0.8A升到1A*/
-            tmp_bat_val = (adc_bat_val + (150)); /* 实际测试，在最后减去215的补偿下， 在1.1A-1.2A附近，但是在7.33V附近时，会在0.7-0.8A*/
+            // tmp_bat_val = (adc_bat_val + (140)); /* 实际测试，在最后减去215的补偿下， 从0.8A升到1A */
+
+/* 下限=============================== */
+            tmp_bat_val = (adc_bat_val + (145)); /* 实际测试，在最后减去215的补偿下，6.52V--0.7A，6.73V--0.9A，6.8--1.0A，6.90--1.2A，6.98--1.27A */
+            // tmp_bat_val = (adc_bat_val + (150)); /* 实际测试，在最后减去215的补偿下， */
+            
+            // tmp_bat_val = (adc_bat_val + (155)); /* 实际测试，在最后减去215的补偿下， 在6.4V--0.7A，6.90V--1.4A */
+/* 上限=============================== */
             // tmp_bat_val = (adc_bat_val + (160)); /* 实际测试，在最后减去215的补偿下， 最后到7V时，在1.49A */
             // tmp_bat_val = (adc_bat_val + (170)); /* 实际测试，在最后减去215的补偿下，会超过1.5A，还不知道会稳定在多少 */ 
             // tmp_bat_val = (adc_bat_val + (300)); /* 实际测试，在最后减去215的补偿下， 会超过2A */
@@ -324,24 +330,42 @@ void charge_scan_handle(void)
         {
             // tmp_bat_val = (adc_bat_val + (16)); /* 实际测试，在最后减去215的补偿下， 在 1.0A 附近 */
             // tmp_bat_val = (adc_bat_val + (70)); /* 实际测试，在最后减去215的补偿下， 会慢慢降到0.64A */
-            // tmp_bat_val = (adc_bat_val + (90)); /* 实际测试，在最后减去215的补偿下， 会接近1.3-1.4A，在7.43V测得电流只有0.57A */
+            // tmp_bat_val = (adc_bat_val + (90)); /* 实际测试，在最后减去215的补偿下， 在7.15V只有0.9A左右 */
+            tmp_bat_val = (adc_bat_val + (95)); /* 实际测试，在最后减去215的补偿下，  */
             // tmp_bat_val = (adc_bat_val + (100)); /* 实际测试，在最后减去215的补偿下， 会在1.15附近跳动 */
-            tmp_bat_val = (adc_bat_val + (115)); /* 实际测试，在最后减去215的补偿下， */
+            // tmp_bat_val = (adc_bat_val + (105)); /* 实际测试，在最后减去215的补偿下， 7.05V--1.35A，7.10--1.32A，7.20--1.44A */
+            // tmp_bat_val = (adc_bat_val + (115)); /* 实际测试，在最后减去215的补偿下， 在7.10V附近，会到1.5A，超过7.10V，会在1.3A附近跳动，有时又是1.4A附近跳动 */
+            // tmp_bat_val = (adc_bat_val + (125)); /* 实际测试，在最后减去215的补偿下，  */
 
             // tmp_bat_val = (adc_bat_val + (130)); /* 实际测试，在最后减去215的补偿下，  会从1.1A升到1.5A*/
         }
         else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
         {
             // tmp_bat_val = (adc_bat_val + (0));
-            tmp_bat_val = (adc_bat_val + (50));
+            tmp_bat_val = (adc_bat_val + (50)); /*  */
+            // tmp_bat_val = (adc_bat_val + (60)); 
+            // tmp_bat_val = (adc_bat_val + (70)); 
         }
         else // 如果在充电时检测到电池电压大于
         {
             // 如果检测电池的分压电阻是 22K / 100K，1.2-1.3A,最常见是在1.22A、1.26A
             // 如果检测电池的分压电阻是 220K / 1M，充电电流在0.9A-1A
             // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 294);
-            tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (0);
+            // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (0); /* 在7.77V是1.1A附近跳动 */
+            tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (10); /*  */
+
+            // {
+            //     u8 i = 0; 
+            //     for (; i < 10; i++) // 
+            //     {
+            //         if (tmp_bat_val > 1)
+            //         {
+            //             tmp_bat_val--;
+            //         }
+            //     }
+            // }
         }
+
 
         {
             u8 i = 0;

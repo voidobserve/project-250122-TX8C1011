@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 1   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CHARGE
@@ -62,7 +62,7 @@ line level    source
   40          /**
   41           * @brief    充电、电池的扫描和相关处理
   42                       如果一上电检测到电池为空，不能调用该函数
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 2   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 2   
 
   43                       除了定时器，可供外部检测的标志位：
   44                          flag_is_in_charging
@@ -126,7 +126,7 @@ line level    source
   97   4                      // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
   98   4                      flag_tim_scan_bat_maybe_full = 1;
   99   4                  }
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 3   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 3   
 
  100   3                  else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
  101   3                  {
@@ -190,7 +190,7 @@ line level    source
  153   2              {
  154   3                  // 如果在充电时，检测到拔出了充电线
  155   3                  flag_is_in_charging = 0;
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 4   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 4   
 
  156   3      
  157   3                  // 清空充电时使用的标志位和变量：
@@ -254,7 +254,7 @@ line level    source
  211   4                  }
  212   3      
  213   3                  // 如果连续一段时间检测到电池电压低于关机电压
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 5   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 5   
 
  214   3                  // if (flag_tim_set_shut_down)
  215   3                  // {
@@ -318,7 +318,7 @@ line level    source
  270   2      #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
  271   2          }
  272   1      
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 6   
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 6   
 
  273   1      #if 1 // 充电电流控制
  274   1      
@@ -377,161 +377,190 @@ line level    source
              - 0.496 附近 */
  316   3                  // tmp_bat_val = (adc_bat_val + (127)); /* 实际测试，在最后减去215的补偿下， �
              -�  1A 附近 */
- 317   3                  tmp_bat_val = (adc_bat_val + (140)); /* 实际测试，在最后减去215的补偿下， */
- 318   3                  // tmp_bat_val = (adc_bat_val + (150)); /* 实际测试，在最后减去215的补偿下， �
-             -�1.1A-1.2A附近，但是在7.33V附近时，会在0.7-0.8A*/
- 319   3                  // tmp_bat_val = (adc_bat_val + (160)); /* 实际测试，在最后减去215的补偿下， �
+ 317   3                  // tmp_bat_val = (adc_bat_val + (140)); /* 实际测试，在最后减去215的补偿下， �
+             -�0.8A升到1A */
+ 318   3      
+ 319   3                  tmp_bat_val = (adc_bat_val + (145)); /* 实际测试，在最后减去215的补偿下， */
+ 320   3                  // tmp_bat_val = (adc_bat_val + (150)); /* 实际测试，在最后减去215的补偿下， */
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 7   
+
+ 321   3                  // tmp_bat_val = (adc_bat_val + (155)); /* 实际测试，在最后减去215的补偿下， �
+             -�6.4V--0.7A，6.90V--1.4A*/
+ 322   3      
+ 323   3                  // tmp_bat_val = (adc_bat_val + (160)); /* 实际测试，在最后减去215的补偿下， �
              -�后到7V时，在1.49A */
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 7   
-
- 320   3                  // tmp_bat_val = (adc_bat_val + (170)); /* 实际测试，在最后减去215的补偿下，会
+ 324   3                  // tmp_bat_val = (adc_bat_val + (170)); /* 实际测试，在最后减去215的补偿下，会
              -超过1.5A，还不知道会稳定在多少 */ 
- 321   3                  // tmp_bat_val = (adc_bat_val + (300)); /* 实际测试，在最后减去215的补偿下， �
+ 325   3                  // tmp_bat_val = (adc_bat_val + (300)); /* 实际测试，在最后减去215的补偿下， �
              -�超过2A */
- 322   3              }
- 323   2              else if (adc_bat_val <= 3091) // 如果检测电池电压小于 7.3V
- 324   2              {
- 325   3                  // tmp_bat_val = (adc_bat_val + (16)); /* 实际测试，在最后减去215的补偿下， 在
+ 326   3              }
+ 327   2              else if (adc_bat_val <= 3091) // 如果检测电池电压小于 7.3V
+ 328   2              {
+ 329   3                  // tmp_bat_val = (adc_bat_val + (16)); /* 实际测试，在最后减去215的补偿下， 在
              - 1.0A 附近 */
- 326   3                  // tmp_bat_val = (adc_bat_val + (70)); /* 实际测试，在最后减去215的补偿下， 会
+ 330   3                  // tmp_bat_val = (adc_bat_val + (70)); /* 实际测试，在最后减去215的补偿下， 会
              -慢慢降到0.64A */
- 327   3                  // tmp_bat_val = (adc_bat_val + (90)); /* 实际测试，在最后减去215的补偿下， 会
-             -接近1.3-1.4A，在7.43V测得电流只有0.57A */
- 328   3                  // tmp_bat_val = (adc_bat_val + (100)); /* 实际测试，在最后减去215的补偿下， �
+ 331   3                  // tmp_bat_val = (adc_bat_val + (90)); /* 实际测试，在最后减去215的补偿下， 在
+             -7.15V只有0.9A左右 */
+ 332   3                  tmp_bat_val = (adc_bat_val + (95)); /* 实际测试，在最后减去215的补偿下，  */
+ 333   3                  // tmp_bat_val = (adc_bat_val + (100)); /* 实际测试，在最后减去215的补偿下， �
              -�在1.15附近跳动 */
- 329   3                  tmp_bat_val = (adc_bat_val + (130)); /* 实际测试，在最后减去215的补偿下，  */
- 330   3              }
- 331   2              else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
- 332   2              {
- 333   3                  // tmp_bat_val = (adc_bat_val + (0));
- 334   3                  tmp_bat_val = (adc_bat_val + (50));
- 335   3              }
- 336   2              else // 如果在充电时检测到电池电压大于
- 337   2              {
- 338   3                  // 如果检测电池的分压电阻是 22K / 100K，1.2-1.3A,最常见是在1.22A、1.26A
- 339   3                  // 如果检测电池的分压电阻是 220K / 1M，充电电流在0.9A-1A
- 340   3                  // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 294);
- 341   3                  tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (0);
- 342   3              }
- 343   2      
- 344   2              {
- 345   3                  u8 i = 0;
- 346   3                  // for (; i < 50; i++) // 会大于2A
- 347   3                  // for (; i < 180; i++) // 会到1.4，还不确定最终是不是1.4A
- 348   3                  // for (; i < 200; i++) // 会到1.55，还不确定是不是稳定在1.55
- 349   3                  for (; i < 215; i++) //
- 350   3                  // for (; i < 230; i++) // 会稳定在1.08A
- 351   3                  // for (; i < 260; i++) // 充电头那边会没有电流流出
- 352   3                  // for (; i < 300; i++) // 充电头那边会没有电流流出
- 353   3                  {
- 354   4                      if (tmp_bat_val > 1)
- 355   4                      {
- 356   5                          tmp_bat_val--;
- 357   5                      }
- 358   4                  }
- 359   3              }
- 360   2      
- 361   2              // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)
- 362   2              // {
- 363   2              //     if (adc_bat_val <= bat_val_fix_table[i].adc_bat_val)
- 364   2              //     {
- 365   2              //         tmp_bat_val = (adc_bat_val + bat_val_fix_table[i].tmp_bat_val_fix);
- 366   2              //         break;
- 367   2              //     }
- 368   2      
- 369   2              //     if (i == (ARRAY_SIZE(bat_val_fix_table) - 1))
- 370   2              //     {
- 371   2              //         tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + TMP_BAT_VAL_FI
+ 334   3                  // tmp_bat_val = (adc_bat_val + (105)); /* 实际测试，在最后减去215的补偿下， 7.
+             -05V--1.35A，7.10--1.32A，7.20--1.44A */
+ 335   3                  // tmp_bat_val = (adc_bat_val + (115)); /* 实际测试，在最后减去215的补偿下， �
+             -�7.10V附近，会到1.5A，超过7.10V，会在1.3A附近跳动，有时又是1.4A附近跳动 */
+ 336   3                  // tmp_bat_val = (adc_bat_val + (125)); /* 实际测试，在最后减去215的补偿下，  *
+             -/
+ 337   3      
+ 338   3                  // tmp_bat_val = (adc_bat_val + (130)); /* 实际测试，在最后减去215的补偿下，  �
+             -��从1.1A升到1.5A*/
+ 339   3              }
+ 340   2              else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
+ 341   2              {
+ 342   3                  // tmp_bat_val = (adc_bat_val + (0));
+ 343   3                  tmp_bat_val = (adc_bat_val + (50)); /*  */
+ 344   3                  // tmp_bat_val = (adc_bat_val + (60)); 
+ 345   3                  // tmp_bat_val = (adc_bat_val + (70)); 
+ 346   3              }
+ 347   2              else // 如果在充电时检测到电池电压大于
+ 348   2              {
+ 349   3                  // 如果检测电池的分压电阻是 22K / 100K，1.2-1.3A,最常见是在1.22A、1.26A
+ 350   3                  // 如果检测电池的分压电阻是 220K / 1M，充电电流在0.9A-1A
+ 351   3                  // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 294);
+ 352   3                  // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (0); /* 在7.77V�
+             -�1.1A附近跳动 */
+ 353   3                  tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + (10); /*  */
+ 354   3      
+ 355   3                  // {
+ 356   3                  //     u8 i = 0; 
+ 357   3                  //     for (; i < 10; i++) // 
+ 358   3                  //     {
+ 359   3                  //         if (tmp_bat_val > 1)
+ 360   3                  //         {
+ 361   3                  //             tmp_bat_val--;
+ 362   3                  //         }
+ 363   3                  //     }
+ 364   3                  // }
+ 365   3              }
+ 366   2      
+ 367   2              {
+ 368   3                  u8 i = 0;
+ 369   3                  // for (; i < 50; i++) // 会大于2A
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 8   
+
+ 370   3                  // for (; i < 180; i++) // 会到1.4，还不确定最终是不是1.4A
+ 371   3                  // for (; i < 200; i++) // 会到1.55，还不确定是不是稳定在1.55
+ 372   3                  for (; i < 215; i++) //
+ 373   3                  // for (; i < 230; i++) // 会稳定在1.08A
+ 374   3                  // for (; i < 260; i++) // 充电头那边会没有电流流出
+ 375   3                  // for (; i < 300; i++) // 充电头那边会没有电流流出
+ 376   3                  {
+ 377   4                      if (tmp_bat_val > 1)
+ 378   4                      {
+ 379   5                          tmp_bat_val--;
+ 380   5                      }
+ 381   4                  }
+ 382   3              }
+ 383   2      
+ 384   2              // for (i = 0; i < ARRAY_SIZE(bat_val_fix_table); i++)
+ 385   2              // {
+ 386   2              //     if (adc_bat_val <= bat_val_fix_table[i].adc_bat_val)
+ 387   2              //     {
+ 388   2              //         tmp_bat_val = (adc_bat_val + bat_val_fix_table[i].tmp_bat_val_fix);
+ 389   2              //         break;
+ 390   2              //     }
+ 391   2      
+ 392   2              //     if (i == (ARRAY_SIZE(bat_val_fix_table) - 1))
+ 393   2              //     {
+ 394   2              //         tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522) + TMP_BAT_VAL_FI
              -X;
- 372   2              //     }
- 373   2              // }
- 374   2      
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 8   
-
- 375   2              /*
- 376   2                  升压公式：Vo = Vi / (1 - D)
- 377   2      
- 378   2                  通过PWM来控制升压，这里假设当前PWM占空比寄存器的值 为 D，PWM占空比�
+ 395   2              //     }
+ 396   2              // }
+ 397   2      
+ 398   2              /*
+ 399   2                  升压公式：Vo = Vi / (1 - D)
+ 400   2      
+ 401   2                  通过PWM来控制升压，这里假设当前PWM占空比寄存器的值 为 D，PWM占空比�
              -��存器可以到的最大的值 为 1
- 379   2                  Vo = Vi / (PWM占空比寄存器可以到的最大的值 - 当前PWM占空比寄存器的值)
- 380   2                  当前PWM占空比越大，Vo也越大，充电的电流也会越大
- 381   2      
- 382   2                  (PWM占空比寄存器可以到的最大的值 - 当前PWM占空比寄存器的值) = Vi / Vo
- 383   2                  当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大的值 - Vi / Vo
- 384   2      
- 385   2                  这里检测到的充电电压的ad值 == USB-C口电压 / 2[上下拉电阻分压] / 参考�
-             -�压[3V，那么这里就是除以3] * 4096[ad转换精度，12位-->0~4096]
- 386   2                  即，这里检测到的充电电压的ad值 == USB-C口电压 / 2 / 3 * 4096
- 387   2                  检测到的电池电压的ad值 == 电池电压 * 0.18 / 3V参考电压 * 4096 == 电池电�
-             -� * 220 / 1220 / 3V参考电压 * 4096
- 388   2                  (电池的分压电阻： 上拉220K，下拉1M，分压系数： 220 / 1220)
- 389   2      
- 390   2                  检测充电电压和检测电池电压使用的不是同一个分压系数，要一起运算�
-             -��，这里将充电电压的ad再 * 2 * 220 / 1220
- 391   2                  即 (adc_charging_val * 22 / 61)
- 392   2      
- 393   2                  再代回公式：当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大�
-             -��值 - Vi / Vo
- 394   2                  当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大的值 - 充电电�
-             -�� / 充电时电池两侧的电压
- 395   2                  tmp_val = max_pwm_val - 充电电压 / 充电时电池两侧的电压
- 396   2                  转换成单片机可以计算的形式：
- 397   2                  tmp_val = max_pwm_val - (adc_charging_val * 22 / 61) / tmp_bat_val，但是 max_pwm_val 的值
-             -不是1，不符合 Vo = Vi / (1 - D)
- 398   2                  这里要改成 tmp_val = max_pwm_val - max_pwm_val * (adc_charging_val * 22 / 61) / tmp_bat_v
-             -al
- 399   2                  tmp_val = max_pwm_val - (adc_charging_val * max_pwm_val * 22 / 61) / tmp_bat_val
- 400   2              */
- 401   2              // D = 1 - (Vi / Vo)
- 402   2              // tmp_val = max_pwm_val - (adc_charging_val * max_pwm_val * 22 / 61) / tmp_bat_val;
- 403   2              tmp_val = max_pwm_val - ((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val;
+ 402   2                  Vo = Vi / (PWM占空比寄存器可以到的最大的值 - 当前PWM占空比寄存器的值)
+ 403   2                  当前PWM占空比越大，Vo也越大，充电的电流也会越大
  404   2      
- 405   2              if (tmp_val >= max_pwm_val)
- 406   2              {
- 407   3                  // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
-             -�能是电池电压过小），按0处理
- 408   3                  tmp_val = 0;
- 409   3              }
- 410   2      
- 411   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
- 412   2              tmp_val_cnt++;
- 413   2              tmp_val_cnt &= 0x07;
- 414   2              tmp_val_l[tmp_val_cnt] = (tmp_val_l[tmp_val_cnt] + tmp_val) >> 1;
- 415   2              tmp_val = 0;
- 416   2              for (i = 0; i < 8; i++)
- 417   2              {
- 418   3                  tmp_val += tmp_val_l[i];
- 419   3              }
- 420   2              tmp_val >>= 3;
- 421   2      
- 422   2              if (tmp_val > last_pwm_val)
- 423   2              {
- 424   3                  // last_pwm_val = last_pwm_val + 1;
- 425   3                  last_pwm_val++;
- 426   3              }
- 427   2              else if (tmp_val < last_pwm_val)
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/08/2025 17:53:35 PAGE 9   
+ 405   2                  (PWM占空比寄存器可以到的最大的值 - 当前PWM占空比寄存器的值) = Vi / Vo
+ 406   2                  当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大的值 - Vi / Vo
+ 407   2      
+ 408   2                  这里检测到的充电电压的ad值 == USB-C口电压 / 2[上下拉电阻分压] / 参考�
+             -�压[3V，那么这里就是除以3] * 4096[ad转换精度，12位-->0~4096]
+ 409   2                  即，这里检测到的充电电压的ad值 == USB-C口电压 / 2 / 3 * 4096
+ 410   2                  检测到的电池电压的ad值 == 电池电压 * 0.18 / 3V参考电压 * 4096 == 电池电�
+             -� * 220 / 1220 / 3V参考电压 * 4096
+ 411   2                  (电池的分压电阻： 上拉220K，下拉1M，分压系数： 220 / 1220)
+ 412   2      
+ 413   2                  检测充电电压和检测电池电压使用的不是同一个分压系数，要一起运算�
+             -��，这里将充电电压的ad再 * 2 * 220 / 1220
+ 414   2                  即 (adc_charging_val * 22 / 61)
+ 415   2      
+ 416   2                  再代回公式：当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大�
+             -��值 - Vi / Vo
+ 417   2                  当前PWM占空比寄存器的值 = PWM占空比寄存器可以到的最大的值 - 充电电�
+             -�� / 充电时电池两侧的电压
+ 418   2                  tmp_val = max_pwm_val - 充电电压 / 充电时电池两侧的电压
+ 419   2                  转换成单片机可以计算的形式：
+ 420   2                  tmp_val = max_pwm_val - (adc_charging_val * 22 / 61) / tmp_bat_val，但是 max_pwm_val 的值
+             -不是1，不符合 Vo = Vi / (1 - D)
+ 421   2                  这里要改成 tmp_val = max_pwm_val - max_pwm_val * (adc_charging_val * 22 / 61) / tmp_bat_v
+             -al
+ 422   2                  tmp_val = max_pwm_val - (adc_charging_val * max_pwm_val * 22 / 61) / tmp_bat_val
+C51 COMPILER V9.60.7.0   CHARGE                                                            04/10/2025 16:49:40 PAGE 9   
 
- 428   2              {
- 429   3                  // last_pwm_val = last_pwm_val - 1;
- 430   3                  last_pwm_val--;
- 431   3              }
- 432   2      
- 433   2              TMR2_PWML = last_pwm_val % 256;
- 434   2              // TMR2_PWMH = last_pwm_val / 256;  // 最大占空比的值不超过255，为了节省程序空�
+ 423   2              */
+ 424   2              // D = 1 - (Vi / Vo)
+ 425   2              // tmp_val = max_pwm_val - (adc_charging_val * max_pwm_val * 22 / 61) / tmp_bat_val;
+ 426   2              tmp_val = max_pwm_val - ((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val;
+ 427   2      
+ 428   2              if (tmp_val >= max_pwm_val)
+ 429   2              {
+ 430   3                  // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
+             -�能是电池电压过小），按0处理
+ 431   3                  tmp_val = 0;
+ 432   3              }
+ 433   2      
+ 434   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
+ 435   2              tmp_val_cnt++;
+ 436   2              tmp_val_cnt &= 0x07;
+ 437   2              tmp_val_l[tmp_val_cnt] = (tmp_val_l[tmp_val_cnt] + tmp_val) >> 1;
+ 438   2              tmp_val = 0;
+ 439   2              for (i = 0; i < 8; i++)
+ 440   2              {
+ 441   3                  tmp_val += tmp_val_l[i];
+ 442   3              }
+ 443   2              tmp_val >>= 3;
+ 444   2      
+ 445   2              if (tmp_val > last_pwm_val)
+ 446   2              {
+ 447   3                  // last_pwm_val = last_pwm_val + 1;
+ 448   3                  last_pwm_val++;
+ 449   3              }
+ 450   2              else if (tmp_val < last_pwm_val)
+ 451   2              {
+ 452   3                  // last_pwm_val = last_pwm_val - 1;
+ 453   3                  last_pwm_val--;
+ 454   3              }
+ 455   2      
+ 456   2              TMR2_PWML = last_pwm_val % 256;
+ 457   2              // TMR2_PWMH = last_pwm_val / 256;  // 最大占空比的值不超过255，为了节省程序空�
              -�，可以不用配置高8位的寄存器
- 435   2              TMR2_PWMH = 0;
- 436   2      
- 437   2              // 充电时，每隔一段时间再调整一次PWM占空比，否则充电电流跳动会很厉�
+ 458   2              TMR2_PWMH = 0;
+ 459   2      
+ 460   2              // 充电时，每隔一段时间再调整一次PWM占空比，否则充电电流跳动会很厉�
              -�
- 438   2              delay_ms(100);
- 439   2          } // if (flag_is_in_charging)
- 440   1      #endif // 充电电流控制
- 441   1      }
+ 461   2              delay_ms(100);
+ 462   2          } // if (flag_is_in_charging)
+ 463   1      #endif // 充电电流控制
+ 464   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    659    ----
+   CODE SIZE        =    662    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
