@@ -1,7 +1,5 @@
 #include "tmr2.h"
 
-
-
 // void tmr2_pwm_config(void)
 // {
 //     // 配置P01为timer2 pwm输出端口
@@ -30,6 +28,10 @@ void tmr2_pwm_enable(void)
     P0_MD0 &= ~(0x03 << 2);
     P0_MD0 |= 0x02 << 2; // 多功能IO模式
     // P0_AF0 &= ~(0x03 << 2);
+
+    // TMR2_PWML = 30; // 占空比 
+    // TMR2_PWML = 0; // 占空比 0%
+    // TMR2_PWMH = 0;
     TMR2_CONL |= 0x02; // 定时器2配置为PWM模式
 }
 
@@ -39,5 +41,7 @@ void tmr2_pwm_disable(void)
     P0_MD0 &= ~(0x03 << 2);
     P0_MD0 |= 0x01 << 2; // 输出
     P01 = 0;
+    // TMR2_PWML = 0; // 占空比 0%
+    // TMR2_PWMH = 0;
 }
 

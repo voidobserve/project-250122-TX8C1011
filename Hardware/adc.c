@@ -9,7 +9,7 @@
 //     // P05 AIN5 检测电池分压后的ad值
 //     P0_MD1 |= 0x03 << 2;   // 模拟模式
 //     P0_AIOEN |= 0x01 << 5; // 使能模拟功能
- 
+
 //     // 使用 P06 AIN06 检测电机是否堵转
 //     P1_MD1 |= 0x3 << 4;    // 模拟模式
 //     P1_AIOEN |= 0x01 << 6; // 使能模拟功能
@@ -24,7 +24,7 @@
 // 切换adc检测的引脚
 void adc_sel_channel(u8 adc_channel)
 {
-#if 0 // 可以节省7字节程序空间
+#if 0  // 可以节省7字节程序空间
     // 避免前后切换相同的通道，节省时间：
     static u8 last_adc_channel = ADC_CHANNEL_NONE;
     if (last_adc_channel == adc_channel)
@@ -33,6 +33,25 @@ void adc_sel_channel(u8 adc_channel)
     }
     last_adc_channel = adc_channel;
 #endif // 可以节省7字节程序空间
+
+    // switch (adc_channel)
+    // {
+    // case ADC_CHANNEL_CHARGE:
+    //     // P04 AIN4 检测充电口传过来的ad值
+    //     ADC_CHS0 = 0x04; // 软件触发，P04通路
+    //     break;
+    // case ADC_CHANNEL_BAT:
+    //     // P05 AIN5 检测电池分压后的ad值
+    //     ADC_CHS0 = 0x05; // 软件触发，P05通路
+    //     break;
+    // case ADC_CHANNEL_MOTOR:
+    //     // P06 AIN6 检测电机是否堵转
+    //     ADC_CHS0 = 0x06; // 软件触发，P06通路
+    //     break;
+
+    // default:
+    //     break;
+    // }
 
     // 使用if-else语句比switch更节省程序空间
     if (ADC_CHANNEL_CHARGE == adc_channel)
@@ -50,7 +69,7 @@ void adc_sel_channel(u8 adc_channel)
         // P06 AIN6 检测电机是否堵转
         ADC_CHS0 = 0x06; // 软件触发，P06通路
     }
-
+    
     ADC_CFG0 = 0x14; // 使能A/D转换，使能通道0转换
     delay_ms(1);     // 切换adc检测的引脚后，要延时一段时间，等待adc稳定，防止意料之外的检测结果
 }

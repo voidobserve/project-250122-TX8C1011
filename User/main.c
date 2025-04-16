@@ -18,61 +18,6 @@
 #include "include.h"
 #include "my_config.h"
 
-#if 0  // 定义全局变量并赋值
-volatile bit flag_bat_is_empty = 0;     // 标志位，用于检测是否拔出了电池
-volatile bit flag_bat_is_near_full = 0; // 标志位，表示电池是否快充满电
-volatile bit flag_bat_is_full = 0;      // 电池是否被充满电的标志位
-
-volatile bit flag_is_in_charging = 0;               // 是否处于充电的标志位
-volatile bit flag_tim_scan_maybe_not_charge = 0;    // 用于给定时器扫描的标志位，可能检测到了拔出充电器
-volatile bit flag_tim_scan_maybe_in_charging = 0;   // 用于给定时器扫描的标志位，可能检测到了充电器
-volatile bit flag_tim_set_is_in_charging = 0;       // 由定时器置位/复位的，表示是否有插入充电器的标志位
-volatile bit flag_tim_scan_bat_maybe_full = 0;      // 用于给定时器扫描的标志位，可能检测到电池被充满电
-volatile bit flag_tim_set_bat_is_full = 0;          // 由定时器置位/复位的，表示电池是否被充满电的标志位
-volatile bit flag_tim_scan_bat_maybe_near_full = 0; // 用于给定时器扫描的标志位，可能检测到电池快被充满电
-volatile bit flag_tim_set_bat_is_near_full = 0;     // 由定时器置位/复位的，表示电池是否快被充满电的标志位
-
-volatile bit flag_tim_scan_maybe_low_bat = 0; // 用于给定时器扫描的标志位，可能检测到了低电量
-volatile bit flag_tim_set_bat_is_low = 0;     // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
-
-// volatile bit flag_tim_scan_maybe_shut_down = 0; // 用于给定时器扫描的标志位，可能检测到了 电池电压 低于 关机对应的电压
-// volatile bit flag_tim_set_shut_down = 0;        // 由定时器置位/复位的，表示在工作时，检测到了 电池电压 在一段时间内都低于 关机对应的电压
-
-volatile bit flag_tim_scan_maybe_motor_stalling = 0; // 用于给定时器扫描的标志位，可能检测到了电机堵转
-volatile bit flag_tim_set_motor_stalling = 0;        // 由定时器置位/复位的，表示在工作时检测到了电机堵转
-
-volatile bit flag_is_enable_key_scan = 0; // 标志位，是否使能按键扫描(每10ms被定时器置位，在主函数中检测并清零)
-// volatile bit flag_is_dev_open = 0;        // （只在长按开机、关机时使用）设备是否开机的标志位，0--未开机，1--开机
-
-volatile bit flag_ctl_led_blink = 0; // 控制标志位，是否控制指示灯闪烁
-volatile bit flag_ctl_turn_dir = 0;  // 控制标志位，是否更换电机的方向
-
-volatile bit flag_ctl_dev_close = 0; // 控制标志位，是否要关闭设备
-
-volatile bit flag_ctl_low_bat_alarm = 0; // 控制标志位，是否使能低电量报警
-
-volatile bit flag_is_disable_to_open = 0; // 标志位，是否不使能开机(低电量不允许开机)
-
-volatile bit flag_is_recv_ctl = 0; // 标志位，是否接收了控制命令
-/*
-    标志位，是否通过语音来切换方向.
-    用在定时器中断中，判断自动换方向，如果这个标志位置一，
-    会清除当前自动换方向的计时，重新开始自动换方向的计时,
-    定时器清除计时后，会给这个标志位清零
-*/
-volatile bit flag_is_turn_dir_by_speech = 0;
-
-/*
-    标志位，是否接收到了新的语音信息/有新的按键操作
-    用在定时器中断，在通过语音关闭设备后，一段时间无操作而彻底关机
-    如果这个标志位置一，在定时器内会清除自动彻底关机的倒计时，
-    定时器在清除计时后，会给这个标志位清零
-*/
-volatile bit flag_is_new_operation = 0;
-
-volatile bit flag_is_enter_low_power = 0; // 标志位，是否要进入低功耗
-#endif // 定义全局变量并赋值
-
 #if 1                               // 不给全局变量赋值，默认就是0
 volatile bit flag_bat_is_empty;     // 标志位，用于检测是否拔出了电池
 volatile bit flag_bat_is_near_full; // 标志位，表示电池是否快充满电
@@ -559,7 +504,8 @@ void main(void)
         如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
         检测到的是充电5V升压后的电压
     */
-    TMR2_PWML = 93 % 256; // 调节为约47.6%的占空比
+    // TMR2_PWML = 93 % 256; // 调节为约47.6%的占空比(占空比太大，会导致一开始的电流过大)
+    TMR2_PWML = 55 % 256; // 
     // 最大占空比的值不超过255，为了节省程序空间，可以不用配置高8位的寄存器
     // 但是这里不能去掉下面这一条，会导致电流异常跳动，设备会反复重启：
     // TMR2_PWMH = 93 / 256;
@@ -688,6 +634,13 @@ void main(void)
         if (flag_is_enter_low_power)
         {
             flag_is_enter_low_power = 0;
+
+            // if (P15)
+            // {
+
+            //     continue;
+            // }
+
             low_power();
         }
 
@@ -702,11 +655,6 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
     {
         TMR0_CONH |= 0x80;
         // 1ms产生一次中断，进入到这里
-
-        if (flag_bat_is_empty)
-        {
-            return; // 如果电池为空，提前退出中断服务函数
-        }
 
         { // 按键扫描
             static volatile u8 key_scan_cnt = 0;
@@ -921,7 +869,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
             // if ((0 != cur_motor_status ||     /* 如果电机不是关闭的 */
             //      0 != cur_ctl_heat_status) && /* 如果加热不是关闭的 */
             //     0 == flag_is_in_charging      /* 当前没有在充电 */
-            if ((SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) && /* 如果语音IC的电源开启，说明设备正在工作 */
+            if (
+                (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) && /* 如果语音IC的电源开启，说明设备正在工作 */
                 0 == flag_is_in_charging                   /* 当前没有在充电 */
             )
             {

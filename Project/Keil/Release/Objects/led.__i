@@ -1,1 +1,0 @@
-"..\..\Hardware\led.c" OPTIMIZE (9,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\led.lst) OBJECT(.\Release\Objects\led.obj)

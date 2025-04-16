@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/08/2025 15:27:45 PAGE 1   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/15/2025 14:20:23 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SPEECH_PROCESS
@@ -62,7 +62,7 @@ line level    source
   47   2              flag_is_new_operation = 1;
   48   2              delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和
              -标志位
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/08/2025 15:27:45 PAGE 2   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/15/2025 14:20:23 PAGE 2   
 
   49   2      
   50   2              // (用 if-else if 语句会比switch语句更省空间)
@@ -126,7 +126,7 @@ line level    source
  106   4                      // 如果加热没有开启
  107   4                      // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
  108   4                      fun_ctl_heat_status(0);
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/08/2025 15:27:45 PAGE 3   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/15/2025 14:20:23 PAGE 3   
 
  109   4                  }
  110   3              }
@@ -190,7 +190,7 @@ line level    source
  165   5                          {
  166   6                              // 如果没有打开加热，让绿灯闪烁
  167   6                              LED_RED_OFF();
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/08/2025 15:27:45 PAGE 4   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/15/2025 14:20:23 PAGE 4   
 
  168   6                              LED_GREEN_ON();
  169   6                              cur_sel_led = CUR_SEL_LED_GREEN;
@@ -254,7 +254,7 @@ line level    source
                                       // 如果没有打开加热，让绿灯闪烁
                                       LED_RED_OFF();
                                       LED_GREEN_ON();
-C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/08/2025 15:27:45 PAGE 5   
+C51 COMPILER V9.60.7.0   SPEECH_PROCESS                                                    04/15/2025 14:20:23 PAGE 5   
 
                                       cur_sel_led = CUR_SEL_LED_GREEN;
                                   }

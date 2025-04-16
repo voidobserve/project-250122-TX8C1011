@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/08/2025 15:27:44 PAGE 1   
+C51 COMPILER V9.60.7.0   MOTOR                                                             04/15/2025 14:20:22 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   47          //     P0_MD0 &= ~0xF0;
   48          //     P0_MD0 |= 0xA0;
   49          //     // P0_AF0 &= ~0xF0;
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/08/2025 15:27:44 PAGE 2   
+C51 COMPILER V9.60.7.0   MOTOR                                                             04/15/2025 14:20:22 PAGE 2   
 
   50          //     STMR1_CR |= 0x01; // 使能高级定时器
   51          // }
@@ -126,7 +126,7 @@ line level    source
  108          // }
  109          
  110          /**
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/08/2025 15:27:44 PAGE 3   
+C51 COMPILER V9.60.7.0   MOTOR                                                             04/15/2025 14:20:22 PAGE 3   
 
  111           * @brief 修改电机转速（函数内部只修改占空比，不开/关pwm输出）
  112           *
@@ -190,7 +190,7 @@ line level    source
  170   1          {
  171   2              // 让定时器进行连续计时
  172   2              flag_tim_scan_maybe_motor_stalling = 1;
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/08/2025 15:27:44 PAGE 4   
+C51 COMPILER V9.60.7.0   MOTOR                                                             04/15/2025 14:20:22 PAGE 4   
 
  173   2          }
  174   1          else

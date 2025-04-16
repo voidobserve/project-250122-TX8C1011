@@ -1,1 +1,0 @@
-"..\..\App\speech_process.c" OPTIMIZE (9,SIZE) BROWSE INTVECTOR(0x8000) INCDIR(..\..\Libraries\Include;..\..\User;..\..\Hardware;..\..\App) interval(3) DEBUG OBJECTEXTEND PRINT(.\Release\Listings\speech_process.lst) OBJECT(.\Release\Objects\speech_process.obj)

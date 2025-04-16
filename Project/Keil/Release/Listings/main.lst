@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -29,282 +29,220 @@ line level    source
   18          #include "include.h"
   19          #include "my_config.h"
   20          
-  21          #if 0  // ¶¨ÒåÈ«¾Ö±äÁ¿²¢¸³Öµ
-              volatile bit flag_bat_is_empty = 0;     // ±êÖ¾Î»£¬ÓÃÓÚ¼ì²âÊÇ·ñ°Î³öÁËµç³Ø
-              volatile bit flag_bat_is_near_full = 0; // ±êÖ¾Î»£¬±íÊ¾µç³ØÊÇ·ñ¿ì³äÂúµç
-              volatile bit flag_bat_is_full = 0;      // µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
-              
-              volatile bit flag_is_in_charging = 0;               // ÊÇ·ñ´¦ÓÚ³äµçµÄ±êÖ¾Î»
-              volatile bit flag_tim_scan_maybe_not_charge = 0;    // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË°Î³ö³äµçÆ÷
-              volatile bit flag_tim_scan_maybe_in_charging = 0;   // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË³äµçÆ÷
-              volatile bit flag_tim_set_is_in_charging = 0;       // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÊÇ·ñÓĞ²åÈë³äµçÆ÷µÄ±êÖ¾Î»
-              volatile bit flag_tim_scan_bat_maybe_full = 0;      // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø±»³äÂúµç
-              volatile bit flag_tim_set_bat_is_full = 0;          // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
-              volatile bit flag_tim_scan_bat_maybe_near_full = 0; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø¿ì±»³äÂúµç
-              volatile bit flag_tim_set_bat_is_near_full = 0;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ¿ì±»³äÂúµçµÄ±êÖ¾Î»
-              
-              volatile bit flag_tim_scan_maybe_low_bat = 0; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµÍµçÁ¿
-              volatile bit flag_tim_set_bat_is_low = 0;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬µç³ØÊÇ·ñ´¦ÓÚµÍµçÁ¿µÄ±ê
-             -Ö¾Î»
-              
-              // volatile bit flag_tim_scan_maybe_shut_down = 0; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË µç³ØµçÑ¹ µÍÓÚ
-             - ¹Ø»ú¶ÔÓ¦µÄµçÑ¹
-              // volatile bit flag_tim_set_shut_down = 0;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬¼ì²âµ½ÁË µç³ØµçÑ¹
-             - ÔÚÒ»¶ÎÊ±¼äÄÚ¶¼µÍÓÚ ¹Ø»ú¶ÔÓ¦µÄµçÑ¹
-              
-              volatile bit flag_tim_scan_maybe_motor_stalling = 0; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµç»ú¶Â×ª
-              volatile bit flag_tim_set_motor_stalling = 0;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±¼ì²âµ½ÁËµç»ú¶Â×ª
-              
-              volatile bit flag_is_enable_key_scan = 0; // ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜ°´¼üÉ¨Ãè(Ã¿10ms±»¶¨Ê±Æ÷ÖÃÎ»£¬ÔÚÖ÷º¯ÊıÖĞ¼ì²â²¢
-             -ÇåÁã)
-              // volatile bit flag_is_dev_open = 0;        // £¨Ö»ÔÚ³¤°´¿ª»ú¡¢¹Ø»úÊ±Ê¹ÓÃ£©Éè±¸ÊÇ·ñ¿ª»úµÄ±êÖ¾Î»£¬0--Î´¿ª»
-             -ú£¬1--¿ª»ú
-              
-              volatile bit flag_ctl_led_blink = 0; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¿ØÖÆÖ¸Ê¾µÆÉÁË¸
-              volatile bit flag_ctl_turn_dir = 0;  // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¸ü»»µç»úµÄ·½Ïò
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 2   
-
-              
-              volatile bit flag_ctl_dev_close = 0; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÒª¹Ø±ÕÉè±¸
-              
-              volatile bit flag_ctl_low_bat_alarm = 0; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜµÍµçÁ¿±¨¾¯
-              
-              volatile bit flag_is_disable_to_open = 0; // ±êÖ¾Î»£¬ÊÇ·ñ²»Ê¹ÄÜ¿ª»ú(µÍµçÁ¿²»ÔÊĞí¿ª»ú)
-              
-              volatile bit flag_is_recv_ctl = 0; // ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕÁË¿ØÖÆÃüÁî
-              /*
-                  ±êÖ¾Î»£¬ÊÇ·ñÍ¨¹ıÓïÒôÀ´ÇĞ»»·½Ïò.
-                  ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶ÏÖĞ£¬ÅĞ¶Ï×Ô¶¯»»·½Ïò£¬Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬
-                  »áÇå³ıµ±Ç°×Ô¶¯»»·½ÏòµÄ¼ÆÊ±£¬ÖØĞÂ¿ªÊ¼×Ô¶¯»»·½ÏòµÄ¼ÆÊ±,
-                  ¶¨Ê±Æ÷Çå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
-              */
-              volatile bit flag_is_turn_dir_by_speech = 0;
-              
-              /*
-                  ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕµ½ÁËĞÂµÄÓïÒôĞÅÏ¢/ÓĞĞÂµÄ°´¼ü²Ù×÷
-                  ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶Ï£¬ÔÚÍ¨¹ıÓïÒô¹Ø±ÕÉè±¸ºó£¬Ò»¶ÎÊ±¼äÎŞ²Ù×÷¶ø³¹µ×¹Ø»ú
-                  Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬ÔÚ¶¨Ê±Æ÷ÄÚ»áÇå³ı×Ô¶¯³¹µ×¹Ø»úµÄµ¹¼ÆÊ±£¬
-                  ¶¨Ê±Æ÷ÔÚÇå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
-              */
-              volatile bit flag_is_new_operation = 0;
-              
-              volatile bit flag_is_enter_low_power = 0; // ±êÖ¾Î»£¬ÊÇ·ñÒª½øÈëµÍ¹¦ºÄ
-              #endif // ¶¨ÒåÈ«¾Ö±äÁ¿²¢¸³Öµ
-  75          
-  76          #if 1                               // ²»¸øÈ«¾Ö±äÁ¿¸³Öµ£¬Ä¬ÈÏ¾ÍÊÇ0
-  77          volatile bit flag_bat_is_empty;     // ±êÖ¾Î»£¬ÓÃÓÚ¼ì²âÊÇ·ñ°Î³öÁËµç³Ø
-  78          volatile bit flag_bat_is_near_full; // ±êÖ¾Î»£¬±íÊ¾µç³ØÊÇ·ñ¿ì³äÂúµç
-  79          volatile bit flag_bat_is_full;      // µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
-  80          
-  81          volatile bit flag_is_in_charging;               // ÊÇ·ñ´¦ÓÚ³äµçµÄ±êÖ¾Î»
-  82          volatile bit flag_tim_scan_maybe_not_charge;    // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË°Î³ö³äµçÆ÷
-  83          volatile bit flag_tim_scan_maybe_in_charging;   // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË³äµçÆ÷
-  84          volatile bit flag_tim_set_is_in_charging;       // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÊÇ·ñÓĞ²åÈë³äµçÆ÷µÄ±êÖ¾Î»
-  85          volatile bit flag_tim_scan_bat_maybe_full;      // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø±»³äÂúµç
-  86          volatile bit flag_tim_set_bat_is_full;          // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
-  87          volatile bit flag_tim_scan_bat_maybe_near_full; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø¿ì±»³äÂúµç
-  88          volatile bit flag_tim_set_bat_is_near_full;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ¿ì±»³äÂúµçµÄ±êÖ¾Î»
-  89          
-  90          volatile bit flag_tim_scan_maybe_low_bat; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµÍµçÁ¿
-  91          volatile bit flag_tim_set_bat_is_low;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬µç³ØÊÇ·ñ´¦ÓÚµÍµçÁ¿µÄ±êÖ¾Î»
-  92          
-  93          // volatile bit flag_tim_scan_maybe_shut_down  ; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË µç³ØµçÑ¹ µÍÓÚ ¹
+  21          #if 1                               // ²»¸øÈ«¾Ö±äÁ¿¸³Öµ£¬Ä¬ÈÏ¾ÍÊÇ0
+  22          volatile bit flag_bat_is_empty;     // ±êÖ¾Î»£¬ÓÃÓÚ¼ì²âÊÇ·ñ°Î³öÁËµç³Ø
+  23          volatile bit flag_bat_is_near_full; // ±êÖ¾Î»£¬±íÊ¾µç³ØÊÇ·ñ¿ì³äÂúµç
+  24          volatile bit flag_bat_is_full;      // µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
+  25          
+  26          volatile bit flag_is_in_charging;               // ÊÇ·ñ´¦ÓÚ³äµçµÄ±êÖ¾Î»
+  27          volatile bit flag_tim_scan_maybe_not_charge;    // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË°Î³ö³äµçÆ÷
+  28          volatile bit flag_tim_scan_maybe_in_charging;   // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË³äµçÆ÷
+  29          volatile bit flag_tim_set_is_in_charging;       // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÊÇ·ñÓĞ²åÈë³äµçÆ÷µÄ±êÖ¾Î»
+  30          volatile bit flag_tim_scan_bat_maybe_full;      // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø±»³äÂúµç
+  31          volatile bit flag_tim_set_bat_is_full;          // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ±»³äÂúµçµÄ±êÖ¾Î»
+  32          volatile bit flag_tim_scan_bat_maybe_near_full; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½µç³Ø¿ì±»³äÂúµç
+  33          volatile bit flag_tim_set_bat_is_near_full;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾µç³ØÊÇ·ñ¿ì±»³äÂúµçµÄ±êÖ¾Î»
+  34          
+  35          volatile bit flag_tim_scan_maybe_low_bat; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµÍµçÁ¿
+  36          volatile bit flag_tim_set_bat_is_low;     // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬µç³ØÊÇ·ñ´¦ÓÚµÍµçÁ¿µÄ±êÖ¾Î»
+  37          
+  38          // volatile bit flag_tim_scan_maybe_shut_down  ; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁË µç³ØµçÑ¹ µÍÓÚ ¹
              -Ø»ú¶ÔÓ¦µÄµçÑ¹
-  94          // volatile bit flag_tim_set_shut_down ;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬¼ì²âµ½ÁË µç³ØµçÑ¹ ÔÚ
+  39          // volatile bit flag_tim_set_shut_down ;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±£¬¼ì²âµ½ÁË µç³ØµçÑ¹ ÔÚ
              -Ò»¶ÎÊ±¼äÄÚ¶¼µÍÓÚ ¹Ø»ú¶ÔÓ¦µÄµçÑ¹
-  95          
-  96          volatile bit flag_tim_scan_maybe_motor_stalling; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµç»ú¶Â×ª
-  97          volatile bit flag_tim_set_motor_stalling;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±¼ì²âµ½ÁËµç»ú¶Â×ª
-  98          
-  99          volatile bit flag_is_enable_key_scan; // ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜ°´¼üÉ¨Ãè(Ã¿10ms±»¶¨Ê±Æ÷ÖÃÎ»£¬ÔÚÖ÷º¯ÊıÖĞ¼ì²â²¢ÇåÁã
+  40          
+  41          volatile bit flag_tim_scan_maybe_motor_stalling; // ÓÃÓÚ¸ø¶¨Ê±Æ÷É¨ÃèµÄ±êÖ¾Î»£¬¿ÉÄÜ¼ì²âµ½ÁËµç»ú¶Â×ª
+  42          volatile bit flag_tim_set_motor_stalling;        // ÓÉ¶¨Ê±Æ÷ÖÃÎ»/¸´Î»µÄ£¬±íÊ¾ÔÚ¹¤×÷Ê±¼ì²âµ½ÁËµç»ú¶Â×ª
+  43          
+  44          volatile bit flag_is_enable_key_scan; // ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜ°´¼üÉ¨Ãè(Ã¿10ms±»¶¨Ê±Æ÷ÖÃÎ»£¬ÔÚÖ÷º¯ÊıÖĞ¼ì²â²¢ÇåÁã
              -)
- 100          // volatile bit flag_is_dev_open ;        // £¨Ö»ÔÚ³¤°´¿ª»ú¡¢¹Ø»úÊ±Ê¹ÓÃ£©Éè±¸ÊÇ·ñ¿ª»úµÄ±êÖ¾Î»£¬0--Î´¿ª»ú£¬
+  45          // volatile bit flag_is_dev_open ;        // £¨Ö»ÔÚ³¤°´¿ª»ú¡¢¹Ø»úÊ±Ê¹ÓÃ£©Éè±¸ÊÇ·ñ¿ª»úµÄ±êÖ¾Î»£¬0--Î´¿ª»ú£¬
              -1--¿ª»ú
- 101          
- 102          volatile bit flag_ctl_led_blink; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¿ØÖÆÖ¸Ê¾µÆÉÁË¸
- 103          volatile bit flag_ctl_turn_dir;  // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¸ü»»µç»úµÄ·½Ïò
- 104          
- 105          volatile bit flag_ctl_dev_close; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÒª¹Ø±ÕÉè±¸
- 106          
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 3   
+  46          
+  47          volatile bit flag_ctl_led_blink; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¿ØÖÆÖ¸Ê¾µÆÉÁË¸
+  48          volatile bit flag_ctl_turn_dir;  // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñ¸ü»»µç»úµÄ·½Ïò
+  49          
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 2   
 
- 107          volatile bit flag_ctl_low_bat_alarm; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜµÍµçÁ¿±¨¾¯
- 108          
- 109          volatile bit flag_is_disable_to_open; // ±êÖ¾Î»£¬ÊÇ·ñ²»Ê¹ÄÜ¿ª»ú(µÍµçÁ¿²»ÔÊĞí¿ª»ú)
- 110          
- 111          volatile bit flag_is_recv_ctl; // ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕÁË¿ØÖÆÃüÁî
- 112          /*
- 113              ±êÖ¾Î»£¬ÊÇ·ñÍ¨¹ıÓïÒôÀ´ÇĞ»»·½Ïò.
- 114              ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶ÏÖĞ£¬ÅĞ¶Ï×Ô¶¯»»·½Ïò£¬Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬
- 115              »áÇå³ıµ±Ç°×Ô¶¯»»·½ÏòµÄ¼ÆÊ±£¬ÖØĞÂ¿ªÊ¼×Ô¶¯»»·½ÏòµÄ¼ÆÊ±,
- 116              ¶¨Ê±Æ÷Çå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
- 117          */
- 118          volatile bit flag_is_turn_dir_by_speech;
- 119          
- 120          /*
- 121              ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕµ½ÁËĞÂµÄÓïÒôĞÅÏ¢/ÓĞĞÂµÄ°´¼ü²Ù×÷
- 122              ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶Ï£¬ÔÚÍ¨¹ıÓïÒô¹Ø±ÕÉè±¸ºó£¬Ò»¶ÎÊ±¼äÎŞ²Ù×÷¶ø³¹µ×¹Ø»ú
- 123              Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬ÔÚ¶¨Ê±Æ÷ÄÚ»áÇå³ı×Ô¶¯³¹µ×¹Ø»úµÄµ¹¼ÆÊ±£¬
- 124              ¶¨Ê±Æ÷ÔÚÇå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
- 125          */
- 126          volatile bit flag_is_new_operation;
- 127          
- 128          volatile bit flag_is_enter_low_power; // ±êÖ¾Î»£¬ÊÇ·ñÒª½øÈëµÍ¹¦ºÄ
- 129          
- 130          #endif // ²»¸øÈ«¾Ö±äÁ¿¸³Öµ£¬Ä¬ÈÏ¾ÍÊÇ0
- 131          
- 132          #if 1
- 133          // ¿ØÖÆº¯Êı£¬¿ª»ú
- 134          void fun_ctl_power_on(void)
- 135          {
- 136   1          alter_motor_speed(2); // ¿ª»úºó£¬µç»ú½øÈë¶şµµ
- 137   1      
- 138   1          motor_pwm_b_enable(); // µç»úÕıÏò×ª¶¯
- 139   1      
- 140   1          // cur_motor_dir = 1;    // ±íÊ¾µ±Ç°µç»úÔÚÕı×ª
- 141   1          cur_motor_status = 2; // ¸üĞÂµç»úµ²Î»×´Ì¬
- 142   1      
- 143   1          // ÈÃÂÌµÆÉÁË¸
- 144   1          LED_GREEN_ON();
- 145   1          cur_sel_led = CUR_SEL_LED_GREEN;
- 146   1      
- 147   1          cur_ctl_led_blink_cnt = cur_motor_status; // ledÉÁË¸´ÎÊıÓëµ±Ç°µç»úµÄµ²Î»ÓĞ¹Ø
- 148   1      
- 149   1          flag_ctl_led_blink = 1; // ´ò¿ªLEDÉÁË¸µÄ¹¦ÄÜ
- 150   1      }
- 151          
- 152          // ¿ØÖÆº¯Êı£¬¹Ø»ú
- 153          void fun_ctl_power_off(void)
- 154          {
- 155   1          // alter_motor_speed(0); ¹Ø»ú£¨ºÃÏñ¿ÉÒÔ²»Ğ´ÕâÒ»Ìõ£©
- 156   1      
- 157   1          // ¹Ø±ÕµÆ¹âÉÁË¸µÄ¶¯»­
- 158   1          // flag_ctl_led_blink = 0;
- 159   1          // delay_ms(1); // µÈ´ı¶¨Ê±Æ÷ÖĞ¶ÏÄÚ²¿Çå¿ÕÉÁË¸¹¦ÄÜ¶ÔÓ¦µÄ±êÖ¾ºÍ±äÁ¿£¬·ñÔò´ò¶ÏÉÁµÆµÄĞ§¹û»á±ä²î
- 160   1          interrupt_led_blink();
- 161   1          LED_GREEN_OFF();
- 162   1      
- 163   1          if (0 == flag_is_in_charging)
- 164   1          {
- 165   2              // ²»ÔÚ³äµç£¬²Å¹Ø±ÕºìÉ«LED£¬·ñÔò³äµçÊ±µÄºìÉ«LEDÊµÏÖ²»ÁËºôÎüµÆĞ§¹û
- 166   2              LED_RED_OFF();
- 167   2          }
- 168   1      
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 4   
+  50          volatile bit flag_ctl_dev_close; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÒª¹Ø±ÕÉè±¸
+  51          
+  52          volatile bit flag_ctl_low_bat_alarm; // ¿ØÖÆ±êÖ¾Î»£¬ÊÇ·ñÊ¹ÄÜµÍµçÁ¿±¨¾¯
+  53          
+  54          volatile bit flag_is_disable_to_open; // ±êÖ¾Î»£¬ÊÇ·ñ²»Ê¹ÄÜ¿ª»ú(µÍµçÁ¿²»ÔÊĞí¿ª»ú)
+  55          
+  56          volatile bit flag_is_recv_ctl; // ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕÁË¿ØÖÆÃüÁî
+  57          /*
+  58              ±êÖ¾Î»£¬ÊÇ·ñÍ¨¹ıÓïÒôÀ´ÇĞ»»·½Ïò.
+  59              ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶ÏÖĞ£¬ÅĞ¶Ï×Ô¶¯»»·½Ïò£¬Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬
+  60              »áÇå³ıµ±Ç°×Ô¶¯»»·½ÏòµÄ¼ÆÊ±£¬ÖØĞÂ¿ªÊ¼×Ô¶¯»»·½ÏòµÄ¼ÆÊ±,
+  61              ¶¨Ê±Æ÷Çå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
+  62          */
+  63          volatile bit flag_is_turn_dir_by_speech;
+  64          
+  65          /*
+  66              ±êÖ¾Î»£¬ÊÇ·ñ½ÓÊÕµ½ÁËĞÂµÄÓïÒôĞÅÏ¢/ÓĞĞÂµÄ°´¼ü²Ù×÷
+  67              ÓÃÔÚ¶¨Ê±Æ÷ÖĞ¶Ï£¬ÔÚÍ¨¹ıÓïÒô¹Ø±ÕÉè±¸ºó£¬Ò»¶ÎÊ±¼äÎŞ²Ù×÷¶ø³¹µ×¹Ø»ú
+  68              Èç¹ûÕâ¸ö±êÖ¾Î»ÖÃÒ»£¬ÔÚ¶¨Ê±Æ÷ÄÚ»áÇå³ı×Ô¶¯³¹µ×¹Ø»úµÄµ¹¼ÆÊ±£¬
+  69              ¶¨Ê±Æ÷ÔÚÇå³ı¼ÆÊ±ºó£¬»á¸øÕâ¸ö±êÖ¾Î»ÇåÁã
+  70          */
+  71          volatile bit flag_is_new_operation;
+  72          
+  73          volatile bit flag_is_enter_low_power; // ±êÖ¾Î»£¬ÊÇ·ñÒª½øÈëµÍ¹¦ºÄ
+  74          
+  75          #endif // ²»¸øÈ«¾Ö±äÁ¿¸³Öµ£¬Ä¬ÈÏ¾ÍÊÇ0
+  76          
+  77          #if 1
+  78          // ¿ØÖÆº¯Êı£¬¿ª»ú
+  79          void fun_ctl_power_on(void)
+  80          {
+  81   1          alter_motor_speed(2); // ¿ª»úºó£¬µç»ú½øÈë¶şµµ
+  82   1      
+  83   1          motor_pwm_b_enable(); // µç»úÕıÏò×ª¶¯
+  84   1      
+  85   1          // cur_motor_dir = 1;    // ±íÊ¾µ±Ç°µç»úÔÚÕı×ª
+  86   1          cur_motor_status = 2; // ¸üĞÂµç»úµ²Î»×´Ì¬
+  87   1      
+  88   1          // ÈÃÂÌµÆÉÁË¸
+  89   1          LED_GREEN_ON();
+  90   1          cur_sel_led = CUR_SEL_LED_GREEN;
+  91   1      
+  92   1          cur_ctl_led_blink_cnt = cur_motor_status; // ledÉÁË¸´ÎÊıÓëµ±Ç°µç»úµÄµ²Î»ÓĞ¹Ø
+  93   1      
+  94   1          flag_ctl_led_blink = 1; // ´ò¿ªLEDÉÁË¸µÄ¹¦ÄÜ
+  95   1      }
+  96          
+  97          // ¿ØÖÆº¯Êı£¬¹Ø»ú
+  98          void fun_ctl_power_off(void)
+  99          {
+ 100   1          // alter_motor_speed(0); ¹Ø»ú£¨ºÃÏñ¿ÉÒÔ²»Ğ´ÕâÒ»Ìõ£©
+ 101   1      
+ 102   1          // ¹Ø±ÕµÆ¹âÉÁË¸µÄ¶¯»­
+ 103   1          // flag_ctl_led_blink = 0;
+ 104   1          // delay_ms(1); // µÈ´ı¶¨Ê±Æ÷ÖĞ¶ÏÄÚ²¿Çå¿ÕÉÁË¸¹¦ÄÜ¶ÔÓ¦µÄ±êÖ¾ºÍ±äÁ¿£¬·ñÔò´ò¶ÏÉÁµÆµÄĞ§¹û»á±ä²î
+ 105   1          interrupt_led_blink();
+ 106   1          LED_GREEN_OFF();
+ 107   1      
+ 108   1          if (0 == flag_is_in_charging)
+ 109   1          {
+ 110   2              // ²»ÔÚ³äµç£¬²Å¹Ø±ÕºìÉ«LED£¬·ñÔò³äµçÊ±µÄºìÉ«LEDÊµÏÖ²»ÁËºôÎüµÆĞ§¹û
+ 111   2              LED_RED_OFF();
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 3   
 
- 169   1          // ¹Ø±Õ¼ÓÈÈ
- 170   1          cur_ctl_heat_status = 0;
- 171   1      
- 172   1          // ¹Ø±ÕÇı¶¯µç»úµÄPWMÊä³ö£º
- 173   1          motor_pwm_disable();
- 174   1      
- 175   1          // ¹Ø»ú¿ÉÄÜÊÇ ³äµçÊ±½øÈëÁË¹Ø»ú¡¢µÍµçÁ¿½øÈëÁË¹Ø»ú¡¢ÊÖ¶¯¹Ø»ú¡¢×Ô¶¯½øÈëÁË¹Ø»ú
- 176   1          // Èç¹ûÊÇ ³äµçÊ±½øÈëÁË¹Ø»ú£¬²»Ó¦¸ÃÇå³ıÏàÓ¦µÄ±êÖ¾Î»
- 177   1          if (0 == flag_is_in_charging)
- 178   1          {
- 179   2              // Èç¹ûÃ»ÓĞÔÚ³äµç£¬Çå¿Õ¸úµÍµçÁ¿²»¿ª»úÎŞ¹ØµÄ±êÖ¾Î»
- 180   2              // flag_bat_is_empty = 0;
- 181   2              flag_bat_is_near_full = 0;
- 182   2              flag_bat_is_full = 0;
- 183   2              // flag_tim_scan_maybe_not_charge = 0;
- 184   2              // flag_tim_scan_maybe_in_charging = 0;
- 185   2              flag_tim_scan_bat_maybe_full = 0;
- 186   2              flag_tim_scan_maybe_low_bat = 0;
- 187   2              // flag_tim_scan_maybe_shut_down = 0;
- 188   2              flag_is_enable_key_scan = 0;
- 189   2              flag_ctl_low_bat_alarm = 0;
- 190   2          }
- 191   1      }
- 192          
- 193          /**
- 194           * @brief ¿ØÖÆµç»úµ²Î»
- 195           *           Èç¹ûÒª¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»£¬»á¸Ä±ä È«¾Ö±äÁ¿ cur_motor_status µÄ×´Ì¬
- 196           *
- 197           * @param adjust_motor_status Òªµ÷½Úµ½µÄµ²Î»
- 198           *                          0--¸ù¾İÈ«¾Ö±äÁ¿ cur_motor_status µÄ×´Ì¬À´×Ô¶¯µ÷½Ú
- 199           *                          1--µ÷½ÚÎª1µµ
- 200           *                          2--µ÷½ÚÎª2µµ
- 201           *                          3--µ÷½ÚÎª3µµ
- 202           *                          ÆäËû--º¯ÊıÖ±½Ó·µ»Ø £¨ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬ÕâÀïÃ»ÓĞ¼Ó£©
- 203           */
- 204          void fun_ctl_motor_status(u8 adjust_motor_status)
- 205          {
- 206   1      #if 0  // ¿ÉÒÔ½ÚÊ¡5×Ö½Ú¿Õ¼ä
+ 112   2          }
+ 113   1      
+ 114   1          // ¹Ø±Õ¼ÓÈÈ
+ 115   1          cur_ctl_heat_status = 0;
+ 116   1      
+ 117   1          // ¹Ø±ÕÇı¶¯µç»úµÄPWMÊä³ö£º
+ 118   1          motor_pwm_disable();
+ 119   1      
+ 120   1          // ¹Ø»ú¿ÉÄÜÊÇ ³äµçÊ±½øÈëÁË¹Ø»ú¡¢µÍµçÁ¿½øÈëÁË¹Ø»ú¡¢ÊÖ¶¯¹Ø»ú¡¢×Ô¶¯½øÈëÁË¹Ø»ú
+ 121   1          // Èç¹ûÊÇ ³äµçÊ±½øÈëÁË¹Ø»ú£¬²»Ó¦¸ÃÇå³ıÏàÓ¦µÄ±êÖ¾Î»
+ 122   1          if (0 == flag_is_in_charging)
+ 123   1          {
+ 124   2              // Èç¹ûÃ»ÓĞÔÚ³äµç£¬Çå¿Õ¸úµÍµçÁ¿²»¿ª»úÎŞ¹ØµÄ±êÖ¾Î»
+ 125   2              // flag_bat_is_empty = 0;
+ 126   2              flag_bat_is_near_full = 0;
+ 127   2              flag_bat_is_full = 0;
+ 128   2              // flag_tim_scan_maybe_not_charge = 0;
+ 129   2              // flag_tim_scan_maybe_in_charging = 0;
+ 130   2              flag_tim_scan_bat_maybe_full = 0;
+ 131   2              flag_tim_scan_maybe_low_bat = 0;
+ 132   2              // flag_tim_scan_maybe_shut_down = 0;
+ 133   2              flag_is_enable_key_scan = 0;
+ 134   2              flag_ctl_low_bat_alarm = 0;
+ 135   2          }
+ 136   1      }
+ 137          
+ 138          /**
+ 139           * @brief ¿ØÖÆµç»úµ²Î»
+ 140           *           Èç¹ûÒª¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»£¬»á¸Ä±ä È«¾Ö±äÁ¿ cur_motor_status µÄ×´Ì¬
+ 141           *
+ 142           * @param adjust_motor_status Òªµ÷½Úµ½µÄµ²Î»
+ 143           *                          0--¸ù¾İÈ«¾Ö±äÁ¿ cur_motor_status µÄ×´Ì¬À´×Ô¶¯µ÷½Ú
+ 144           *                          1--µ÷½ÚÎª1µµ
+ 145           *                          2--µ÷½ÚÎª2µµ
+ 146           *                          3--µ÷½ÚÎª3µµ
+ 147           *                          ÆäËû--º¯ÊıÖ±½Ó·µ»Ø £¨ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬ÕâÀïÃ»ÓĞ¼Ó£©
+ 148           */
+ 149          void fun_ctl_motor_status(u8 adjust_motor_status)
+ 150          {
+ 151   1      #if 0  // ¿ÉÒÔ½ÚÊ¡5×Ö½Ú¿Õ¼ä
                   // if (adjust_motor_status > 3)
                   // {
                   //     return; // ´«²ÎÓĞÎó£¬Ö±½Ó·µ»Ø
                   // }
               #endif // ¿ÉÒÔ½ÚÊ¡5×Ö½Ú¿Õ¼ä
- 212   1      
- 213   1          if (0 == adjust_motor_status)
- 214   1          {
- 215   2              // Èç¹û²»ÊÇ¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»£¬
- 216   2              // ¶øÊÇ¸ù¾İÈ«¾Ö±äÁ¿cur_motor_statusµÄ×´Ì¬À´µ÷½Ú
- 217   2              // if (1 == cur_motor_status)
- 218   2              // {
- 219   2              //     // ´Ó 1µµ -> 2µµ
- 220   2              //     cur_motor_status = 2;
- 221   2              // }
- 222   2              // else if (2 == cur_motor_status)
- 223   2              if (2 == cur_motor_status)
- 224   2              {
- 225   3                  // ´Ó 2µµ -> 3µµ
- 226   3                  cur_motor_status = 3;
- 227   3              }
- 228   2              else if (3 == cur_motor_status)
- 229   2              {
- 230   3                  // ´Ó 3µµ -> 1µµ
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 5   
+ 157   1      
+ 158   1          if (0 == adjust_motor_status)
+ 159   1          {
+ 160   2              // Èç¹û²»ÊÇ¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»£¬
+ 161   2              // ¶øÊÇ¸ù¾İÈ«¾Ö±äÁ¿cur_motor_statusµÄ×´Ì¬À´µ÷½Ú
+ 162   2              // if (1 == cur_motor_status)
+ 163   2              // {
+ 164   2              //     // ´Ó 1µµ -> 2µµ
+ 165   2              //     cur_motor_status = 2;
+ 166   2              // }
+ 167   2              // else if (2 == cur_motor_status)
+ 168   2              if (2 == cur_motor_status)
+ 169   2              {
+ 170   3                  // ´Ó 2µµ -> 3µµ
+ 171   3                  cur_motor_status = 3;
+ 172   3              }
+ 173   2              else if (3 == cur_motor_status)
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 4   
 
- 231   3                  cur_motor_status = 1;
- 232   3              }
- 233   2              else
- 234   2              {
- 235   3                  // 1. ´Ó³õÊ¼×´Ì¬ 0 == cur_motor_status ±äÎª 2 µµ
- 236   3                  // 2. »òÕßÊÇ ´Ó 1µµ -> 2µµ
- 237   3                  cur_motor_status = 2;
- 238   3              }
- 239   2          }
- 240   1          else
- 241   1          {
- 242   2              // Èç¹ûÊÇ¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»
- 243   2              cur_motor_status = adjust_motor_status;
- 244   2          }
- 245   1      
- 246   1          alter_motor_speed(cur_motor_status);
- 247   1      
- 248   1          // Ã¿´ÎÇĞ»»µ²Î»£¬¶¼ÈÃ¶¨Ê±Æ÷¼ÓÔØ¶¯»­
- 249   1          // flag_ctl_led_blink = 0; // ´ò¶Ïµ±Ç°ÕıÔÚÉÁË¸µÄ¹¦ÄÜ
- 250   1          // delay_ms(1);            // µÈ´ı¶¨Ê±Æ÷ÖĞ¶ÏÄÚ²¿Çå¿ÕÉÁË¸¹¦ÄÜ¶ÔÓ¦µÄ±êÖ¾ºÍ±äÁ¿£¬·ñÔò´ò¶ÏÉÁµÆµÄĞ§¹û»á±ä²î
- 251   1          interrupt_led_blink(); // ´ò¶Ïµ±Ç°ÕıÔÚÖ´ĞĞµÄLEDÉÁË¸¹¦ÄÜ
- 252   1      
- 253   1          // Èç¹û²»´¦ÓÚµÍµçÁ¿±¨¾¯×´Ì¬£¬²ÅÊ¹ÄÜLEDÉÁË¸¹¦ÄÜ£º
- 254   1          if (0 == flag_ctl_low_bat_alarm)
- 255   1          {
- 256   2              if (0 == cur_ctl_heat_status)
- 257   2              {
- 258   3                  // Èç¹ûÃ»ÓĞ´ò¿ª¼ÓÈÈ£¬ÈÃÂÌµÆÉÁË¸
- 259   3                  LED_RED_OFF();
- 260   3                  LED_GREEN_ON();
- 261   3                  cur_sel_led = CUR_SEL_LED_GREEN;
- 262   3              }
- 263   2              else
- 264   2              {
- 265   3                  // Èç¹û´ò¿ªÁË¼ÓÈÈ£¬ÈÃºìµÆÉÁË¸
- 266   3                  LED_GREEN_OFF();
- 267   3                  LED_RED_ON();
- 268   3                  cur_sel_led = CUR_SEL_LED_RED;
- 269   3              }
- 270   2      
- 271   2              cur_ctl_led_blink_cnt = cur_motor_status; // ledÉÁË¸´ÎÊıÓëµ±Ç°µç»úµÄµ²Î»ÓĞ¹Ø
- 272   2              flag_ctl_led_blink = 1;                   // ´ò¿ªLEDÉÁË¸µÄ¹¦ÄÜ
- 273   2          }
- 274   1      }
- 275          #endif
- 276          
- 277          void user_config(void)
- 278          {
- 279   1      #if 0 // Î´ÓÅ»¯³ÌĞò¿Õ¼äµÄ´úÂë£º
+ 174   2              {
+ 175   3                  // ´Ó 3µµ -> 1µµ
+ 176   3                  cur_motor_status = 1;
+ 177   3              }
+ 178   2              else
+ 179   2              {
+ 180   3                  // 1. ´Ó³õÊ¼×´Ì¬ 0 == cur_motor_status ±äÎª 2 µµ
+ 181   3                  // 2. »òÕßÊÇ ´Ó 1µµ -> 2µµ
+ 182   3                  cur_motor_status = 2;
+ 183   3              }
+ 184   2          }
+ 185   1          else
+ 186   1          {
+ 187   2              // Èç¹ûÊÇ¸ù¾İ´«²ÎÀ´µ÷½Úµ²Î»
+ 188   2              cur_motor_status = adjust_motor_status;
+ 189   2          }
+ 190   1      
+ 191   1          alter_motor_speed(cur_motor_status);
+ 192   1      
+ 193   1          // Ã¿´ÎÇĞ»»µ²Î»£¬¶¼ÈÃ¶¨Ê±Æ÷¼ÓÔØ¶¯»­
+ 194   1          // flag_ctl_led_blink = 0; // ´ò¶Ïµ±Ç°ÕıÔÚÉÁË¸µÄ¹¦ÄÜ
+ 195   1          // delay_ms(1);            // µÈ´ı¶¨Ê±Æ÷ÖĞ¶ÏÄÚ²¿Çå¿ÕÉÁË¸¹¦ÄÜ¶ÔÓ¦µÄ±êÖ¾ºÍ±äÁ¿£¬·ñÔò´ò¶ÏÉÁµÆµÄĞ§¹û»á±ä²î
+ 196   1          interrupt_led_blink(); // ´ò¶Ïµ±Ç°ÕıÔÚÖ´ĞĞµÄLEDÉÁË¸¹¦ÄÜ
+ 197   1      
+ 198   1          // Èç¹û²»´¦ÓÚµÍµçÁ¿±¨¾¯×´Ì¬£¬²ÅÊ¹ÄÜLEDÉÁË¸¹¦ÄÜ£º
+ 199   1          if (0 == flag_ctl_low_bat_alarm)
+ 200   1          {
+ 201   2              if (0 == cur_ctl_heat_status)
+ 202   2              {
+ 203   3                  // Èç¹ûÃ»ÓĞ´ò¿ª¼ÓÈÈ£¬ÈÃÂÌµÆÉÁË¸
+ 204   3                  LED_RED_OFF();
+ 205   3                  LED_GREEN_ON();
+ 206   3                  cur_sel_led = CUR_SEL_LED_GREEN;
+ 207   3              }
+ 208   2              else
+ 209   2              {
+ 210   3                  // Èç¹û´ò¿ªÁË¼ÓÈÈ£¬ÈÃºìµÆÉÁË¸
+ 211   3                  LED_GREEN_OFF();
+ 212   3                  LED_RED_ON();
+ 213   3                  cur_sel_led = CUR_SEL_LED_RED;
+ 214   3              }
+ 215   2      
+ 216   2              cur_ctl_led_blink_cnt = cur_motor_status; // ledÉÁË¸´ÎÊıÓëµ±Ç°µç»úµÄµ²Î»ÓĞ¹Ø
+ 217   2              flag_ctl_led_blink = 1;                   // ´ò¿ªLEDÉÁË¸µÄ¹¦ÄÜ
+ 218   2          }
+ 219   1      }
+ 220          #endif
+ 221          
+ 222          void user_config(void)
+ 223          {
+ 224   1      #if 0 // Î´ÓÅ»¯³ÌĞò¿Õ¼äµÄ´úÂë£º
                   IE_EA = 1; // Ê¹ÄÜ×ÜÖĞ¶Ï
               
                   // ¼ì²â¿ª»ú/Ä£Ê½°´¼ü ºÍ ¼ì²â¼ÓÈÈ°´¼üµÄÒı½Å£º
@@ -316,10 +254,10 @@ line level    source
                   P1_MD0 &= ~0x03;        // P10 ÊäÈëÄ£Ê½
               
                   // heating_pin_config();    // ¼ÓÈÈ¿ØÖÆÒı½Å
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 5   
+
                   P1_MD1 |= 0x01; // ÓÃ P14 ¿ØÖÆ¼ÓÈÈ
               
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 6   
-
                                   // speech_ctl_pin_config(); // ¿ØÖÆÓïÒôICµçÔ´µÄÒı½Å
                   // P11
                   P1_MD0 |= 0x01 << 2; // Êä³öÄ£Ê½
@@ -380,10 +318,10 @@ line level    source
              -µçÏÂ)
                   ADC_CFG1 = 0x3C;       // ADCÊ±ÖÓ·ÖÆµ£¬16·ÖÆµ
                   ADC_CFG2 = 0xFF;       // ADC²ÉÑùÊ±ÖÓ£¬256¸öADCÊ±ÖÓ
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 6   
+
               
                   // motor_config();  // ¿ØÖÆµç»úµÄÁ½Â·PWM
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 7   
-
                   P0_AF0 &= ~0xF0; // P02 ¸´ÓÃÎª STMR1_PWMB£¬P03 ¸´ÓÃÎª STMR1_PWMA
                   // ÅäÖÃSTIMER1
                   STMR1_FCONR = 0x00;          // Ñ¡ÔñÏµÍ³Ê±ÖÓ£¬0·ÖÆµ
@@ -419,755 +357,759 @@ line level    source
               #endif
               
               #endif // Î´ÓÅ»¯³ÌĞò¿Õ¼äµÄ´úÂë
- 387   1      
- 388   1          IE_EA = 1; // Ê¹ÄÜ×ÜÖĞ¶Ï
- 389   1      
- 390   1          // ÉÏÀ­£º
- 391   1          // P0_PU |= 0x01 << 7;
- 392   1          // P1_PU |= 0x01;
- 393   1          P0_PU = 0x80; // P07 ÉÏÀ­
- 394   1          P1_PU = 0x01; // P10 ÉÏÀ­
- 395   1      
- 396   1          /*
- 397   1              P03 ¶à¹¦ÄÜIOÄ£Ê½
- 398   1              P02 ¶à¹¦ÄÜIOÄ£Ê½
- 399   1              P01 ¶à¹¦ÄÜIOÄ£Ê½
- 400   1              P00 ¶à¹¦ÄÜIOÄ£Ê½
- 401   1          */
- 402   1          P0_MD0 = 0xAA;
- 403   1          /*
- 404   1              P07 ÊäÈëÄ£Ê½ ¼ì²â¿ª»ú/Ä£Ê½ÇĞ»»µÄÒı½Å
- 405   1              P06 Ä£ÄâÄ£Ê½ ¼ì²âµç»úÊÇ·ñ¶Â×ª
- 406   1              P05 Ä£ÄâÄ£Ê½ ¼ì²âµç³Ø·ÖÑ¹ºóµÄµçÑ¹(Íâ²¿1MÉÏÀ­£¬330KÏÂÀ­)
- 407   1              P04 Ä£ÄâÄ£Ê½ ¼ì²âÊÇ·ñÓĞ³äµç(Íâ²¿3.3KÉÏÀ­£¬2.2KÏÂÀ­)
- 408   1          */
- 409   1          P0_MD1 = 0x3F;
- 410   1          /*
- 411   1              P13 ¶à¹¦ÄÜIOÄ£Ê½ Çı¶¯ºìÉ«LED
- 412   1              P12 ¶à¹¦ÄÜIOÄ£Ê½ Çı¶¯ÂÌÉ«LED
- 413   1              P11 Êä³öÄ£Ê½ ¿ØÖÆÓïÒôIC¹©µç
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 8   
+ 332   1      
+ 333   1          IE_EA = 1; // Ê¹ÄÜ×ÜÖĞ¶Ï
+ 334   1      
+ 335   1          // ÉÏÀ­£º
+ 336   1          // P0_PU |= 0x01 << 7;
+ 337   1          // P1_PU |= 0x01;
+ 338   1          P0_PU = 0x80; // P07 ÉÏÀ­
+ 339   1          P1_PU = 0x01; // P10 ÉÏÀ­
+ 340   1      
+ 341   1          /*
+ 342   1              P03 ¶à¹¦ÄÜIOÄ£Ê½
+ 343   1              P02 ¶à¹¦ÄÜIOÄ£Ê½
+ 344   1              P01 ¶à¹¦ÄÜIOÄ£Ê½
+ 345   1              P00 ¶à¹¦ÄÜIOÄ£Ê½
+ 346   1          */
+ 347   1          P0_MD0 = 0xAA;
+ 348   1          /*
+ 349   1              P07 ÊäÈëÄ£Ê½ ¼ì²â¿ª»ú/Ä£Ê½ÇĞ»»µÄÒı½Å
+ 350   1              P06 Ä£ÄâÄ£Ê½ ¼ì²âµç»úÊÇ·ñ¶Â×ª
+ 351   1              P05 Ä£ÄâÄ£Ê½ ¼ì²âµç³Ø·ÖÑ¹ºóµÄµçÑ¹(Íâ²¿1MÉÏÀ­£¬330KÏÂÀ­)
+ 352   1              P04 Ä£ÄâÄ£Ê½ ¼ì²âÊÇ·ñÓĞ³äµç(Íâ²¿3.3KÉÏÀ­£¬2.2KÏÂÀ­)
+ 353   1          */
+ 354   1          P0_MD1 = 0x3F;
+ 355   1          /*
+ 356   1              P13 ¶à¹¦ÄÜIOÄ£Ê½ Çı¶¯ºìÉ«LED
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 7   
 
- 414   1              P10 ÊäÈëÄ£Ê½ ¼ì²â¼ÓÈÈ°´¼üµÄÒı½Å
- 415   1          */
- 416   1          // P1_MD0 = 0xA4;
- 417   1          P1_MD0 = 0x54; // P12¡¢P13ÊÇÇı¶¯LEDµÄÒı½Å£¬µÆ¹â³õÊ¼×´Ì¬Ó¦¸ÃÊÇ¹Ø±ÕµÄ
- 418   1          /*
- 419   1              P15 ÊäÈëÄ£Ê½ Íâ²¿2KÉÏÀ­£¬Á¬½Óµ½³äµçC¿ÚµÄ5V£¬10KÏÂÀ­½ÓµØ
- 420   1              P14 Êä³öÄ£Ê½ ¿ØÖÆ¼ÓÈÈ
- 421   1          */
- 422   1          P1_MD1 = 0x01;
- 423   1          /*
- 424   1              P03 ¸´ÓÃÎª STMR1_PWMA
- 425   1              P02 ¸´ÓÃÎª STMR1_PWMB
- 426   1              P01 ¸´ÓÃÎª TMR2_PWM
- 427   1              P00 ¸´ÓÃÎª UART1_RX
- 428   1          */
- 429   1          P0_AF0 = 0x01;
- 430   1          /*
- 431   1              P07 ²»¸´ÓÃ
- 432   1              P06 ²»¸´ÓÃ
- 433   1              P05 ²»¸´ÓÃ
- 434   1              P04 ²»¸´ÓÃ
- 435   1          */
- 436   1          // P0_AF1 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
- 437   1          /*
- 438   1              P13 ¸´ÓÃÎª STMR2_CHA
- 439   1              P12 ¸´ÓÃÎª STMR2_CHB
- 440   1              P11 ²»¸´ÓÃ
- 441   1              P10 ²»¸´ÓÃ
- 442   1          */
- 443   1          // P1_AF0 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
- 444   1          /*
- 445   1              P15 ²»¸´ÓÃ
- 446   1              P14 ²»¸´ÓÃ
- 447   1          */
- 448   1          // P1_AF1 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
- 449   1      
- 450   1          /*
- 451   1              Ö»Ê¹ÄÜ P04¡¢P05ºÍP06 µÄÄ£Äâ¹¦ÄÜ
- 452   1          */
- 453   1          P0_AIOEN = (0x01 << 4) | (0x01 << 5) | (0x01 << 6); //
- 454   1      
- 455   1          // P12¡¢P13¶ÔÓ¦µÄLED¶¼Ê¹ÓÃPWMÀ´Çı¶¯
- 456   1          LED_GREEN_OFF();
- 457   1          LED_RED_OFF();
- 458   1          // ÅäÖÃSTIMER1
- 459   1          STMR2_FCONR = 0x00;          // Ñ¡ÔñÏµÍ³Ê±ÖÓ£¬0·ÖÆµ
- 460   1          STMR2_PRH = STMR2_PRE / 256; // ÖÜÆÚÖµ
- 461   1          STMR2_PRL = STMR2_PRE % 256;
- 462   1          // Õ¼¿Õ±ÈÄ¬ÈÏÎª0£¬²»µãÁÁLED
- 463   1          // STMR2_CMPAH = STMR2_PRE / 2 / 256; // Í¨µÀAÕ¼¿Õ±È
- 464   1          // STMR2_CMPAL = STMR2_PRE / 2 % 256;
- 465   1          // STMR2_CMPBH = STMR2_PRE / 4 / 256; // Í¨µÀBÕ¼¿Õ±È
- 466   1          // STMR2_CMPBL = STMR2_PRE / 4 % 256;
- 467   1          STMR2_PCONRA = 0x10; // Ê¹ÄÜCHA£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
- 468   1          STMR2_PCONRB = 0x10; // Ê¹ÄÜCHB£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
- 469   1          STMR2_CR |= 0x01;    // Ê¹ÄÜ¸ß¼¶¶¨Ê±Æ÷
- 470   1      
- 471   1          __EnableIRQ(TMR0_IRQn);                                                     // Ê¹ÄÜtimer0ÖĞ¶Ï
- 472   1          TMR0_PRL = TMR0_CNT_TIME;                                                   // ÖÜÆÚÖµ
- 473   1          TMR0_CNTL = 0x00;                                                           // Çå³ı¼ÆÊıÖµ
- 474   1          TMR0_CONH = 0xA0;                                                           // Ê¹ÄÜ¼ÆÊıÖĞ¶Ï
- 475   1          TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128·ÖÆµ£¬ÏµÍ³Ê±ÖÓ£¬coun
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 9   
+ 357   1              P12 ¶à¹¦ÄÜIOÄ£Ê½ Çı¶¯ÂÌÉ«LED
+ 358   1              P11 Êä³öÄ£Ê½ ¿ØÖÆÓïÒôIC¹©µç
+ 359   1              P10 ÊäÈëÄ£Ê½ ¼ì²â¼ÓÈÈ°´¼üµÄÒı½Å
+ 360   1          */
+ 361   1          // P1_MD0 = 0xA4;
+ 362   1          P1_MD0 = 0x54; // P12¡¢P13ÊÇÇı¶¯LEDµÄÒı½Å£¬µÆ¹â³õÊ¼×´Ì¬Ó¦¸ÃÊÇ¹Ø±ÕµÄ
+ 363   1          /*
+ 364   1              P15 ÊäÈëÄ£Ê½ Íâ²¿2KÉÏÀ­£¬Á¬½Óµ½³äµçC¿ÚµÄ5V£¬10KÏÂÀ­½ÓµØ
+ 365   1              P14 Êä³öÄ£Ê½ ¿ØÖÆ¼ÓÈÈ
+ 366   1          */
+ 367   1          P1_MD1 = 0x01;
+ 368   1          /*
+ 369   1              P03 ¸´ÓÃÎª STMR1_PWMA
+ 370   1              P02 ¸´ÓÃÎª STMR1_PWMB
+ 371   1              P01 ¸´ÓÃÎª TMR2_PWM
+ 372   1              P00 ¸´ÓÃÎª UART1_RX
+ 373   1          */
+ 374   1          P0_AF0 = 0x01;
+ 375   1          /*
+ 376   1              P07 ²»¸´ÓÃ
+ 377   1              P06 ²»¸´ÓÃ
+ 378   1              P05 ²»¸´ÓÃ
+ 379   1              P04 ²»¸´ÓÃ
+ 380   1          */
+ 381   1          // P0_AF1 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
+ 382   1          /*
+ 383   1              P13 ¸´ÓÃÎª STMR2_CHA
+ 384   1              P12 ¸´ÓÃÎª STMR2_CHB
+ 385   1              P11 ²»¸´ÓÃ
+ 386   1              P10 ²»¸´ÓÃ
+ 387   1          */
+ 388   1          // P1_AF0 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
+ 389   1          /*
+ 390   1              P15 ²»¸´ÓÃ
+ 391   1              P14 ²»¸´ÓÃ
+ 392   1          */
+ 393   1          // P1_AF1 = 0x00; // Ä¬ÈÏ¾ÍÊÇ0,¿ÉÒÔ²»Ğ´
+ 394   1      
+ 395   1          /*
+ 396   1              Ö»Ê¹ÄÜ P04¡¢P05ºÍP06 µÄÄ£Äâ¹¦ÄÜ
+ 397   1          */
+ 398   1          P0_AIOEN = (0x01 << 4) | (0x01 << 5) | (0x01 << 6); //
+ 399   1      
+ 400   1          // P12¡¢P13¶ÔÓ¦µÄLED¶¼Ê¹ÓÃPWMÀ´Çı¶¯
+ 401   1          LED_GREEN_OFF();
+ 402   1          LED_RED_OFF();
+ 403   1          // ÅäÖÃSTIMER1
+ 404   1          STMR2_FCONR = 0x00;          // Ñ¡ÔñÏµÍ³Ê±ÖÓ£¬0·ÖÆµ
+ 405   1          STMR2_PRH = STMR2_PRE / 256; // ÖÜÆÚÖµ
+ 406   1          STMR2_PRL = STMR2_PRE % 256;
+ 407   1          // Õ¼¿Õ±ÈÄ¬ÈÏÎª0£¬²»µãÁÁLED
+ 408   1          // STMR2_CMPAH = STMR2_PRE / 2 / 256; // Í¨µÀAÕ¼¿Õ±È
+ 409   1          // STMR2_CMPAL = STMR2_PRE / 2 % 256;
+ 410   1          // STMR2_CMPBH = STMR2_PRE / 4 / 256; // Í¨µÀBÕ¼¿Õ±È
+ 411   1          // STMR2_CMPBL = STMR2_PRE / 4 % 256;
+ 412   1          STMR2_PCONRA = 0x10; // Ê¹ÄÜCHA£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
+ 413   1          STMR2_PCONRB = 0x10; // Ê¹ÄÜCHB£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
+ 414   1          STMR2_CR |= 0x01;    // Ê¹ÄÜ¸ß¼¶¶¨Ê±Æ÷
+ 415   1      
+ 416   1          __EnableIRQ(TMR0_IRQn);                                                     // Ê¹ÄÜtimer0ÖĞ¶Ï
+ 417   1          TMR0_PRL = TMR0_CNT_TIME;                                                   // ÖÜÆÚÖµ
+ 418   1          TMR0_CNTL = 0x00;                                                           // Çå³ı¼ÆÊıÖµ
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 8   
 
+ 419   1          TMR0_CONH = 0xA0;                                                           // Ê¹ÄÜ¼ÆÊıÖĞ¶Ï
+ 420   1          TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128·ÖÆµ£¬ÏµÍ³Ê±ÖÓ£¬coun
              -tÄ£Ê½
- 476   1      
- 477   1          // ¿ØÖÆÉıÑ¹µÄPWM
- 478   1          TMR2_PRL = TMR2_CNT_TIME % 256; // ÖÜÆÚÖµ
- 479   1          TMR2_PRH = TMR2_CNT_TIME / 256;
- 480   1          // Õ¼¿Õ±ÈÅäÖÃ£º£¨²»ÄÜÈ¥µô£¬·ñÔò¸ÕÉÏµç/³äµçÊ±¿ÉÄÜ»áÊÇËæ»úÖµ£¬¶ø²»ÊÇ0£©
- 481   1          TMR2_PWML = 0; // Õ¼¿Õ±È 0%
- 482   1          TMR2_PWMH = 0;
- 483   1          // TMR2_CNTL = 0x00; // Çå³ı¼ÆÊıÖµ
- 484   1          // TMR2_CNTH = 0x00;
- 485   1          TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0·ÖÆµ£¬ÏµÍ³Ê±ÖÓ£¬PWMÄ£Ê
+ 421   1      
+ 422   1          // ¿ØÖÆÉıÑ¹µÄPWM
+ 423   1          TMR2_PRL = TMR2_CNT_TIME % 256; // ÖÜÆÚÖµ
+ 424   1          TMR2_PRH = TMR2_CNT_TIME / 256;
+ 425   1          // Õ¼¿Õ±ÈÅäÖÃ£º£¨²»ÄÜÈ¥µô£¬·ñÔò¸ÕÉÏµç/³äµçÊ±¿ÉÄÜ»áÊÇËæ»úÖµ£¬¶ø²»ÊÇ0£©
+ 426   1          TMR2_PWML = 0; // Õ¼¿Õ±È 0%
+ 427   1          TMR2_PWMH = 0;
+ 428   1          // TMR2_CNTL = 0x00; // Çå³ı¼ÆÊıÖµ
+ 429   1          // TMR2_CNTH = 0x00;
+ 430   1          TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0·ÖÆµ£¬ÏµÍ³Ê±ÖÓ£¬PWMÄ£Ê
              -½
- 486   1          // ¹Ø±Õ¶¨Ê±Æ÷2
- 487   1          tmr2_pwm_disable();
- 488   1      
- 489   1          AIP_CON2 |= 0xC0; // Ê¹ÄÜADCÖĞCMPÊ¹ÄÜĞÅºÅºÍCMPĞ£×¼¹¦ÄÜ
- 490   1          AIP_CON4 |= 0x01; // Ê¹ÄÜADCÆ«ÖÃµçÁ÷£¬²Î¿¼µçÑ¹Ñ¡ÔñÄÚ²¿2.4V(Note: Ê¹ÓÃÄÚ²¿²Î¿¼Ê±£¬Ğ¾Æ¬ĞèÔÚ5VµçÑ¹¹©µçÏÂ)
- 491   1          ADC_CFG1 = 0x3C;  // ADCÊ±ÖÓ·ÖÆµ£¬16·ÖÆµ
- 492   1          ADC_CFG2 = 0xFF;  // ADC²ÉÑùÊ±ÖÓ£¬256¸öADCÊ±ÖÓ
- 493   1      
- 494   1          // ÅäÖÃSTIMER1
- 495   1          STMR1_FCONR = 0x00;          // Ñ¡ÔñÏµÍ³Ê±ÖÓ£¬0·ÖÆµ
- 496   1          STMR1_PRH = STMR1_PRE / 256; // ÖÜÆÚÖµ
- 497   1          STMR1_PRL = STMR1_PRE % 256;
- 498   1          // Õ¼¿Õ±È£¬Ä¬ÈÏÎª0
- 499   1          // STMR1_CMPAH = STMR1_PRE / 2 / 256;
- 500   1          // STMR1_CMPAL = STMR1_PRE / 2 % 256;
- 501   1          // STMR1_CMPBH = STMR1_PRE / 4 / 256;
- 502   1          // STMR1_CMPBL = STMR1_PRE / 4 % 256;
- 503   1          STMR1_PCONRA = 0x10; // Ê¹ÄÜCHA£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
- 504   1          STMR1_PCONRB = 0x10; // Ê¹ÄÜCHB£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
- 505   1          STMR1_CR |= 0x01;    // Ê¹ÄÜ¸ß¼¶¶¨Ê±Æ÷
- 506   1          // ¹Ø±Õ¶¨Ê±Æ÷£¬IOÅäÖÃÎªÊä³öÄ£Ê½£¬Êä³öµÍµçÆ½
- 507   1          motor_pwm_disable();
- 508   1      
- 509   1          // P00 RX
- 510   1          __EnableIRQ(UART1_IRQn);                    // ´ò¿ªUARTÄ£¿éÖĞ¶Ï
- 511   1          UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // ÅäÖÃ²¨ÌØÂÊ¸ß°ËÎ»
- 512   1          UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // ÅäÖÃ²¨ÌØÂÊµÍ°ËÎ»
- 513   1          // UART1_CON = 0x91;                           // 8bitÊı¾İ£¬1bitÍ£Ö¹Î»£¬Ê¹ÄÜÖĞ¶Ï
- 514   1          // UART1_CON |= 0x02;                          // ½ÓÊÕÄ£Ê½
- 515   1          UART1_CON = 0x93; // 8bitÊı¾İ£¬1bitÍ£Ö¹Î»£¬Ê¹ÄÜÖĞ¶Ï,½ÓÊÕÄ£Ê½
- 516   1      }
- 517          
- 518          void main(void)
- 519          {
- 520   1      // system_init();
- 521   1      #define HRCSC_STEP_VAL (*(u8 code *)0x9111) // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
- 522   1          u8 hrcsc_data = HRCSC_STEP_VAL & 0x7f;  // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
- 523   1          WDT_KEY = 0xDD;                         // Close WDT
- 524   1          FLASH_TIM0 = 0x55;
- 525   1          FLASH_TIM1 = 0x54; // FLASH 16M ·ÃÎÊËÙ¶È
- 526   1          FLASH_TRIM = 0x0A;
- 527   1          AIP_CON0 = 0x80 | hrcsc_data; // Ê¹ÄÜ hirc
- 528   1          CLK_CON0 = 0x03;              // Ñ¡Ôñ hirc clk
- 529   1          CLK_CON2 = 0x00;              // ÏµÍ³Ê±ÖÓ²»·ÖÆµ
- 530   1          CLK_CON6 = 0x1F;              // FLASHÉÕĞ´Ê±ÖÓ32·ÖÆµ£º1M
- 531   1          delay_ms(1);                  // ¸ÃÑÓ³Ù²»¿ÉÉ¾³ı£¬±£Ö¤ÉÕÂ¼ÎÈ¶¨ĞÔ
- 532   1          __ADC_VREFP_TRIM_5V_CALIB;    // ÌîÈë5VµçÑ¹¹©µçÏÂÄÚ²¿2.4V²Î¿¼µçÑ¹µÄĞ£×¼Öµ
- 533   1      
- 534   1          // ¹Ø±ÕHCKºÍHDAµÄµ÷ÊÔ¹¦ÄÜ
- 535   1          WDT_KEY = 0x55;  // ½â³ıĞ´±£»¤
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 10  
+ 431   1          // ¹Ø±Õ¶¨Ê±Æ÷2
+ 432   1          tmr2_pwm_disable();
+ 433   1      
+ 434   1          AIP_CON2 |= 0xC0; // Ê¹ÄÜADCÖĞCMPÊ¹ÄÜĞÅºÅºÍCMPĞ£×¼¹¦ÄÜ
+ 435   1          AIP_CON4 |= 0x01; // Ê¹ÄÜADCÆ«ÖÃµçÁ÷£¬²Î¿¼µçÑ¹Ñ¡ÔñÄÚ²¿2.4V(Note: Ê¹ÓÃÄÚ²¿²Î¿¼Ê±£¬Ğ¾Æ¬ĞèÔÚ5VµçÑ¹¹©µçÏÂ)
+ 436   1          ADC_CFG1 = 0x3C;  // ADCÊ±ÖÓ·ÖÆµ£¬16·ÖÆµ
+ 437   1          ADC_CFG2 = 0xFF;  // ADC²ÉÑùÊ±ÖÓ£¬256¸öADCÊ±ÖÓ
+ 438   1      
+ 439   1          // ÅäÖÃSTIMER1
+ 440   1          STMR1_FCONR = 0x00;          // Ñ¡ÔñÏµÍ³Ê±ÖÓ£¬0·ÖÆµ
+ 441   1          STMR1_PRH = STMR1_PRE / 256; // ÖÜÆÚÖµ
+ 442   1          STMR1_PRL = STMR1_PRE % 256;
+ 443   1          // Õ¼¿Õ±È£¬Ä¬ÈÏÎª0
+ 444   1          // STMR1_CMPAH = STMR1_PRE / 2 / 256;
+ 445   1          // STMR1_CMPAL = STMR1_PRE / 2 % 256;
+ 446   1          // STMR1_CMPBH = STMR1_PRE / 4 / 256;
+ 447   1          // STMR1_CMPBL = STMR1_PRE / 4 % 256;
+ 448   1          STMR1_PCONRA = 0x10; // Ê¹ÄÜCHA£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
+ 449   1          STMR1_PCONRB = 0x10; // Ê¹ÄÜCHB£¬¼ÆÊıÖµ´óÓÚCHA±È½ÏÖµÊä³ö0£¬Ğ¡ÓÚÊä³ö1
+ 450   1          STMR1_CR |= 0x01;    // Ê¹ÄÜ¸ß¼¶¶¨Ê±Æ÷
+ 451   1          // ¹Ø±Õ¶¨Ê±Æ÷£¬IOÅäÖÃÎªÊä³öÄ£Ê½£¬Êä³öµÍµçÆ½
+ 452   1          motor_pwm_disable();
+ 453   1      
+ 454   1          // P00 RX
+ 455   1          __EnableIRQ(UART1_IRQn);                    // ´ò¿ªUARTÄ£¿éÖĞ¶Ï
+ 456   1          UART1_BAUD1 = (USER_UART_BAUD >> 8) & 0xFF; // ÅäÖÃ²¨ÌØÂÊ¸ß°ËÎ»
+ 457   1          UART1_BAUD0 = USER_UART_BAUD & 0xFF;        // ÅäÖÃ²¨ÌØÂÊµÍ°ËÎ»
+ 458   1          // UART1_CON = 0x91;                           // 8bitÊı¾İ£¬1bitÍ£Ö¹Î»£¬Ê¹ÄÜÖĞ¶Ï
+ 459   1          // UART1_CON |= 0x02;                          // ½ÓÊÕÄ£Ê½
+ 460   1          UART1_CON = 0x93; // 8bitÊı¾İ£¬1bitÍ£Ö¹Î»£¬Ê¹ÄÜÖĞ¶Ï,½ÓÊÕÄ£Ê½
+ 461   1      }
+ 462          
+ 463          void main(void)
+ 464          {
+ 465   1      // system_init();
+ 466   1      #define HRCSC_STEP_VAL (*(u8 code *)0x9111) // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
+ 467   1          u8 hrcsc_data = HRCSC_STEP_VAL & 0x7f;  // »ñÈ¡HRCÊ±ÖÓÏ¸µ÷Öµ
+ 468   1          WDT_KEY = 0xDD;                         // Close WDT
+ 469   1          FLASH_TIM0 = 0x55;
+ 470   1          FLASH_TIM1 = 0x54; // FLASH 16M ·ÃÎÊËÙ¶È
+ 471   1          FLASH_TRIM = 0x0A;
+ 472   1          AIP_CON0 = 0x80 | hrcsc_data; // Ê¹ÄÜ hirc
+ 473   1          CLK_CON0 = 0x03;              // Ñ¡Ôñ hirc clk
+ 474   1          CLK_CON2 = 0x00;              // ÏµÍ³Ê±ÖÓ²»·ÖÆµ
+ 475   1          CLK_CON6 = 0x1F;              // FLASHÉÕĞ´Ê±ÖÓ32·ÖÆµ£º1M
+ 476   1          delay_ms(1);                  // ¸ÃÑÓ³Ù²»¿ÉÉ¾³ı£¬±£Ö¤ÉÕÂ¼ÎÈ¶¨ĞÔ
+ 477   1          __ADC_VREFP_TRIM_5V_CALIB;    // ÌîÈë5VµçÑ¹¹©µçÏÂÄÚ²¿2.4V²Î¿¼µçÑ¹µÄĞ£×¼Öµ
+ 478   1      
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 9   
 
- 536   1          IO_MAP &= ~0x03; // ¹Ø±ÕHCKºÍHDAÒı½ÅµÄµ÷ÊÔ¹¦ÄÜ£¨½â³ıÓ³Éä£©
- 537   1          WDT_KEY = 0xBB;
- 538   1      
- 539   1          // ³õÊ¼»¯´òÓ¡
- 540   1      #if USE_MY_DEBUG
+ 479   1          // ¹Ø±ÕHCKºÍHDAµÄµ÷ÊÔ¹¦ÄÜ
+ 480   1          WDT_KEY = 0x55;  // ½â³ıĞ´±£»¤
+ 481   1          IO_MAP &= ~0x03; // ¹Ø±ÕHCKºÍHDAÒı½ÅµÄµ÷ÊÔ¹¦ÄÜ£¨½â³ıÓ³Éä£©
+ 482   1          WDT_KEY = 0xBB;
+ 483   1      
+ 484   1          // ³õÊ¼»¯´òÓ¡
+ 485   1      #if USE_MY_DEBUG
                   debug_init();
                   printf("TXM8C101x_SDK main start\n");
               #endif //  #if USE_MY_DEBUG
- 544   1      
- 545   1          user_config();
- 546   1      
- 547   1      #if 1
- 548   1          // ÓÉÓÚĞ¾Æ¬ÏÂÔØÖ®ºó»áÃ»ÓĞ·´Ó¦£¬ÕâÀïÓÃÂÌÉ«µÆ×÷ÎªÖ¸Ê¾£º
- 549   1          LED_GREEN_ON();
- 550   1          // LED_RED_ON();
- 551   1          delay_ms(1000);
- 552   1          LED_GREEN_OFF();
- 553   1          // LED_RED_OFF();
- 554   1      #endif
- 555   1      
- 556   1      #if 1 // ÉÏµçÊ±¼ì²âµç³ØÊÇ·ñÕıÈ·°²×°(²âÊÔÍ¨¹ı)(Õ¼ÓÃ58¸ö×Ö½Ú):
- 557   1      
- 558   1          /*
- 559   1              Èç¹û´ò¿ªPWMºó£¬¼ì²âµç³ØµÄµçÑ¹±ÈÂúµç»¹Òª¸ß£¬ËµÃ÷Ã»ÓĞ½ÓÈëµç³Ø£¬
- 560   1              ¼ì²âµ½µÄÊÇ³äµç5VÉıÑ¹ºóµÄµçÑ¹
- 561   1          */
- 562   1          TMR2_PWML = 93 % 256; // µ÷½ÚÎªÔ¼47.6%µÄÕ¼¿Õ±È
- 563   1          // ×î´óÕ¼¿Õ±ÈµÄÖµ²»³¬¹ı255£¬ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬¿ÉÒÔ²»ÓÃÅäÖÃ¸ß8Î»µÄ¼Ä´æÆ÷
- 564   1          // µ«ÊÇÕâÀï²»ÄÜÈ¥µôÏÂÃæÕâÒ»Ìõ£¬»áµ¼ÖÂµçÁ÷Òì³£Ìø¶¯£¬Éè±¸»á·´¸´ÖØÆô£º
- 565   1          // TMR2_PWMH = 93 / 256;
- 566   1          TMR2_PWMH = 0;
- 567   1          tmr2_pwm_enable(); // ´ò¿ª¿ØÖÆÉıÑ¹µçÂ·µÄpwm
- 568   1          delay_ms(100);
- 569   1          adc_sel_channel(ADC_CHANNEL_BAT); // ÇĞ»»µ½¼ì²âµç³Ø½µÑ¹ºóµÄµçÑ¹µÄ¼ì²âÒı½Å
- 570   1          {
- 571   2              u8 i = 0;
- 572   2              u16 adc_val = 0;
- 573   2              for (i = 0; i < 10; i++) //
- 574   2              {
- 575   3                  adc_val = adc_get_val();
- 576   3                  if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
- 577   3                  {
- 578   4                      flag_bat_is_empty = 1; // ±íÊ¾µç³ØÊÇ¿ÕµÄ(µç³ØÃ»ÓĞ°²×°)
- 579   4                  }
- 580   3              }
- 581   2          }
- 582   1          tmr2_pwm_disable(); // ¹Ø±Õ¿ØÖÆÉıÑ¹µçÂ·µÄPWM
- 583   1          TMR2_PWML = 0;      // 0%Õ¼¿Õ±È
- 584   1          // TMR2_PWMH = 0;  // ×î´óÕ¼¿Õ±ÈµÄÖµ²»³¬¹ı255£¬ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬¿ÉÒÔ²»ÓÃÅäÖÃ¸ß8Î»µÄ¼Ä´æÆ÷
- 585   1      
- 586   1      #endif // ÉÏµçÊ±¼ì²âµç³ØÊÇ·ñÕıÈ·°²×°
- 587   1      
- 588   1          {
- 589   2              u16 adc_charging_val;
- 590   2              adc_sel_channel(ADC_CHANNEL_CHARGE);                 // ÇĞ»»µ½¼ì²â³äµçµÄµçÑ¹¼ì²âÒı½Å(¼ì²âµ½µÄ³äµçµ
+ 489   1      
+ 490   1          user_config();
+ 491   1      
+ 492   1      #if 1
+ 493   1          // ÓÉÓÚĞ¾Æ¬ÏÂÔØÖ®ºó»áÃ»ÓĞ·´Ó¦£¬ÕâÀïÓÃÂÌÉ«µÆ×÷ÎªÖ¸Ê¾£º
+ 494   1          LED_GREEN_ON();
+ 495   1          // LED_RED_ON();
+ 496   1          delay_ms(1000);
+ 497   1          LED_GREEN_OFF();
+ 498   1          // LED_RED_OFF();
+ 499   1      #endif
+ 500   1      
+ 501   1      #if 1 // ÉÏµçÊ±¼ì²âµç³ØÊÇ·ñÕıÈ·°²×°(²âÊÔÍ¨¹ı)(Õ¼ÓÃ58¸ö×Ö½Ú):
+ 502   1      
+ 503   1          /*
+ 504   1              Èç¹û´ò¿ªPWMºó£¬¼ì²âµç³ØµÄµçÑ¹±ÈÂúµç»¹Òª¸ß£¬ËµÃ÷Ã»ÓĞ½ÓÈëµç³Ø£¬
+ 505   1              ¼ì²âµ½µÄÊÇ³äµç5VÉıÑ¹ºóµÄµçÑ¹
+ 506   1          */
+ 507   1          // TMR2_PWML = 93 % 256; // µ÷½ÚÎªÔ¼47.6%µÄÕ¼¿Õ±È(Õ¼¿Õ±ÈÌ«´ó£¬»áµ¼ÖÂÒ»¿ªÊ¼µÄµçÁ÷¹ı´ó)
+ 508   1          TMR2_PWML = 55 % 256; // 
+ 509   1          // ×î´óÕ¼¿Õ±ÈµÄÖµ²»³¬¹ı255£¬ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬¿ÉÒÔ²»ÓÃÅäÖÃ¸ß8Î»µÄ¼Ä´æÆ÷
+ 510   1          // µ«ÊÇÕâÀï²»ÄÜÈ¥µôÏÂÃæÕâÒ»Ìõ£¬»áµ¼ÖÂµçÁ÷Òì³£Ìø¶¯£¬Éè±¸»á·´¸´ÖØÆô£º
+ 511   1          // TMR2_PWMH = 93 / 256;
+ 512   1          TMR2_PWMH = 0;
+ 513   1          tmr2_pwm_enable(); // ´ò¿ª¿ØÖÆÉıÑ¹µçÂ·µÄpwm
+ 514   1          delay_ms(100);
+ 515   1          adc_sel_channel(ADC_CHANNEL_BAT); // ÇĞ»»µ½¼ì²âµç³Ø½µÑ¹ºóµÄµçÑ¹µÄ¼ì²âÒı½Å
+ 516   1          {
+ 517   2              u8 i = 0;
+ 518   2              u16 adc_val = 0;
+ 519   2              for (i = 0; i < 10; i++) //
+ 520   2              {
+ 521   3                  adc_val = adc_get_val();
+ 522   3                  if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+ 523   3                  {
+ 524   4                      flag_bat_is_empty = 1; // ±íÊ¾µç³ØÊÇ¿ÕµÄ(µç³ØÃ»ÓĞ°²×°)
+ 525   4                  }
+ 526   3              }
+ 527   2          }
+ 528   1          tmr2_pwm_disable(); // ¹Ø±Õ¿ØÖÆÉıÑ¹µçÂ·µÄPWM
+ 529   1          TMR2_PWML = 0;      // 0%Õ¼¿Õ±È
+ 530   1          // TMR2_PWMH = 0;  // ×î´óÕ¼¿Õ±ÈµÄÖµ²»³¬¹ı255£¬ÎªÁË½ÚÊ¡³ÌĞò¿Õ¼ä£¬¿ÉÒÔ²»ÓÃÅäÖÃ¸ß8Î»µÄ¼Ä´æÆ÷
+ 531   1      
+ 532   1      #endif // ÉÏµçÊ±¼ì²âµç³ØÊÇ·ñÕıÈ·°²×°
+ 533   1      
+ 534   1          {
+ 535   2              u16 adc_charging_val;
+ 536   2              adc_sel_channel(ADC_CHANNEL_CHARGE);                 // ÇĞ»»µ½¼ì²â³äµçµÄµçÑ¹¼ì²âÒı½Å(¼ì²âµ½µÄ³äµçµ
              -çÑ¹ == USB-C¿ÚµçÑ¹ / 2)
- 591   2              adc_charging_val = adc_get_val();                    // ¸üĞÂµ±Ç°¼ì²âµ½µÄ³äµçµçÑ¹¶ÔÓ¦µÄadÖµ
- 592   2              if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD) // Èç¹û¸ÕÉÏµç¼ì²âµ½»¹ÔÚ³äµç£¬²»½øÈëµÍ¹¦ºÄ
- 593   2              {
- 594   3              }
- 595   2              else
- 596   2              {
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 11  
+ 537   2              adc_charging_val = adc_get_val();                    // ¸üĞÂµ±Ç°¼ì²âµ½µÄ³äµçµçÑ¹¶ÔÓ¦µÄadÖµ
+ 538   2              if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD) // Èç¹û¸ÕÉÏµç¼ì²âµ½»¹ÔÚ³äµç£¬²»½øÈëµÍ¹¦ºÄ
+ 539   2              {
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 10  
 
- 597   3                  flag_is_enter_low_power = 1; // ÉÏµçÖ®ºó¾Í½øÈëµÍ¹¦ºÄ
- 598   3              }
- 599   2          }
- 600   1      
- 601   1          while (1)
- 602   1          {
- 603   2      
- 604   2      #if 1 // (²âÊÔÍ¨¹ı)ÉÏµçÊ±£¬Èç¹û¼ì²âµ½µç³ØÃ»ÓĞ°²×°£¬ÈÃLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç(Õ¼ÓÃ25¸ö×Ö½Ú)
- 605   2              if (flag_bat_is_empty)
- 606   2              {
- 607   3                  // Ã»ÓĞ·ÅÈëµç³Ø£¬¿ØÖÆLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç
- 608   3                  LED_RED_ON();
- 609   3                  delay_ms(200);
- 610   3                  LED_RED_OFF();
- 611   3                  delay_ms(200);
- 612   3                  continue;
- 613   3              }
- 614   2      #endif // ÉÏµçÊ±£¬Èç¹û¼ì²âµ½µç³ØÃ»ÓĞ°²×°£¬ÈÃLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç
- 615   2      
- 616   2      #if 1
- 617   2              charge_scan_handle();
- 618   2      
- 619   2              if (flag_is_enable_key_scan) // Ã¿10ms£¬¸Ã±êÖ¾Î»»á±»¶¨Ê±Æ÷ÖÃÎ»Ò»´Î
- 620   2              {
- 621   3                  flag_is_enable_key_scan = 0;
- 622   3                  key_scan_10ms_isr();
- 623   3              }
- 624   2      
- 625   2              key_event_handle();
- 626   2      
- 627   2              speech_scan_process(); // ¼ì²âÊÇ·ñÓĞ´ÓÓïÒôIC´«À´µÄÃüÁî£¬Èç¹ûÓĞÔò×öÏàÓ¦µÄ´¦Àí
- 628   2      #endif
- 629   2      
- 630   2      #if 1 // µç»ú×Ô¶¯×ªÏò
- 631   2              if (flag_ctl_turn_dir)
- 632   2              {
- 633   3                  // Èç¹ûÒªÇĞ»»µç»ú×ªÏò
- 634   3                  flag_ctl_turn_dir = 0;
- 635   3                  // if (0 == cur_motor_dir)
- 636   3                  // {
- 637   3                  //     // Èç¹ûµ±Ç°µç»úÎª³õÊ¼×´Ì¬£¬²»µ÷½Ú
- 638   3                  // }
- 639   3                  // else if (1 == cur_motor_dir)
- 640   3                  if (1 == cur_motor_dir)
- 641   3                  {
- 642   4                      // Èç¹ûµ±Ç°µç»úÎªÕı×ª£¬µ÷½ÚÎª·´×ª
- 643   4                      motor_pwm_b_disable(); // ¹Ø±ÕÕı×ªµÄPWMÊä³ö
- 644   4                      delay_ms(500);
- 645   4                      motor_pwm_a_enable(); // ´ò¿ª·´×ªµÄPWMÊä³ö
- 646   4                      // cur_motor_dir = 2;    // ±íÊ¾µç»úµ±Ç°×ªÏòÎª ·´×ª
- 647   4                  }
- 648   3                  else if (2 == cur_motor_dir)
- 649   3                  {
- 650   4                      // Èç¹ûµ±Ç°µç»úÎª·´×ª£¬µ÷½ÚÎªÕı×ª
- 651   4                      motor_pwm_a_disable(); // ¹Ø±Õ·´×ªµÄPWMÊä³ö
- 652   4                      delay_ms(500);
- 653   4                      motor_pwm_b_enable();
- 654   4                      // cur_motor_dir = 1; // ±íÊ¾µç»úµ±Ç°×ªÏòÎª Õı×ª
- 655   4                  }
- 656   3                  // else
- 657   3                  // {
- 658   3                  //     // ÆäËûÇé¿ö£¬²»¿¼ÂÇ£¬²»×ö´¦Àí
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 12  
+ 540   3              }
+ 541   2              else
+ 542   2              {
+ 543   3                  flag_is_enter_low_power = 1; // ÉÏµçÖ®ºó¾Í½øÈëµÍ¹¦ºÄ
+ 544   3              }
+ 545   2          }
+ 546   1      
+ 547   1          while (1)
+ 548   1          {
+ 549   2      
+ 550   2      #if 1 // (²âÊÔÍ¨¹ı)ÉÏµçÊ±£¬Èç¹û¼ì²âµ½µç³ØÃ»ÓĞ°²×°£¬ÈÃLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç(Õ¼ÓÃ25¸ö×Ö½Ú)
+ 551   2              if (flag_bat_is_empty)
+ 552   2              {
+ 553   3                  // Ã»ÓĞ·ÅÈëµç³Ø£¬¿ØÖÆLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç
+ 554   3                  LED_RED_ON();
+ 555   3                  delay_ms(200);
+ 556   3                  LED_RED_OFF();
+ 557   3                  delay_ms(200);
+ 558   3                  continue;
+ 559   3              }
+ 560   2      #endif // ÉÏµçÊ±£¬Èç¹û¼ì²âµ½µç³ØÃ»ÓĞ°²×°£¬ÈÃLEDÉÁË¸£¬Ö±µ½ÖØĞÂÉÏµç
+ 561   2      
+ 562   2      #if 1
+ 563   2              charge_scan_handle();
+ 564   2      
+ 565   2              if (flag_is_enable_key_scan) // Ã¿10ms£¬¸Ã±êÖ¾Î»»á±»¶¨Ê±Æ÷ÖÃÎ»Ò»´Î
+ 566   2              {
+ 567   3                  flag_is_enable_key_scan = 0;
+ 568   3                  key_scan_10ms_isr();
+ 569   3              }
+ 570   2      
+ 571   2              key_event_handle();
+ 572   2      
+ 573   2              speech_scan_process(); // ¼ì²âÊÇ·ñÓĞ´ÓÓïÒôIC´«À´µÄÃüÁî£¬Èç¹ûÓĞÔò×öÏàÓ¦µÄ´¦Àí
+ 574   2      #endif
+ 575   2      
+ 576   2      #if 1 // µç»ú×Ô¶¯×ªÏò
+ 577   2              if (flag_ctl_turn_dir)
+ 578   2              {
+ 579   3                  // Èç¹ûÒªÇĞ»»µç»ú×ªÏò
+ 580   3                  flag_ctl_turn_dir = 0;
+ 581   3                  // if (0 == cur_motor_dir)
+ 582   3                  // {
+ 583   3                  //     // Èç¹ûµ±Ç°µç»úÎª³õÊ¼×´Ì¬£¬²»µ÷½Ú
+ 584   3                  // }
+ 585   3                  // else if (1 == cur_motor_dir)
+ 586   3                  if (1 == cur_motor_dir)
+ 587   3                  {
+ 588   4                      // Èç¹ûµ±Ç°µç»úÎªÕı×ª£¬µ÷½ÚÎª·´×ª
+ 589   4                      motor_pwm_b_disable(); // ¹Ø±ÕÕı×ªµÄPWMÊä³ö
+ 590   4                      delay_ms(500);
+ 591   4                      motor_pwm_a_enable(); // ´ò¿ª·´×ªµÄPWMÊä³ö
+ 592   4                      // cur_motor_dir = 2;    // ±íÊ¾µç»úµ±Ç°×ªÏòÎª ·´×ª
+ 593   4                  }
+ 594   3                  else if (2 == cur_motor_dir)
+ 595   3                  {
+ 596   4                      // Èç¹ûµ±Ç°µç»úÎª·´×ª£¬µ÷½ÚÎªÕı×ª
+ 597   4                      motor_pwm_a_disable(); // ¹Ø±Õ·´×ªµÄPWMÊä³ö
+ 598   4                      delay_ms(500);
+ 599   4                      motor_pwm_b_enable();
+ 600   4                      // cur_motor_dir = 1; // ±íÊ¾µç»úµ±Ç°×ªÏòÎª Õı×ª
+ 601   4                  }
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 11  
 
- 659   3                  // }
- 660   3              }
- 661   2      #endif // µç»ú×Ô¶¯×ªÏò
- 662   2      
- 663   2      #if 1 // µç»ú¹ıÁ÷¼ì²âºÍ´¦Àí
- 664   2      
- 665   2              motor_over_current_detect_handle(); // º¯ÊıÄÚ²¿»á¼ì²âµç»úÓĞÃ»ÓĞÔËĞĞ
- 666   2      
- 667   2      #endif // µç»ú¹ıÁ÷¼ì²âºÍ´¦Àí
+ 602   3                  // else
+ 603   3                  // {
+ 604   3                  //     // ÆäËûÇé¿ö£¬²»¿¼ÂÇ£¬²»×ö´¦Àí
+ 605   3                  // }
+ 606   3              }
+ 607   2      #endif // µç»ú×Ô¶¯×ªÏò
+ 608   2      
+ 609   2      #if 1 // µç»ú¹ıÁ÷¼ì²âºÍ´¦Àí
+ 610   2      
+ 611   2              motor_over_current_detect_handle(); // º¯ÊıÄÚ²¿»á¼ì²âµç»úÓĞÃ»ÓĞÔËĞĞ
+ 612   2      
+ 613   2      #endif // µç»ú¹ıÁ÷¼ì²âºÍ´¦Àí
+ 614   2      
+ 615   2      #if 1 // ¸ù¾İ¿ØÖÆ±êÖ¾Î»À´¿ØÖÆ¹Ø»ú
+ 616   2              if (flag_ctl_dev_close)
+ 617   2              {
+ 618   3                  // Èç¹ûÒª¹Ø±ÕÉè±¸
+ 619   3                  flag_ctl_dev_close = 0;
+ 620   3      
+ 621   3                  if (flag_is_in_charging)
+ 622   3                  {
+ 623   4                      // Èç¹ûÕıÔÚ³äµç£¬Ö±½Ó¹Ø±ÕÓïÒôICµÄµçÔ´
+ 624   4                      SPEECH_POWER_DISABLE();
+ 625   4                  }
+ 626   3      
+ 627   3                  // º¯ÊıÄÚ²¿»áÅĞ¶ÏÊÇ²»ÊÇÕıÔÚ³äµç¶ø¹Ø»ú
+ 628   3                  fun_ctl_power_off();
+ 629   3              }
+ 630   2      #endif // ¸ù¾İ¿ØÖÆ±êÖ¾Î»À´¿ØÖÆ¹Ø»ú
+ 631   2      
+ 632   2      #if 1 // µÍ¹¦ºÄ
+ 633   2      
+ 634   2              if (flag_is_enter_low_power)
+ 635   2              {
+ 636   3                  flag_is_enter_low_power = 0;
+ 637   3      
+ 638   3                  // if (P15)
+ 639   3                  // {
+ 640   3      
+ 641   3                  //     continue;
+ 642   3                  // }
+ 643   3      
+ 644   3                  low_power();
+ 645   3              }
+ 646   2      
+ 647   2      #endif // µÍ¹¦ºÄ
+ 648   2      
+ 649   2          } // while (1)
+ 650   1      }
+ 651          
+ 652          void TMR0_IRQHandler(void) interrupt TMR0_IRQn
+ 653          {
+ 654   1          if (TMR0_CONH & 0x80)
+ 655   1          {
+ 656   2              TMR0_CONH |= 0x80;
+ 657   2              // 1ms²úÉúÒ»´ÎÖĞ¶Ï£¬½øÈëµ½ÕâÀï
+ 658   2      
+ 659   2              { // °´¼üÉ¨Ãè
+ 660   3                  static volatile u8 key_scan_cnt = 0;
+ 661   3                  key_scan_cnt++;
+ 662   3                  if (key_scan_cnt >= 10)
+ 663   3                  {
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 12  
+
+ 664   4                      key_scan_cnt = 0;
+ 665   4                      flag_is_enable_key_scan = 1;
+ 666   4                  }
+ 667   3              } // °´¼üÉ¨Ãè
  668   2      
- 669   2      #if 1 // ¸ù¾İ¿ØÖÆ±êÖ¾Î»À´¿ØÖÆ¹Ø»ú
- 670   2              if (flag_ctl_dev_close)
- 671   2              {
- 672   3                  // Èç¹ûÒª¹Ø±ÕÉè±¸
- 673   3                  flag_ctl_dev_close = 0;
- 674   3      
- 675   3                  if (flag_is_in_charging)
- 676   3                  {
- 677   4                      // Èç¹ûÕıÔÚ³äµç£¬Ö±½Ó¹Ø±ÕÓïÒôICµÄµçÔ´
- 678   4                      SPEECH_POWER_DISABLE();
- 679   4                  }
- 680   3      
- 681   3                  // º¯ÊıÄÚ²¿»áÅĞ¶ÏÊÇ²»ÊÇÕıÔÚ³äµç¶ø¹Ø»ú
- 682   3                  fun_ctl_power_off();
- 683   3              }
- 684   2      #endif // ¸ù¾İ¿ØÖÆ±êÖ¾Î»À´¿ØÖÆ¹Ø»ú
- 685   2      
- 686   2      #if 1 // µÍ¹¦ºÄ
- 687   2      
- 688   2              if (flag_is_enter_low_power)
- 689   2              {
- 690   3                  flag_is_enter_low_power = 0;
- 691   3                  low_power();
- 692   3              }
- 693   2      
- 694   2      #endif // µÍ¹¦ºÄ
- 695   2      
- 696   2          } // while (1)
- 697   1      }
- 698          
- 699          void TMR0_IRQHandler(void) interrupt TMR0_IRQn
- 700          {
- 701   1          if (TMR0_CONH & 0x80)
- 702   1          {
- 703   2              TMR0_CONH |= 0x80;
- 704   2              // 1ms²úÉúÒ»´ÎÖĞ¶Ï£¬½øÈëµ½ÕâÀï
- 705   2      
- 706   2              if (flag_bat_is_empty)
- 707   2              {
- 708   3                  return; // Èç¹ûµç³ØÎª¿Õ£¬ÌáÇ°ÍË³öÖĞ¶Ï·şÎñº¯Êı
- 709   3              }
- 710   2      
- 711   2              { // °´¼üÉ¨Ãè
- 712   3                  static volatile u8 key_scan_cnt = 0;
- 713   3                  key_scan_cnt++;
- 714   3                  if (key_scan_cnt >= 10)
- 715   3                  {
- 716   4                      key_scan_cnt = 0;
- 717   4                      flag_is_enable_key_scan = 1;
- 718   4                  }
- 719   3              } // °´¼üÉ¨Ãè
- 720   2      
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 13  
+ 669   2      #if 1 // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
+ 670   2      
+ 671   2              { // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
+ 672   3                  static u8 not_charge_ms_cnt = 0;
+ 673   3                  static u8 charging_ms_cnt = 0;
+ 674   3                  if (flag_is_in_charging)
+ 675   3                  {
+ 676   4                      if (flag_tim_scan_maybe_not_charge)
+ 677   4                      {
+ 678   5                          // ÕıÔÚ³äµç£¬²¢ÇÒ¼ì²âµ½¿ÉÄÜÓĞ³äµçÆ÷¶Ï¿ª£¬½øĞĞ¼ÆÊ±
+ 679   5                          not_charge_ms_cnt++;
+ 680   5                          if (not_charge_ms_cnt >= 250)
+ 681   5                          {
+ 682   6                              not_charge_ms_cnt = 0;
+ 683   6                              flag_tim_set_is_in_charging = 0;
+ 684   6                          }
+ 685   5                      }
+ 686   4                      else
+ 687   4                      {
+ 688   5                          // ÕıÔÚ³äµç£¬²¢ÇÒÃ»ÓĞ¼ì²âµ½³äµçÆ÷¶Ï¿ª£º
+ 689   5                          not_charge_ms_cnt = 0;
+ 690   5                          flag_tim_set_is_in_charging = 1;
+ 691   5                      }
+ 692   4                  }
+ 693   3                  else
+ 694   3                  {
+ 695   4                      if (flag_tim_scan_maybe_in_charging)
+ 696   4                      {
+ 697   5                          // Ã»ÓĞÔÚ³äµç£¬µ«ÊÇ¼ì²âµ½ÓĞ³äµçÆ÷²åÈë£¬½øĞĞ¼ÆÊ±£¬È·ÈÏ³äµçÆ÷ÊÇ·ñÕæµÄ²åÈë£º
+ 698   5                          charging_ms_cnt++;
+ 699   5                          if (charging_ms_cnt >= 250)
+ 700   5                          {
+ 701   6                              charging_ms_cnt = 0;
+ 702   6                              flag_tim_set_is_in_charging = 1;
+ 703   6                          }
+ 704   5                      }
+ 705   4                      else
+ 706   4                      {
+ 707   5                          // Ã»ÓĞÔÚ³äµç£¬²¢ÇÒÒ²Ã»ÓĞ¼ì²âµ½³äµçÆ÷²åÈë
+ 708   5                          charging_ms_cnt = 0;
+ 709   5                          flag_tim_set_is_in_charging = 0;
+ 710   5                      }
+ 711   4                  }
+ 712   3              } // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
+ 713   2      #endif // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
+ 714   2      
+ 715   2      #if 1 // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
+ 716   2      
+ 717   2              { // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
+ 718   3      
+ 719   3                  static volatile u16 blink_ms_cnt = 0; // ¼ÆÊıÖµ£¬¿ØÖÆµÆ¹âÉÁË¸µÄÊ±¼ä¼ä¸ô
+ 720   3      
+ 721   3                  // ×´Ì¬»ú£¬
+ 722   3                  // 0--³õÊ¼Öµ¡¢ÎŞ×´Ì¬£¬
+ 723   3                  // 1--×¼±¸½øÈëÉÁË¸£¬
+ 724   3                  // 2--ÕıÔÚÉÁË¸
+ 725   3                  static volatile u8 cur_blink_status = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 13  
 
- 721   2      #if 1 // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
- 722   2      
- 723   2              { // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
- 724   3                  static u8 not_charge_ms_cnt = 0;
- 725   3                  static u8 charging_ms_cnt = 0;
- 726   3                  if (flag_is_in_charging)
- 727   3                  {
- 728   4                      if (flag_tim_scan_maybe_not_charge)
- 729   4                      {
- 730   5                          // ÕıÔÚ³äµç£¬²¢ÇÒ¼ì²âµ½¿ÉÄÜÓĞ³äµçÆ÷¶Ï¿ª£¬½øĞĞ¼ÆÊ±
- 731   5                          not_charge_ms_cnt++;
- 732   5                          if (not_charge_ms_cnt >= 250)
- 733   5                          {
- 734   6                              not_charge_ms_cnt = 0;
- 735   6                              flag_tim_set_is_in_charging = 0;
- 736   6                          }
- 737   5                      }
- 738   4                      else
- 739   4                      {
- 740   5                          // ÕıÔÚ³äµç£¬²¢ÇÒÃ»ÓĞ¼ì²âµ½³äµçÆ÷¶Ï¿ª£º
- 741   5                          not_charge_ms_cnt = 0;
- 742   5                          flag_tim_set_is_in_charging = 1;
- 743   5                      }
- 744   4                  }
- 745   3                  else
+ 726   3                  static volatile u8 __blink_cnt = 0; // Ò»¿ªÊ¼´æ·ÅÒªÉÁË¸µÄ´ÎÊı£¬ºóÃæ¿ØÖÆµ±Ç°Ê£ÓàÉÁË¸´ÎÊı
+ 727   3      
+ 728   3                  if (flag_ctl_led_blink)
+ 729   3                  {
+ 730   4                      // Èç¹ûÊ¹ÄÜÁËµÆ¹âÉÁË¸
+ 731   4                      if (0 == cur_blink_status)
+ 732   4                      {
+ 733   5                          // Èç¹ûµ±Ç°µÆ¹â×´Ì¬´¦ÓÚ³õÊ¼Öµ£¬Ã»ÓĞÔÚÉÁË¸
+ 734   5                          cur_blink_status = 1;
+ 735   5                      }
+ 736   4                  }
+ 737   3                  else
+ 738   3                  {
+ 739   4                      // Èç¹û²»Ê¹ÄÜµÆ¹âÉÁË¸£¬Á¢¼´Í£Ö¹µ±Ç°µÆ¹âÉÁË¸µÄĞ§¹û
+ 740   4                      cur_blink_status = 0;
+ 741   4                      blink_ms_cnt = 0;
+ 742   4                      __blink_cnt = 0;
+ 743   4                  }
+ 744   3      
+ 745   3                  if (1 == cur_blink_status)
  746   3                  {
- 747   4                      if (flag_tim_scan_maybe_in_charging)
- 748   4                      {
- 749   5                          // Ã»ÓĞÔÚ³äµç£¬µ«ÊÇ¼ì²âµ½ÓĞ³äµçÆ÷²åÈë£¬½øĞĞ¼ÆÊ±£¬È·ÈÏ³äµçÆ÷ÊÇ·ñÕæµÄ²åÈë£º
- 750   5                          charging_ms_cnt++;
- 751   5                          if (charging_ms_cnt >= 250)
- 752   5                          {
- 753   6                              charging_ms_cnt = 0;
- 754   6                              flag_tim_set_is_in_charging = 1;
- 755   6                          }
- 756   5                      }
- 757   4                      else
- 758   4                      {
- 759   5                          // Ã»ÓĞÔÚ³äµç£¬²¢ÇÒÒ²Ã»ÓĞ¼ì²âµ½³äµçÆ÷²åÈë
- 760   5                          charging_ms_cnt = 0;
- 761   5                          flag_tim_set_is_in_charging = 0;
- 762   5                      }
- 763   4                  }
- 764   3              } // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
- 765   2      #endif // ¼ì²âÊÇ·ñ°Î³ö/²åÈë³äµçÆ÷
- 766   2      
- 767   2      #if 1 // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
- 768   2      
- 769   2              { // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
- 770   3      
- 771   3                  static volatile u16 blink_ms_cnt = 0; // ¼ÆÊıÖµ£¬¿ØÖÆµÆ¹âÉÁË¸µÄÊ±¼ä¼ä¸ô
- 772   3      
- 773   3                  // ×´Ì¬»ú£¬
- 774   3                  // 0--³õÊ¼Öµ¡¢ÎŞ×´Ì¬£¬
- 775   3                  // 1--×¼±¸½øÈëÉÁË¸£¬
- 776   3                  // 2--ÕıÔÚÉÁË¸
- 777   3                  static volatile u8 cur_blink_status = 0;
- 778   3                  static volatile u8 __blink_cnt = 0; // Ò»¿ªÊ¼´æ·ÅÒªÉÁË¸µÄ´ÎÊı£¬ºóÃæ¿ØÖÆµ±Ç°Ê£ÓàÉÁË¸´ÎÊı
- 779   3      
- 780   3                  if (flag_ctl_led_blink)
- 781   3                  {
- 782   4                      // Èç¹ûÊ¹ÄÜÁËµÆ¹âÉÁË¸
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 14  
+ 747   4                      // ×¼±¸½øÈëÉÁË¸£¬ÅĞ¶ÏÒªÉÁË¸µÄÊÇºìµÆ»¹ÊÇÂÌµÆ£¬ÊÇÒª±íÊ¾µ±Ç°µç»úµÄµ²Î»»¹ÊÇ¼ÓÈÈµÄµ²Î»
+ 748   4      
+ 749   4                      // ¿ÉÒÔÔÚÉÁË¸Ç°ÏÈ¹Ø±ÕµÆ¹â£¬ÔÙµãÁÁÒªÉÁË¸µÄLED£¬
+ 750   4                      // ×îºóÔÙÊ¹ÄÜÉÁË¸µÄĞ§¹û£¬ÕâÑù¾Í²»ÓÃ¼ÓÈëÏÂÃæµÄÅĞ¶Ï£º
+ 751   4                      // if (CUR_SEL_LED_RED == cur_sel_led)
+ 752   4                      // {
+ 753   4                      //     // Èç¹ûÒªÈÃºìµÆÉÁË¸
+ 754   4                      //     // LED_GREEN_OFF();
+ 755   4                      //     // LED_RED_ON();
+ 756   4                      // }
+ 757   4                      // else if (CUR_SEL_LED_GREEN == cur_sel_led)
+ 758   4                      // {
+ 759   4                      //     // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
+ 760   4                      //     // LED_RED_OFF();
+ 761   4                      //     // LED_GREEN_ON();
+ 762   4                      // }
+ 763   4      
+ 764   4                      // ÈÃµÆ¹â±£³ÖµãÁÁ500ms
+ 765   4                      blink_ms_cnt++;
+ 766   4                      if (blink_ms_cnt >= 500)
+ 767   4                      {
+ 768   5                          blink_ms_cnt = 0;
+ 769   5                          cur_blink_status = 2; // ±íÊ¾ÕıÊ½½øÈëLEDÉÁË¸×´Ì¬
+ 770   5                      }
+ 771   4                  }
+ 772   3                  else if (2 == cur_blink_status)
+ 773   3                  {
+ 774   4                      // Èç¹ûÕıÔÚ½øĞĞLEDÉÁË¸
+ 775   4                      if (0 == __blink_cnt)
+ 776   4                      {
+ 777   5                          __blink_cnt = cur_ctl_led_blink_cnt; // ´æ·Åµ±Ç°ÒªÉÁË¸µÄ´ÎÊı
+ 778   5                      }
+ 779   4      
+ 780   4                      if (__blink_cnt) // Èç¹ûÉÁË¸´ÎÊı²»Îª0£¬¼ÌĞøÉÁË¸
+ 781   4                      {
+ 782   5                          blink_ms_cnt++;
+ 783   5                          if (blink_ms_cnt <= 500)
+ 784   5                          {
+ 785   6                              // Ï¨ÃğLED 500ms
+ 786   6                              if (CUR_SEL_LED_RED == cur_sel_led)
+ 787   6                              {
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 14  
 
- 783   4                      if (0 == cur_blink_status)
- 784   4                      {
- 785   5                          // Èç¹ûµ±Ç°µÆ¹â×´Ì¬´¦ÓÚ³õÊ¼Öµ£¬Ã»ÓĞÔÚÉÁË¸
- 786   5                          cur_blink_status = 1;
- 787   5                      }
- 788   4                  }
- 789   3                  else
- 790   3                  {
- 791   4                      // Èç¹û²»Ê¹ÄÜµÆ¹âÉÁË¸£¬Á¢¼´Í£Ö¹µ±Ç°µÆ¹âÉÁË¸µÄĞ§¹û
- 792   4                      cur_blink_status = 0;
- 793   4                      blink_ms_cnt = 0;
- 794   4                      __blink_cnt = 0;
- 795   4                  }
- 796   3      
- 797   3                  if (1 == cur_blink_status)
- 798   3                  {
- 799   4                      // ×¼±¸½øÈëÉÁË¸£¬ÅĞ¶ÏÒªÉÁË¸µÄÊÇºìµÆ»¹ÊÇÂÌµÆ£¬ÊÇÒª±íÊ¾µ±Ç°µç»úµÄµ²Î»»¹ÊÇ¼ÓÈÈµÄµ²Î»
- 800   4      
- 801   4                      // ¿ÉÒÔÔÚÉÁË¸Ç°ÏÈ¹Ø±ÕµÆ¹â£¬ÔÙµãÁÁÒªÉÁË¸µÄLED£¬
- 802   4                      // ×îºóÔÙÊ¹ÄÜÉÁË¸µÄĞ§¹û£¬ÕâÑù¾Í²»ÓÃ¼ÓÈëÏÂÃæµÄÅĞ¶Ï£º
- 803   4                      // if (CUR_SEL_LED_RED == cur_sel_led)
- 804   4                      // {
- 805   4                      //     // Èç¹ûÒªÈÃºìµÆÉÁË¸
- 806   4                      //     // LED_GREEN_OFF();
- 807   4                      //     // LED_RED_ON();
- 808   4                      // }
- 809   4                      // else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 810   4                      // {
- 811   4                      //     // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
- 812   4                      //     // LED_RED_OFF();
- 813   4                      //     // LED_GREEN_ON();
- 814   4                      // }
- 815   4      
- 816   4                      // ÈÃµÆ¹â±£³ÖµãÁÁ500ms
- 817   4                      blink_ms_cnt++;
- 818   4                      if (blink_ms_cnt >= 500)
- 819   4                      {
- 820   5                          blink_ms_cnt = 0;
- 821   5                          cur_blink_status = 2; // ±íÊ¾ÕıÊ½½øÈëLEDÉÁË¸×´Ì¬
+ 788   7                                  // Èç¹ûÒªÈÃºìµÆÉÁË¸
+ 789   7                                  LED_RED_OFF();
+ 790   7                              }
+ 791   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
+ 792   6                              {
+ 793   7                                  // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
+ 794   7                                  LED_GREEN_OFF();
+ 795   7                              }
+ 796   6                          }
+ 797   5                          else if (blink_ms_cnt < 1000)
+ 798   5                          {
+ 799   6                              // µãÁÁLED 500ms
+ 800   6                              if (CUR_SEL_LED_RED == cur_sel_led)
+ 801   6                              {
+ 802   7                                  // Èç¹ûÒªÈÃºìµÆÉÁË¸
+ 803   7                                  LED_RED_ON();
+ 804   7                              }
+ 805   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
+ 806   6                              {
+ 807   7                                  // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
+ 808   7                                  LED_GREEN_ON();
+ 809   7                              }
+ 810   6                          }
+ 811   5                          else
+ 812   5                          {
+ 813   6                              blink_ms_cnt = 0;
+ 814   6                              __blink_cnt--; // Íê³ÉÁËÒ»´ÎÉÁË¸£¬¼ÆÊıÖµ¼õÒ»
+ 815   6                              if (0 == __blink_cnt)
+ 816   6                              {
+ 817   7                                  // Èç¹ûÊ£ÓàÉÁË¸´ÎÊıÎª0£¬½áÊøÉÁË¸
+ 818   7                                  flag_ctl_led_blink = 0; // ²»Ê¹ÄÜÉÁË¸
+ 819   7                                  cur_blink_status = 0;   // »Ö¸´µ½³õÊ¼Öµ£¬±íÊ¾Ã»ÓĞÔÚÉÁË¸
+ 820   7                              }
+ 821   6                          }
  822   5                      }
  823   4                  }
- 824   3                  else if (2 == cur_blink_status)
- 825   3                  {
- 826   4                      // Èç¹ûÕıÔÚ½øĞĞLEDÉÁË¸
- 827   4                      if (0 == __blink_cnt)
- 828   4                      {
- 829   5                          __blink_cnt = cur_ctl_led_blink_cnt; // ´æ·Åµ±Ç°ÒªÉÁË¸µÄ´ÎÊı
- 830   5                      }
- 831   4      
- 832   4                      if (__blink_cnt) // Èç¹ûÉÁË¸´ÎÊı²»Îª0£¬¼ÌĞøÉÁË¸
- 833   4                      {
- 834   5                          blink_ms_cnt++;
- 835   5                          if (blink_ms_cnt <= 500)
- 836   5                          {
- 837   6                              // Ï¨ÃğLED 500ms
- 838   6                              if (CUR_SEL_LED_RED == cur_sel_led)
- 839   6                              {
- 840   7                                  // Èç¹ûÒªÈÃºìµÆÉÁË¸
- 841   7                                  LED_RED_OFF();
- 842   7                              }
- 843   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 844   6                              {
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 15  
+ 824   3              } // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
+ 825   2      #endif // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
+ 826   2      
+ 827   2      #if 1 // ¿ØÖÆ¼ÓÈÈ
+ 828   2      
+ 829   2              { // ¿ØÖÆ¼ÓÈÈ
+ 830   3                  static volatile u8 __ctl_heat_ms_cnt = 0;
+ 831   3      
+ 832   3                  if (1 == cur_ctl_heat_status)
+ 833   3                  {
+ 834   4                      // Ò»µµ¼ÓÈÈ
+ 835   4                      HEATING_ON();
+ 836   4                  }
+ 837   3                  else if (2 == cur_ctl_heat_status)
+ 838   3                  {
+ 839   4                      // ¶şµµ¼ÓÈÈ
+ 840   4                      __ctl_heat_ms_cnt++;
+ 841   4                      if (__ctl_heat_ms_cnt <= 5)
+ 842   4                      {
+ 843   5                          HEATING_ON();
+ 844   5                      }
+ 845   4                      else if (__ctl_heat_ms_cnt < 10)
+ 846   4                      {
+ 847   5                          HEATING_OFF();
+ 848   5                      }
+ 849   4                      else
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 15  
 
- 845   7                                  // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
- 846   7                                  LED_GREEN_OFF();
- 847   7                              }
- 848   6                          }
- 849   5                          else if (blink_ms_cnt < 1000)
- 850   5                          {
- 851   6                              // µãÁÁLED 500ms
- 852   6                              if (CUR_SEL_LED_RED == cur_sel_led)
- 853   6                              {
- 854   7                                  // Èç¹ûÒªÈÃºìµÆÉÁË¸
- 855   7                                  LED_RED_ON();
- 856   7                              }
- 857   6                              else if (CUR_SEL_LED_GREEN == cur_sel_led)
- 858   6                              {
- 859   7                                  // Èç¹ûÒªÈÃÂÌµÆÉÁË¸
- 860   7                                  LED_GREEN_ON();
- 861   7                              }
- 862   6                          }
- 863   5                          else
- 864   5                          {
- 865   6                              blink_ms_cnt = 0;
- 866   6                              __blink_cnt--; // Íê³ÉÁËÒ»´ÎÉÁË¸£¬¼ÆÊıÖµ¼õÒ»
- 867   6                              if (0 == __blink_cnt)
- 868   6                              {
- 869   7                                  // Èç¹ûÊ£ÓàÉÁË¸´ÎÊıÎª0£¬½áÊøÉÁË¸
- 870   7                                  flag_ctl_led_blink = 0; // ²»Ê¹ÄÜÉÁË¸
- 871   7                                  cur_blink_status = 0;   // »Ö¸´µ½³õÊ¼Öµ£¬±íÊ¾Ã»ÓĞÔÚÉÁË¸
- 872   7                              }
- 873   6                          }
- 874   5                      }
- 875   4                  }
- 876   3              } // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
- 877   2      #endif // ¿ØÖÆµÆ¹âÉÁË¸µÄĞ§¹û
- 878   2      
- 879   2      #if 1 // ¿ØÖÆ¼ÓÈÈ
- 880   2      
- 881   2              { // ¿ØÖÆ¼ÓÈÈ
- 882   3                  static volatile u8 __ctl_heat_ms_cnt = 0;
- 883   3      
- 884   3                  if (1 == cur_ctl_heat_status)
- 885   3                  {
- 886   4                      // Ò»µµ¼ÓÈÈ
- 887   4                      HEATING_ON();
+ 850   4                      {
+ 851   5                          __ctl_heat_ms_cnt = 0;
+ 852   5                      }
+ 853   4                  }
+ 854   3                  else
+ 855   3                  {
+ 856   4                      // ÎŞ×´Ì¬£¬¹Ø±Õ¼ÓÈÈ
+ 857   4                      HEATING_OFF();
+ 858   4                      __ctl_heat_ms_cnt = 0;
+ 859   4                  }
+ 860   3      
+ 861   3              } // ¿ØÖÆ¼ÓÈÈ
+ 862   2      #endif // ¿ØÖÆ¼ÓÈÈ
+ 863   2      
+ 864   2      #if 1 // ¿ØÖÆ×Ô¶¯¹Ø»ú
+ 865   2      
+ 866   2              { // ×Ô¶¯¹Ø»ú
+ 867   3                  static volatile u32 shut_down_ms_cnt = 0;
+ 868   3      
+ 869   3                  // if ((0 != cur_motor_status ||     /* Èç¹ûµç»ú²»ÊÇ¹Ø±ÕµÄ */
+ 870   3                  //      0 != cur_ctl_heat_status) && /* Èç¹û¼ÓÈÈ²»ÊÇ¹Ø±ÕµÄ */
+ 871   3                  //     0 == flag_is_in_charging      /* µ±Ç°Ã»ÓĞÔÚ³äµç */
+ 872   3                  if (
+ 873   3                      (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) && /* Èç¹ûÓïÒôICµÄµçÔ´¿ªÆô£¬ËµÃ÷Éè±¸ÕıÔÚ¹¤×÷ */
+ 874   3                      0 == flag_is_in_charging                   /* µ±Ç°Ã»ÓĞÔÚ³äµç */
+ 875   3                  )
+ 876   3                  {
+ 877   4                      shut_down_ms_cnt++;
+ 878   4                      if (shut_down_ms_cnt >= 600000) // xx ms ºó£¬¹Ø»ú
+ 879   4                      {
+ 880   5                          shut_down_ms_cnt = 0;
+ 881   5                          flag_ctl_dev_close = 1;
+ 882   5                          flag_is_enter_low_power = 1; // ÔÊĞí½øÈëµÍ¹¦ºÄ
+ 883   5                      }
+ 884   4                  }
+ 885   3                  else
+ 886   3                  {
+ 887   4                      shut_down_ms_cnt = 0;
  888   4                  }
- 889   3                  else if (2 == cur_ctl_heat_status)
- 890   3                  {
- 891   4                      // ¶şµµ¼ÓÈÈ
- 892   4                      __ctl_heat_ms_cnt++;
- 893   4                      if (__ctl_heat_ms_cnt <= 5)
- 894   4                      {
- 895   5                          HEATING_ON();
- 896   5                      }
- 897   4                      else if (__ctl_heat_ms_cnt < 10)
- 898   4                      {
- 899   5                          HEATING_OFF();
- 900   5                      }
- 901   4                      else
- 902   4                      {
- 903   5                          __ctl_heat_ms_cnt = 0;
- 904   5                      }
- 905   4                  }
- 906   3                  else
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 16  
+ 889   3              } // ×Ô¶¯¹Ø»ú
+ 890   2      #endif // ¿ØÖÆ×Ô¶¯¹Ø»ú
+ 891   2      
+ 892   2      #if 1 // ¿ØÖÆµç»ú×Ô¶¯»»·½Ïò
+ 893   2      
+ 894   2              { // ×Ô¶¯»»·½Ïò
+ 895   3      
+ 896   3                  static volatile u16 turn_dir_ms_cnt = 0; // ¿ØÖÆÔÚÔËĞĞÊ±Ã¿ xx minÇĞ»»Ò»´Î×ªÏòµÄ¼ÆÊ±±äÁ¿
+ 897   3      
+ 898   3                  if ((0 != cur_motor_status) &&       /* Èç¹ûµç»ú²»ÊÇ¹Ø±ÕµÄ */
+ 899   3                      0 == flag_is_turn_dir_by_speech) /* Èç¹ûÃ»ÓĞÍ¨¹ıÓïÒôµ÷½Ú¹ı·½Ïò */
+ 900   3      
+ 901   3                  {
+ 902   4                      turn_dir_ms_cnt++;
+ 903   4                      if (turn_dir_ms_cnt >= 60000) // xx ms ºó£¬»»·½Ïò
+ 904   4                      // if (turn_dir_ms_cnt >= 60) // xx ms ºó£¬»»·½Ïò£¨²âÊÔÓÃ£©
+ 905   4                      {
+ 906   5                          turn_dir_ms_cnt = 0;
+ 907   5                          // ±êÖ¾Î»ÖÃÒ»£¬ÈÃ»»·½ÏòµÄ²Ù×÷ÔÚÖ÷º¯ÊıÖ´ĞĞ£¬ÒòÎª»»·½ÏòÒª¼ä¸ô500ms
+ 908   5                          flag_ctl_turn_dir = 1;
+ 909   5                      }
+ 910   4                  }
+ 911   3                  else
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 16  
 
- 907   3                  {
- 908   4                      // ÎŞ×´Ì¬£¬¹Ø±Õ¼ÓÈÈ
- 909   4                      HEATING_OFF();
- 910   4                      __ctl_heat_ms_cnt = 0;
- 911   4                  }
- 912   3      
- 913   3              } // ¿ØÖÆ¼ÓÈÈ
- 914   2      #endif // ¿ØÖÆ¼ÓÈÈ
- 915   2      
- 916   2      #if 1 // ¿ØÖÆ×Ô¶¯¹Ø»ú
- 917   2      
- 918   2              { // ×Ô¶¯¹Ø»ú
- 919   3                  static volatile u32 shut_down_ms_cnt = 0;
+ 912   3                  {
+ 913   4                      turn_dir_ms_cnt = 0;
+ 914   4      
+ 915   4                      if (flag_is_turn_dir_by_speech)
+ 916   4                      {
+ 917   5                          flag_is_turn_dir_by_speech = 0; // ÒÑ¾­Çå³ı×Ô¶¯»»·½ÏòµÄ¼ÆÊ±£¬±ãÇå³ı¸Ã±êÖ¾Î»
+ 918   5                      }
+ 919   4                  }
  920   3      
- 921   3                  // if ((0 != cur_motor_status ||     /* Èç¹ûµç»ú²»ÊÇ¹Ø±ÕµÄ */
- 922   3                  //      0 != cur_ctl_heat_status) && /* Èç¹û¼ÓÈÈ²»ÊÇ¹Ø±ÕµÄ */
- 923   3                  //     0 == flag_is_in_charging      /* µ±Ç°Ã»ÓĞÔÚ³äµç */
- 924   3                  if ((SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) && /* Èç¹ûÓïÒôICµÄµçÔ´¿ªÆô£¬ËµÃ÷Éè±¸ÕıÔÚ¹¤×÷ */
- 925   3                      0 == flag_is_in_charging                   /* µ±Ç°Ã»ÓĞÔÚ³äµç */
- 926   3                  )
- 927   3                  {
- 928   4                      shut_down_ms_cnt++;
- 929   4                      if (shut_down_ms_cnt >= 600000) // xx ms ºó£¬¹Ø»ú
- 930   4                      {
- 931   5                          shut_down_ms_cnt = 0;
- 932   5                          flag_ctl_dev_close = 1;
- 933   5                          flag_is_enter_low_power = 1; // ÔÊĞí½øÈëµÍ¹¦ºÄ
- 934   5                      }
- 935   4                  }
- 936   3                  else
- 937   3                  {
- 938   4                      shut_down_ms_cnt = 0;
- 939   4                  }
- 940   3              } // ×Ô¶¯¹Ø»ú
- 941   2      #endif // ¿ØÖÆ×Ô¶¯¹Ø»ú
- 942   2      
- 943   2      #if 1 // ¿ØÖÆµç»ú×Ô¶¯»»·½Ïò
- 944   2      
- 945   2              { // ×Ô¶¯»»·½Ïò
- 946   3      
- 947   3                  static volatile u16 turn_dir_ms_cnt = 0; // ¿ØÖÆÔÚÔËĞĞÊ±Ã¿ xx minÇĞ»»Ò»´Î×ªÏòµÄ¼ÆÊ±±äÁ¿
- 948   3      
- 949   3                  if ((0 != cur_motor_status) &&       /* Èç¹ûµç»ú²»ÊÇ¹Ø±ÕµÄ */
- 950   3                      0 == flag_is_turn_dir_by_speech) /* Èç¹ûÃ»ÓĞÍ¨¹ıÓïÒôµ÷½Ú¹ı·½Ïò */
- 951   3      
- 952   3                  {
- 953   4                      turn_dir_ms_cnt++;
- 954   4                      if (turn_dir_ms_cnt >= 60000) // xx ms ºó£¬»»·½Ïò
- 955   4                      // if (turn_dir_ms_cnt >= 60) // xx ms ºó£¬»»·½Ïò£¨²âÊÔÓÃ£©
- 956   4                      {
- 957   5                          turn_dir_ms_cnt = 0;
- 958   5                          // ±êÖ¾Î»ÖÃÒ»£¬ÈÃ»»·½ÏòµÄ²Ù×÷ÔÚÖ÷º¯ÊıÖ´ĞĞ£¬ÒòÎª»»·½ÏòÒª¼ä¸ô500ms
- 959   5                          flag_ctl_turn_dir = 1;
- 960   5                      }
- 961   4                  }
- 962   3                  else
- 963   3                  {
- 964   4                      turn_dir_ms_cnt = 0;
- 965   4      
- 966   4                      if (flag_is_turn_dir_by_speech)
- 967   4                      {
- 968   5                          flag_is_turn_dir_by_speech = 0; // ÒÑ¾­Çå³ı×Ô¶¯»»·½ÏòµÄ¼ÆÊ±£¬±ãÇå³ı¸Ã±êÖ¾Î»
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 17  
+ 921   3              } // ×Ô¶¯»»·½Ïò
+ 922   2      #endif // ¿ØÖÆµç»ú×Ô¶¯»»·½Ïò
+ 923   2      
+ 924   2      #if 1 // ¼ì²âÊÇ·ñ¿ì³äÂúµç
+ 925   2      
+ 926   2              {
+ 927   3                  static volatile u16 bat_is_near_full_ms_cnt = 0;
+ 928   3                  // Èç¹û²»ÔÚ³äµç¾ÍÇå¿ÕÁË±êÖ¾Î» flag_tim_scan_bat_maybe_near_full £¬
+ 929   3                  //  |-- ¿ÉÒÔ²»¼ÓÏÂÃæÕâ¸öÅĞ¶ÏÌõ¼ş£º
+ 930   3                  // if (flag_is_in_charging)
+ 931   3                  {
+ 932   4                      if (flag_tim_scan_bat_maybe_near_full)
+ 933   4                      {
+ 934   5                          // ÕıÔÚ³äµç£¬ÇÒ¼ì²âµ½¿ì³äÂúµç£¬½øĞĞ¼ÆÊ±
+ 935   5                          bat_is_near_full_ms_cnt++;
+ 936   5                          if (bat_is_near_full_ms_cnt >= 5000) // xx ms
+ 937   5                          {
+ 938   6                              bat_is_near_full_ms_cnt = 0;
+ 939   6                              flag_tim_set_bat_is_near_full = 1;
+ 940   6                          }
+ 941   5                      }
+ 942   4                      else
+ 943   4                      {
+ 944   5                          // ÕıÔÚ³äµç£¬µ«ÊÇÓĞÒ»´ÎÃ»ÓĞ¼ì²âµ½¿ì³äÂúµç£¬Çå³ı¼ÆÊ±ºÍ±êÖ¾Î»
+ 945   5                          bat_is_near_full_ms_cnt = 0;
+ 946   5                          flag_tim_set_bat_is_near_full = 0;
+ 947   5                      }
+ 948   4                  }
+ 949   3              }
+ 950   2      
+ 951   2      #endif // ¼ì²âÊÇ·ñ¿ì³äÂúµç
+ 952   2      
+ 953   2      #if 1 // ¼ì²âÊÇ·ñ³äÂúµç
+ 954   2      
+ 955   2              { // ¼ì²âÊÇ·ñ³äÂúµç
+ 956   3                  static volatile u16 bat_is_full_ms_cnt = 0;
+ 957   3                  // Èç¹û²»ÔÚ³äµç¾ÍÇå¿ÕÁË±êÖ¾Î» flag_tim_scan_bat_maybe_full £¬
+ 958   3                  //  |-- ¿ÉÒÔ²»¼ÓÕâ¸öÅĞ¶ÏÌõ¼ş£º
+ 959   3                  // if (flag_is_in_charging)
+ 960   3                  {
+ 961   4                      if (flag_tim_scan_bat_maybe_full)
+ 962   4                      {
+ 963   5                          // ÕıÔÚ³äµç£¬²¢ÇÒÓĞ¼ì²âµ½µç³ØÂúµç£¬½øĞĞÀÛ¼Æ£º
+ 964   5                          bat_is_full_ms_cnt++;
+ 965   5                          if (bat_is_full_ms_cnt >= 5000) // xx ms
+ 966   5                          {
+ 967   6                              bat_is_full_ms_cnt = 0;
+ 968   6                              flag_tim_set_bat_is_full = 1;
+ 969   6                          }
+ 970   5                      }
+ 971   4                      else
+ 972   4                      {
+ 973   5                          // ÕıÔÚ³äµç£¬µ«ÊÇÃ»ÓĞ¼ì²âµ½µç³ØÂúµç£º
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 17  
 
- 969   5                      }
- 970   4                  }
- 971   3      
- 972   3              } // ×Ô¶¯»»·½Ïò
- 973   2      #endif // ¿ØÖÆµç»ú×Ô¶¯»»·½Ïò
- 974   2      
- 975   2      #if 1 // ¼ì²âÊÇ·ñ¿ì³äÂúµç
- 976   2      
- 977   2              {
- 978   3                  static volatile u16 bat_is_near_full_ms_cnt = 0;
- 979   3                  // Èç¹û²»ÔÚ³äµç¾ÍÇå¿ÕÁË±êÖ¾Î» flag_tim_scan_bat_maybe_near_full £¬
- 980   3                  //  |-- ¿ÉÒÔ²»¼ÓÏÂÃæÕâ¸öÅĞ¶ÏÌõ¼ş£º
- 981   3                  // if (flag_is_in_charging)
- 982   3                  {
- 983   4                      if (flag_tim_scan_bat_maybe_near_full)
- 984   4                      {
- 985   5                          // ÕıÔÚ³äµç£¬ÇÒ¼ì²âµ½¿ì³äÂúµç£¬½øĞĞ¼ÆÊ±
- 986   5                          bat_is_near_full_ms_cnt++;
- 987   5                          if (bat_is_near_full_ms_cnt >= 5000) // xx ms
- 988   5                          {
- 989   6                              bat_is_near_full_ms_cnt = 0;
- 990   6                              flag_tim_set_bat_is_near_full = 1;
- 991   6                          }
- 992   5                      }
- 993   4                      else
- 994   4                      {
- 995   5                          // ÕıÔÚ³äµç£¬µ«ÊÇÓĞÒ»´ÎÃ»ÓĞ¼ì²âµ½¿ì³äÂúµç£¬Çå³ı¼ÆÊ±ºÍ±êÖ¾Î»
- 996   5                          bat_is_near_full_ms_cnt = 0;
- 997   5                          flag_tim_set_bat_is_near_full = 0;
- 998   5                      }
- 999   4                  }
-1000   3              }
-1001   2      
-1002   2      #endif // ¼ì²âÊÇ·ñ¿ì³äÂúµç
-1003   2      
-1004   2      #if 1 // ¼ì²âÊÇ·ñ³äÂúµç
-1005   2      
-1006   2              { // ¼ì²âÊÇ·ñ³äÂúµç
-1007   3                  static volatile u16 bat_is_full_ms_cnt = 0;
-1008   3                  // Èç¹û²»ÔÚ³äµç¾ÍÇå¿ÕÁË±êÖ¾Î» flag_tim_scan_bat_maybe_full £¬
-1009   3                  //  |-- ¿ÉÒÔ²»¼ÓÕâ¸öÅĞ¶ÏÌõ¼ş£º
-1010   3                  // if (flag_is_in_charging)
-1011   3                  {
-1012   4                      if (flag_tim_scan_bat_maybe_full)
-1013   4                      {
-1014   5                          // ÕıÔÚ³äµç£¬²¢ÇÒÓĞ¼ì²âµ½µç³ØÂúµç£¬½øĞĞÀÛ¼Æ£º
-1015   5                          bat_is_full_ms_cnt++;
-1016   5                          if (bat_is_full_ms_cnt >= 5000) // xx ms
-1017   5                          {
-1018   6                              bat_is_full_ms_cnt = 0;
-1019   6                              flag_tim_set_bat_is_full = 1;
-1020   6                          }
-1021   5                      }
-1022   4                      else
-1023   4                      {
-1024   5                          // ÕıÔÚ³äµç£¬µ«ÊÇÃ»ÓĞ¼ì²âµ½µç³ØÂúµç£º
-1025   5                          bat_is_full_ms_cnt = 0;
-1026   5                          flag_tim_set_bat_is_full = 0;
-1027   5                      }
-1028   4                  }
-1029   3              } // ¼ì²âÊÇ·ñ³äÂúµç
-1030   2      #endif // ¼ì²âÊÇ·ñ³äÂúµç
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 18  
-
-1031   2      
-1032   2      #if 1 // ¼ì²âÊÇ·ñÒªµÍµçÁ¿±¨¾¯
-1033   2      
-1034   2              {
-1035   3                  static volatile u16 low_bat_ms_cnt = 0;
-1036   3                  if (flag_tim_scan_maybe_low_bat)
-1037   3                  {
-1038   4                      // Èç¹û¿ÉÄÜ¼ì²âµ½ÁËµÍµçÁ¿£¬½øĞĞÁ¬Ğø¼ÆÊ±
-1039   4                      low_bat_ms_cnt++;
-1040   4                      if (low_bat_ms_cnt >= LOW_BAT_SCAN_TIMES_MS)
-1041   4                      {
-1042   5                          low_bat_ms_cnt = 0;
-1043   5                          flag_tim_set_bat_is_low = 1;
-1044   5                      }
-1045   4                  }
-1046   3                  else
-1047   3                  {
-1048   4                      // Èç¹ûÃ»ÓĞ¼ì²âµ½µÍµçÁ¿
-1049   4                      low_bat_ms_cnt = 0;
-1050   4                      flag_tim_set_bat_is_low = 0;
-1051   4                  }
-1052   3              }
-1053   2      
-1054   2              { // ¸ù¾İ±êÖ¾Î»À´Ö´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ£¬Ö´ĞĞÇ°(¸ø¿ØÖÆ±êÖ¾Î»ÖÃÒ»Ç°)ÒªÏÈ¹Ø±ÕËùÓĞLED
-1055   3      
-1056   3                  static volatile bit __flag_is_in_low_bat_alarm = 0;   // ±êÖ¾Î»£¬ÊÇ·ñÕıÔÚÖ´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ
-1057   3                  static volatile u16 __blink_cnt_in_low_bat_alarm = 0; // µÍµçÁ¿±¨¾¯Ê±£¬LEDÉÁË¸Ê±¼ä¼ÆÊı
-1058   3                  static volatile u8 __shut_down_cnt = 0;               // ¹Ø»ú¼ÆÊı£¬µÍµçÁ¿±¨¾¯Ê±£¬Ã¿1s¼ÓÒ»´Î£¬À
+ 974   5                          bat_is_full_ms_cnt = 0;
+ 975   5                          flag_tim_set_bat_is_full = 0;
+ 976   5                      }
+ 977   4                  }
+ 978   3              } // ¼ì²âÊÇ·ñ³äÂúµç
+ 979   2      #endif // ¼ì²âÊÇ·ñ³äÂúµç
+ 980   2      
+ 981   2      #if 1 // ¼ì²âÊÇ·ñÒªµÍµçÁ¿±¨¾¯
+ 982   2      
+ 983   2              {
+ 984   3                  static volatile u16 low_bat_ms_cnt = 0;
+ 985   3                  if (flag_tim_scan_maybe_low_bat)
+ 986   3                  {
+ 987   4                      // Èç¹û¿ÉÄÜ¼ì²âµ½ÁËµÍµçÁ¿£¬½øĞĞÁ¬Ğø¼ÆÊ±
+ 988   4                      low_bat_ms_cnt++;
+ 989   4                      if (low_bat_ms_cnt >= LOW_BAT_SCAN_TIMES_MS)
+ 990   4                      {
+ 991   5                          low_bat_ms_cnt = 0;
+ 992   5                          flag_tim_set_bat_is_low = 1;
+ 993   5                      }
+ 994   4                  }
+ 995   3                  else
+ 996   3                  {
+ 997   4                      // Èç¹ûÃ»ÓĞ¼ì²âµ½µÍµçÁ¿
+ 998   4                      low_bat_ms_cnt = 0;
+ 999   4                      flag_tim_set_bat_is_low = 0;
+1000   4                  }
+1001   3              }
+1002   2      
+1003   2              { // ¸ù¾İ±êÖ¾Î»À´Ö´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ£¬Ö´ĞĞÇ°(¸ø¿ØÖÆ±êÖ¾Î»ÖÃÒ»Ç°)ÒªÏÈ¹Ø±ÕËùÓĞLED
+1004   3      
+1005   3                  static volatile bit __flag_is_in_low_bat_alarm = 0;   // ±êÖ¾Î»£¬ÊÇ·ñÕıÔÚÖ´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ
+1006   3                  static volatile u16 __blink_cnt_in_low_bat_alarm = 0; // µÍµçÁ¿±¨¾¯Ê±£¬LEDÉÁË¸Ê±¼ä¼ÆÊı
+1007   3                  static volatile u8 __shut_down_cnt = 0;               // ¹Ø»ú¼ÆÊı£¬µÍµçÁ¿±¨¾¯Ê±£¬Ã¿1s¼ÓÒ»´Î£¬À
              -Û¼Æ5s±ãÊ¹ÄÜ¹Ø»ú£¬½øµÍ¹¦ºÄ
-1059   3      
-1060   3                  /* Èç¹ûÊ¹ÄÜÁËµÍµçÁ¿±¨¾¯£¬²¢ÇÒÉè±¸ÕıÔÚÔËĞĞ */
-1061   3                  // if (flag_ctl_low_bat_alarm &&
-1062   3                  //     (0 != cur_motor_status || 0 != cur_ctl_heat_status))
-1063   3                  if (flag_ctl_low_bat_alarm &&                  /* Èç¹ûÊ¹ÄÜÁËµÍµçÁ¿±¨¾¯ */
-1064   3                      0 == flag_tim_scan_maybe_motor_stalling && /* Èç¹ûÃ»ÓĞ¼ì²âµ½¶Â×ª */
-1065   3                      SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN)     /* Èç¹ûÓïÒôIC»¹ÔÚ¹¤×÷£¬ËµÃ÷Ã»ÓĞ½øÈëµÍ¹¦ºÄ */
-1066   3                  {
-1067   4                      if (0 == __flag_is_in_low_bat_alarm)
-1068   4                      {
-1069   5                          __flag_is_in_low_bat_alarm = 1; // ÔÚ¸ÃÓï¾ä¿éÄÚ²¿£¬Ê¹ÄÜµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ
-1070   5                      }
-1071   4                  }
-1072   3                  else
-1073   3                  {
-1074   4                      __blink_cnt_in_low_bat_alarm = 0;
-1075   4                      __flag_is_in_low_bat_alarm = 0;
-1076   4                      __shut_down_cnt = 0;
-1077   4                  }
-1078   3      
-1079   3                  if (__flag_is_in_low_bat_alarm)
-1080   3                  {
-1081   4                      __blink_cnt_in_low_bat_alarm++;
-1082   4                      if (__blink_cnt_in_low_bat_alarm <= 500)
-1083   4                      {
-1084   5                          LED_RED_ON();
-1085   5                      }
-1086   4                      else if (__blink_cnt_in_low_bat_alarm < 1000)
-1087   4                      {
-1088   5                          LED_RED_OFF();
-1089   5                      }
-1090   4                      else
-1091   4                      {
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 19  
+1008   3      
+1009   3                  /* Èç¹ûÊ¹ÄÜÁËµÍµçÁ¿±¨¾¯£¬²¢ÇÒÉè±¸ÕıÔÚÔËĞĞ */
+1010   3                  // if (flag_ctl_low_bat_alarm &&
+1011   3                  //     (0 != cur_motor_status || 0 != cur_ctl_heat_status))
+1012   3                  if (flag_ctl_low_bat_alarm &&                  /* Èç¹ûÊ¹ÄÜÁËµÍµçÁ¿±¨¾¯ */
+1013   3                      0 == flag_tim_scan_maybe_motor_stalling && /* Èç¹ûÃ»ÓĞ¼ì²âµ½¶Â×ª */
+1014   3                      SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN)     /* Èç¹ûÓïÒôIC»¹ÔÚ¹¤×÷£¬ËµÃ÷Ã»ÓĞ½øÈëµÍ¹¦ºÄ */
+1015   3                  {
+1016   4                      if (0 == __flag_is_in_low_bat_alarm)
+1017   4                      {
+1018   5                          __flag_is_in_low_bat_alarm = 1; // ÔÚ¸ÃÓï¾ä¿éÄÚ²¿£¬Ê¹ÄÜµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ
+1019   5                      }
+1020   4                  }
+1021   3                  else
+1022   3                  {
+1023   4                      __blink_cnt_in_low_bat_alarm = 0;
+1024   4                      __flag_is_in_low_bat_alarm = 0;
+1025   4                      __shut_down_cnt = 0;
+1026   4                  }
+1027   3      
+1028   3                  if (__flag_is_in_low_bat_alarm)
+1029   3                  {
+1030   4                      __blink_cnt_in_low_bat_alarm++;
+1031   4                      if (__blink_cnt_in_low_bat_alarm <= 500)
+1032   4                      {
+1033   5                          LED_RED_ON();
+1034   5                      }
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 18  
 
-1092   5                          __blink_cnt_in_low_bat_alarm = 0;
-1093   5                          __shut_down_cnt++;
-1094   5                          if (__shut_down_cnt >= 5)
-1095   5                          {
-1096   6                              __shut_down_cnt = 0;
-1097   6                              __flag_is_in_low_bat_alarm = 0;
-1098   6                              flag_ctl_low_bat_alarm = 0;
-1099   6                              flag_ctl_dev_close = 1;
-1100   6                              flag_is_enter_low_power = 1; // ÔÊĞí½øÈëµÍ¹¦ºÄ
-1101   6                          }
-1102   5                      }
-1103   4                  }
-1104   3              } // ¸ù¾İ±êÖ¾Î»À´Ö´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ£¬Ö´ĞĞÇ°(¸ø¿ØÖÆ±êÖ¾Î»ÖÃÒ»Ç°)ÒªÏÈ¹Ø±ÕËùÓĞLED
-1105   2      #endif // ¼ì²âÊÇ·ñÒªµÍµçÁ¿±¨¾¯
-1106   2      
-1107   2      #if 0  // ¹¤×÷Ê±£¬¼ì²âµç³ØµçÁ¿ÊÇ·ñÒ»Ö±µÍÓÚ¹Ø»úµçÑ¹
+1035   4                      else if (__blink_cnt_in_low_bat_alarm < 1000)
+1036   4                      {
+1037   5                          LED_RED_OFF();
+1038   5                      }
+1039   4                      else
+1040   4                      {
+1041   5                          __blink_cnt_in_low_bat_alarm = 0;
+1042   5                          __shut_down_cnt++;
+1043   5                          if (__shut_down_cnt >= 5)
+1044   5                          {
+1045   6                              __shut_down_cnt = 0;
+1046   6                              __flag_is_in_low_bat_alarm = 0;
+1047   6                              flag_ctl_low_bat_alarm = 0;
+1048   6                              flag_ctl_dev_close = 1;
+1049   6                              flag_is_enter_low_power = 1; // ÔÊĞí½øÈëµÍ¹¦ºÄ
+1050   6                          }
+1051   5                      }
+1052   4                  }
+1053   3              } // ¸ù¾İ±êÖ¾Î»À´Ö´ĞĞµÍµçÁ¿±¨¾¯µÄ¹¦ÄÜ£¬Ö´ĞĞÇ°(¸ø¿ØÖÆ±êÖ¾Î»ÖÃÒ»Ç°)ÒªÏÈ¹Ø±ÕËùÓĞLED
+1054   2      #endif // ¼ì²âÊÇ·ñÒªµÍµçÁ¿±¨¾¯
+1055   2      
+1056   2      #if 0  // ¹¤×÷Ê±£¬¼ì²âµç³ØµçÁ¿ÊÇ·ñÒ»Ö±µÍÓÚ¹Ø»úµçÑ¹
               
                       {
                           static u16 __shut_down_cnt = 0; // ¶Ôµç³ØµçÑ¹µÍÓÚ¹Ø»úµçÑ¹µÄÁ¬Ğø¼ÆÊ±
@@ -1191,167 +1133,167 @@ line level    source
                           }
                       }
               #endif // ¹¤×÷Ê±£¬¼ì²âµç³ØµçÁ¿ÊÇ·ñÒ»Ö±µÍÓÚ¹Ø»úµçÑ¹
-1131   2      
-1132   2      #if 1 // µç»ú¹ıÁ÷¼ì²â£¬³¬¹ı10s±ãÈÏÎªµç»ú¶Â×ª
-1133   2      
-1134   2              {
-1135   3                  // ¼ì²âµ½µç»ú¶Â×ªºó£¬½øĞĞÁ¬Ğø¼ÆÊ±
-1136   3                  static volatile u16 __detect_motor_stalling_cnt = 0;
-1137   3      
-1138   3                  // if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
-1139   3                  if (flag_tim_scan_maybe_motor_stalling && cur_motor_status)
-1140   3                  {
-1141   4                      // Èç¹û¼ì²âµ½ÓĞµç»ú¶Â×ªµÄÇé¿ö
-1142   4                      __detect_motor_stalling_cnt++;
-1143   4                      if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
-1144   4                      {
-1145   5                          __detect_motor_stalling_cnt = 0;
-1146   5                          flag_tim_set_motor_stalling = 1;
-1147   5                      }
-1148   4                  }
-1149   3                  else
-1150   3                  {
-1151   4                      // Èç¹ûÃ»ÓĞ¼ì²âµ½ÓĞµç»ú¶Â×ªµÄÇé¿ö
-1152   4                      // P00 = 0; // ·½±ã²âÊÔ¹ıÁ÷¼ì²âÊ±¼ä
-1153   4                      __detect_motor_stalling_cnt = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 20  
+1080   2      
+1081   2      #if 1 // µç»ú¹ıÁ÷¼ì²â£¬³¬¹ı10s±ãÈÏÎªµç»ú¶Â×ª
+1082   2      
+1083   2              {
+1084   3                  // ¼ì²âµ½µç»ú¶Â×ªºó£¬½øĞĞÁ¬Ğø¼ÆÊ±
+1085   3                  static volatile u16 __detect_motor_stalling_cnt = 0;
+1086   3      
+1087   3                  // if (flag_tim_scan_maybe_motor_stalling && 0 != cur_motor_status)
+1088   3                  if (flag_tim_scan_maybe_motor_stalling && cur_motor_status)
+1089   3                  {
+1090   4                      // Èç¹û¼ì²âµ½ÓĞµç»ú¶Â×ªµÄÇé¿ö
+1091   4                      __detect_motor_stalling_cnt++;
+1092   4                      if (__detect_motor_stalling_cnt >= MOTOR_STALLING_SCAN_TIMES_MS)
+1093   4                      {
+1094   5                          __detect_motor_stalling_cnt = 0;
+1095   5                          flag_tim_set_motor_stalling = 1;
+1096   5                      }
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 19  
 
-1154   4                      flag_tim_set_motor_stalling = 0;
-1155   4                  }
-1156   3              }
-1157   2      #endif // µç»ú¹ıÁ÷¼ì²â£¬³¬¹ı10s±ãÈÏÎªµç»ú¶Â×ª
-1158   2      
-1159   2      #if 1 // ¿ØÖÆÓïÒôIC¹Ø»úºó£¬ÎŞ²Ù×÷¶ø¹Ø»ú
-1160   2      
-1161   2              {
-1162   3                  static u32 no_operation_shut_down_cnt = 0; // ÎŞ²Ù×÷×Ô¶¯¹Ø»úµÄ¼ÆÊ±
-1163   3      
-1164   3                  // if (0 == flag_is_new_operation && /* Èç¹ûÃ»ÓĞĞÂµÄ²Ù×÷ */
-1165   3                  //     0 == cur_motor_status &&      /* Èç¹ûµç»ú¹Ø±Õ */
-1166   3                  //     // 0 == cur_ctl_heat_status &&   /* Èç¹û¼ÓÈÈ¹Ø±Õ */
-1167   3                  //     0 == flag_is_enter_low_power  /* Èç¹ûÃ»ÓĞÊ¹ÄÜ½øÈëµÍ¹¦ºÄ */
-1168   3                  // )
-1169   3                  if (0 == flag_is_new_operation && /* Èç¹ûÃ»ÓĞĞÂµÄ²Ù×÷ */
-1170   3                      (0 == flag_is_in_charging) && /* Èç¹û²»ÊÇÔÚ³äµç */
-1171   3                      0 == cur_motor_status &&      /* Èç¹ûµç»ú¹Ø±Õ */
-1172   3                      0 == cur_ctl_heat_status &&   /* Èç¹û¼ÓÈÈ¹Ø±Õ */
-1173   3                      0 == flag_is_enter_low_power  /* Èç¹ûÃ»ÓĞÊ¹ÄÜ½øÈëµÍ¹¦ºÄ */
-1174   3                  )
-1175   3                  {
-1176   4                      no_operation_shut_down_cnt++;
-1177   4                      if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
-1178   4                      {
-1179   5                          no_operation_shut_down_cnt = 0;
-1180   5                          flag_is_enter_low_power = 1;
-1181   5                      }
-1182   4                  }
-1183   3                  else
-1184   3                  {
-1185   4                      no_operation_shut_down_cnt = 0;
-1186   4                      flag_is_new_operation = 0;
-1187   4                  }
-1188   3              }
-1189   2      #endif // ¿ØÖÆÓïÒôIC¹Ø»úºó£¬ÎŞ²Ù×÷¶ø¹Ø»ú
-1190   2      
-1191   2      #if 1 // ¿ØÖÆºôÎüµÆĞ§¹û
-1192   2      
-1193   2              {
-1194   3                  // 0 -- ³õÊ¼×´Ì¬
-1195   3                  // 1 -- ¸Õ½øÈëºôÎüµÆ×´Ì¬
-1196   3                  // 2 -- ´ÓÁÁµ½Ãğ
-1197   3                  // 3 -- ´ÓÃğµ½ÁÁ
-1198   3                  static u8 cur_breathing_status = 0;
-1199   3                  static u16 pwm_duty = 0;
-1200   3      
-1201   3                  if (flag_is_in_charging &&
-1202   3                      (0 == flag_bat_is_near_full) &&
-1203   3                      (0 == flag_bat_is_full))
-1204   3                  {
-1205   4                      if (0 == cur_breathing_status)
-1206   4                      {
-1207   5                          cur_breathing_status = 1;
-1208   5                      }
-1209   4                  }
-1210   3                  else
-1211   3                  {
-1212   4                      cur_breathing_status = 0;
-1213   4                      pwm_duty = 0;
-1214   4                  }
-1215   3      
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 21  
+1097   4                  }
+1098   3                  else
+1099   3                  {
+1100   4                      // Èç¹ûÃ»ÓĞ¼ì²âµ½ÓĞµç»ú¶Â×ªµÄÇé¿ö
+1101   4                      // P00 = 0; // ·½±ã²âÊÔ¹ıÁ÷¼ì²âÊ±¼ä
+1102   4                      __detect_motor_stalling_cnt = 0;
+1103   4                      flag_tim_set_motor_stalling = 0;
+1104   4                  }
+1105   3              }
+1106   2      #endif // µç»ú¹ıÁ÷¼ì²â£¬³¬¹ı10s±ãÈÏÎªµç»ú¶Â×ª
+1107   2      
+1108   2      #if 1 // ¿ØÖÆÓïÒôIC¹Ø»úºó£¬ÎŞ²Ù×÷¶ø¹Ø»ú
+1109   2      
+1110   2              {
+1111   3                  static u32 no_operation_shut_down_cnt = 0; // ÎŞ²Ù×÷×Ô¶¯¹Ø»úµÄ¼ÆÊ±
+1112   3      
+1113   3                  // if (0 == flag_is_new_operation && /* Èç¹ûÃ»ÓĞĞÂµÄ²Ù×÷ */
+1114   3                  //     0 == cur_motor_status &&      /* Èç¹ûµç»ú¹Ø±Õ */
+1115   3                  //     // 0 == cur_ctl_heat_status &&   /* Èç¹û¼ÓÈÈ¹Ø±Õ */
+1116   3                  //     0 == flag_is_enter_low_power  /* Èç¹ûÃ»ÓĞÊ¹ÄÜ½øÈëµÍ¹¦ºÄ */
+1117   3                  // )
+1118   3                  if (0 == flag_is_new_operation && /* Èç¹ûÃ»ÓĞĞÂµÄ²Ù×÷ */
+1119   3                      (0 == flag_is_in_charging) && /* Èç¹û²»ÊÇÔÚ³äµç */
+1120   3                      0 == cur_motor_status &&      /* Èç¹ûµç»ú¹Ø±Õ */
+1121   3                      0 == cur_ctl_heat_status &&   /* Èç¹û¼ÓÈÈ¹Ø±Õ */
+1122   3                      0 == flag_is_enter_low_power  /* Èç¹ûÃ»ÓĞÊ¹ÄÜ½øÈëµÍ¹¦ºÄ */
+1123   3                  )
+1124   3                  {
+1125   4                      no_operation_shut_down_cnt++;
+1126   4                      if (no_operation_shut_down_cnt >= NO_OPERATION_SHUT_DOWN_TIMES_MS)
+1127   4                      {
+1128   5                          no_operation_shut_down_cnt = 0;
+1129   5                          flag_is_enter_low_power = 1;
+1130   5                      }
+1131   4                  }
+1132   3                  else
+1133   3                  {
+1134   4                      no_operation_shut_down_cnt = 0;
+1135   4                      flag_is_new_operation = 0;
+1136   4                  }
+1137   3              }
+1138   2      #endif // ¿ØÖÆÓïÒôIC¹Ø»úºó£¬ÎŞ²Ù×÷¶ø¹Ø»ú
+1139   2      
+1140   2      #if 1 // ¿ØÖÆºôÎüµÆĞ§¹û
+1141   2      
+1142   2              {
+1143   3                  // 0 -- ³õÊ¼×´Ì¬
+1144   3                  // 1 -- ¸Õ½øÈëºôÎüµÆ×´Ì¬
+1145   3                  // 2 -- ´ÓÁÁµ½Ãğ
+1146   3                  // 3 -- ´ÓÃğµ½ÁÁ
+1147   3                  static u8 cur_breathing_status = 0;
+1148   3                  static u16 pwm_duty = 0;
+1149   3      
+1150   3                  if (flag_is_in_charging &&
+1151   3                      (0 == flag_bat_is_near_full) &&
+1152   3                      (0 == flag_bat_is_full))
+1153   3                  {
+1154   4                      if (0 == cur_breathing_status)
+1155   4                      {
+1156   5                          cur_breathing_status = 1;
+1157   5                      }
+1158   4                  }
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 20  
 
-1216   3                  if (1 == cur_breathing_status)
-1217   3                  {
-1218   4                      // ¸Õ½øÈëºôÎüµÆÉÁË¸Ğ§¹û
-1219   4                      pwm_duty = (STMR2_PRE + 1);
-1220   4                      cur_breathing_status = 2;
-1221   4                      LED_RED_ON();
-1222   4                  }
-1223   3                  else if (2 == cur_breathing_status)
-1224   3                  {
-1225   4                      if (pwm_duty > 0)
-1226   4                      {
-1227   5                          pwm_duty--;
-1228   5                      }
-1229   4                      else
-1230   4                      {
-1231   5                          cur_breathing_status = 3;
-1232   5                          pwm_duty = 0;
-1233   5                      }
-1234   4      
-1235   4      #ifdef USE_P13_RLED_USE_P12_GLED
-1236   4                      STMR2_CMPAH = (pwm_duty) / 256; // Í¨µÀAÕ¼¿Õ±È
-1237   4                      STMR2_CMPAL = (pwm_duty) % 256;
-1238   4      #endif
-1239   4      
-1240   4      #ifdef USE_P12_RLED_USE_P13_GLED
+1159   3                  else
+1160   3                  {
+1161   4                      cur_breathing_status = 0;
+1162   4                      pwm_duty = 0;
+1163   4                  }
+1164   3      
+1165   3                  if (1 == cur_breathing_status)
+1166   3                  {
+1167   4                      // ¸Õ½øÈëºôÎüµÆÉÁË¸Ğ§¹û
+1168   4                      pwm_duty = (STMR2_PRE + 1);
+1169   4                      cur_breathing_status = 2;
+1170   4                      LED_RED_ON();
+1171   4                  }
+1172   3                  else if (2 == cur_breathing_status)
+1173   3                  {
+1174   4                      if (pwm_duty > 0)
+1175   4                      {
+1176   5                          pwm_duty--;
+1177   5                      }
+1178   4                      else
+1179   4                      {
+1180   5                          cur_breathing_status = 3;
+1181   5                          pwm_duty = 0;
+1182   5                      }
+1183   4      
+1184   4      #ifdef USE_P13_RLED_USE_P12_GLED
+1185   4                      STMR2_CMPAH = (pwm_duty) / 256; // Í¨µÀAÕ¼¿Õ±È
+1186   4                      STMR2_CMPAL = (pwm_duty) % 256;
+1187   4      #endif
+1188   4      
+1189   4      #ifdef USE_P12_RLED_USE_P13_GLED
                               STMR2_CMPBH = (pwm_duty) / 256; // Í¨µÀBÕ¼¿Õ±È  100%
                               STMR2_CMPBL = (pwm_duty) % 256;
               #endif
-1244   4                  }
-1245   3                  else if (3 == cur_breathing_status)
-1246   3                  {
-1247   4                      if (pwm_duty < (STMR2_PRE + 1))
-1248   4                      {
-1249   5                          pwm_duty++;
-1250   5                      }
-1251   4                      else
-1252   4                      {
-1253   5                          cur_breathing_status = 2;
-1254   5                          pwm_duty = (STMR2_PRE + 1);
-1255   5                      }
-1256   4      
-1257   4      #ifdef USE_P13_RLED_USE_P12_GLED
-1258   4                      STMR2_CMPAH = (pwm_duty) / 256; // Í¨µÀAÕ¼¿Õ±È
-1259   4                      STMR2_CMPAL = (pwm_duty) % 256;
-1260   4      #endif
-1261   4      
-1262   4      #ifdef USE_P12_RLED_USE_P13_GLED
+1193   4                  }
+1194   3                  else if (3 == cur_breathing_status)
+1195   3                  {
+1196   4                      if (pwm_duty < (STMR2_PRE + 1))
+1197   4                      {
+1198   5                          pwm_duty++;
+1199   5                      }
+1200   4                      else
+1201   4                      {
+1202   5                          cur_breathing_status = 2;
+1203   5                          pwm_duty = (STMR2_PRE + 1);
+1204   5                      }
+1205   4      
+1206   4      #ifdef USE_P13_RLED_USE_P12_GLED
+1207   4                      STMR2_CMPAH = (pwm_duty) / 256; // Í¨µÀAÕ¼¿Õ±È
+1208   4                      STMR2_CMPAL = (pwm_duty) % 256;
+1209   4      #endif
+1210   4      
+1211   4      #ifdef USE_P12_RLED_USE_P13_GLED
                               STMR2_CMPBH = (pwm_duty) / 256; // Í¨µÀBÕ¼¿Õ±È
                               STMR2_CMPBL = (pwm_duty) % 256;
               #endif
-1266   4                  }
-1267   3              }
-1268   2      
-1269   2      #endif // ¿ØÖÆºôÎüµÆĞ§¹û
-1270   2      
-1271   2      #if 0 // ³äµçÊ±£¬Ö»ÈÃºìµÆÉÁË¸
+1215   4                  }
+1216   3              }
+1217   2      
+1218   2      #endif // ¿ØÖÆºôÎüµÆĞ§¹û
+1219   2      
+1220   2      #if 0 // ³äµçÊ±£¬Ö»ÈÃºìµÆÉÁË¸
+C51 COMPILER V9.60.7.0   MAIN                                                              04/15/2025 14:20:23 PAGE 21  
+
               
               #endif // ³äµçÊ±£¬Ö»ÈÃºìµÆÉÁË¸
-1274   2          }
-1275   1      }
-1276          
-1277          /**
-C51 COMPILER V9.60.7.0   MAIN                                                              04/08/2025 16:20:30 PAGE 22  
-
-1278           * @}
-1279           */
-1280          
-1281          /*************************** (C) COPYRIGHT 2021 HUGE-IC ***** END OF FILE *****/
+1223   2          }
+1224   1      }
+1225          
+1226          /**
+1227           * @}
+1228           */
+1229          
+1230          /*************************** (C) COPYRIGHT 2021 HUGE-IC ***** END OF FILE *****/
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1526    ----
+   CODE SIZE        =   1520    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
