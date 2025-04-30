@@ -72,6 +72,8 @@ volatile bit flag_is_new_operation;
 
 volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 
+volatile bit flag_is_adjust_current_time_comes; // 标志位，调节电流时间是否到来
+
 #endif // 不给全局变量赋值，默认就是0
 
 #if 1
@@ -132,6 +134,34 @@ void fun_ctl_power_off(void)
         // flag_tim_scan_maybe_shut_down = 0;
         flag_is_enable_key_scan = 0;
         flag_ctl_low_bat_alarm = 0;
+    }
+}
+
+// 使能LED闪烁功能(有多个地方调用相同的代码块，为了节省程序空间，将其整合到一起)
+// 参数：闪烁次数
+void fun_enable_led_blink(u8 blink_times)
+{
+    // 如果不处于低电量报警状态，才使能LED闪烁功能：
+    if (0 == flag_ctl_low_bat_alarm)
+    {
+        if (0 == cur_ctl_heat_status)
+        {
+            // 如果没有打开加热，让绿灯闪烁
+            LED_RED_OFF();
+            LED_GREEN_ON();
+            cur_sel_led = CUR_SEL_LED_GREEN;
+        }
+        else
+        {
+            // 如果打开了加热，让红灯闪烁
+            LED_GREEN_OFF();
+            LED_RED_ON();
+            cur_sel_led = CUR_SEL_LED_RED;
+        }
+
+        // cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
+        cur_ctl_led_blink_cnt = blink_times;
+        flag_ctl_led_blink = 1; // 打开LED闪烁的功能
     }
 }
 
@@ -196,26 +226,28 @@ void fun_ctl_motor_status(u8 adjust_motor_status)
     interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
 
     // 如果不处于低电量报警状态，才使能LED闪烁功能：
-    if (0 == flag_ctl_low_bat_alarm)
-    {
-        if (0 == cur_ctl_heat_status)
-        {
-            // 如果没有打开加热，让绿灯闪烁
-            LED_RED_OFF();
-            LED_GREEN_ON();
-            cur_sel_led = CUR_SEL_LED_GREEN;
-        }
-        else
-        {
-            // 如果打开了加热，让红灯闪烁
-            LED_GREEN_OFF();
-            LED_RED_ON();
-            cur_sel_led = CUR_SEL_LED_RED;
-        }
+    // if (0 == flag_ctl_low_bat_alarm)
+    // {
+    //     if (0 == cur_ctl_heat_status)
+    //     {
+    //         // 如果没有打开加热，让绿灯闪烁
+    //         LED_RED_OFF();
+    //         LED_GREEN_ON();
+    //         cur_sel_led = CUR_SEL_LED_GREEN;
+    //     }
+    //     else
+    //     {
+    //         // 如果打开了加热，让红灯闪烁
+    //         LED_GREEN_OFF();
+    //         LED_RED_ON();
+    //         cur_sel_led = CUR_SEL_LED_RED;
+    //     }
 
-        cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
-        flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
-    }
+    //     cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
+    //     flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
+    // }
+
+    fun_enable_led_blink(cur_motor_status);
 }
 #endif
 
@@ -427,7 +459,8 @@ void user_config(void)
     TMR2_PWMH = 0;
     // TMR2_CNTL = 0x00; // 清除计数值
     // TMR2_CNTH = 0x00;
-    TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0分频，系统时钟，PWM模式
+    // TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0分频，系统时钟，PWM模式
+    TMR2_CONL = (((0x1 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 2分频，系统时钟，PWM模式
     // 关闭定时器2
     tmr2_pwm_disable();
 
@@ -505,7 +538,7 @@ void main(void)
         检测到的是充电5V升压后的电压
     */
     // TMR2_PWML = 93 % 256; // 调节为约47.6%的占空比(占空比太大，会导致一开始的电流过大)
-    TMR2_PWML = 55 % 256; // 
+    TMR2_PWML = 55 % 256; //
     // 最大占空比的值不超过255，为了节省程序空间，可以不用配置高8位的寄存器
     // 但是这里不能去掉下面这一条，会导致电流异常跳动，设备会反复重启：
     // TMR2_PWMH = 93 / 256;
@@ -515,11 +548,12 @@ void main(void)
     adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
     {
         u8 i = 0;
-        u16 adc_val = 0;
-        for (i = 0; i < 10; i++) //
+        u16 adc_val;
+        // for (i = 0; i < 10; i++) //
+        for (; i < 10; i++) //
         {
             adc_val = adc_get_val();
-            if (adc_val >= ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX)
+            if (adc_val >= ((u16)ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX))
             {
                 flag_bat_is_empty = 1; // 表示电池是空的(电池没有安装)
             }
@@ -635,11 +669,11 @@ void main(void)
         {
             flag_is_enter_low_power = 0;
 
-            // if (P15)
-            // {
-
-            //     continue;
-            // }
+            if (P15 || 0 == P07) // 如果还在充电或者按着开机按键，不进入低功耗
+            {
+                flag_is_enter_low_power = 1;
+                continue;
+            }
 
             low_power();
         }
@@ -1053,7 +1087,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 根据标志位来执行低电量报警的功能，执行前(给控制标志位置一前)要先关闭所有LED
 #endif // 检测是否要低电量报警
 
-#if 0  // 工作时，检测电池电量是否一直低于关机电压
+#if 0  // 工作时，检测电池电量是否一直低于关机电压(样机是触发低电量报警后，闪烁几秒直接关机，这里没有再加入检测关机的功能)
 
         {
             static u16 __shut_down_cnt = 0; // 对电池电压低于关机电压的连续计时
@@ -1220,6 +1254,27 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 #if 0 // 充电时，只让红灯闪烁
 
 #endif // 充电时，只让红灯闪烁
+
+#if 1 // 控制充电时，每次调整电流的时间
+        {
+            static u16 cnt = 0;
+
+            if (flag_is_in_charging)
+            {
+                cnt++;
+                if (cnt >= 300)
+                {
+                    cnt = 0;
+                    flag_is_adjust_current_time_comes = 1; // 表示调节电流的时间已经到来
+                }
+            }
+            else
+            {
+                cnt = 0;
+                flag_is_adjust_current_time_comes = 0;
+            }
+        }
+#endif // 控制充电时，每次调整电流的时间
     }
 }
 

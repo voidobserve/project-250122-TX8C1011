@@ -5,7 +5,6 @@ extern volatile bit flag_is_recv_ctl; // 标志位，是否接收了控制命令
 extern volatile bit flag_tim_set_bat_is_low; // 由定时器置位/复位的，表示在工作时，电池是否处于低电量的标志位
 extern volatile bit flag_ctl_led_blink;      // 控制标志位，是否控制指示灯闪烁
 extern volatile bit flag_ctl_turn_dir;       // 控制标志位，是否更换电机的方向
- 
 
 /*
     标志位，是否通过语音来切换方向.
@@ -36,18 +35,15 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
 void speech_scan_process(void)
 {
-    if (flag_is_recv_ctl)
+    if (flag_is_recv_ctl) // 如果接收到了正确的控制命令
     {
-        // 如果接收到了正确的控制命令
-        volatile u8 cmd = recv_ctl;// 从缓冲区取出控制命名
+        volatile u8 cmd = recv_ctl; // 从缓冲区取出控制命名
         flag_is_recv_ctl = 0;
-        // cmd = recv_ctl; // 从缓冲区取出控制命名
 
         // 表示有新的控制命令，清除在关闭按摩指令后，无操作自动关机的倒计时
         flag_is_new_operation = 1;
         delay_ms(1); // 等待定时器清空对应的（2min没有语音操作而关机）计时变量和标志位
 
-        // (用 if-else if 语句会比switch语句更省空间)
         // 根据当前设备的情况，对指令进行处理
         if (CMD_OPEN_DEV == cmd) // 打开按摩/按摩枕/按摩器
         {
@@ -56,31 +52,10 @@ void speech_scan_process(void)
             {
                 alter_motor_speed(2); // 开机后，电机进入二档
                 motor_pwm_b_enable(); // 电机正向转动
-
                 cur_motor_dir = 1;    // 表示当前电机在正转
                 cur_motor_status = 2; // 更新电机挡位状态
-
-                // 如果不处于低电量报警状态，才使能LED闪烁功能：
-                if (0 == flag_tim_set_bat_is_low)
-                {
-                    if (0 == cur_ctl_heat_status)
-                    {
-                        // 如果没有打开加热，让绿灯闪烁
-                        LED_RED_OFF();
-                        LED_GREEN_ON();
-                        cur_sel_led = CUR_SEL_LED_GREEN;
-                    }
-                    else
-                    {
-                        // 如果打开了加热，让红灯闪烁
-                        LED_GREEN_OFF();
-                        LED_RED_ON();
-                        cur_sel_led = CUR_SEL_LED_RED;
-                    }
-
-                    cur_ctl_led_blink_cnt = cur_motor_status; // led闪烁次数与当前电机的挡位有关
-                    flag_ctl_led_blink = 1;                   // 打开LED闪烁的功能
-                }
+                fun_enable_led_blink(cur_motor_status);
+                // fun_enable_led_blink(2);
             }
             else
             {
@@ -88,7 +63,7 @@ void speech_scan_process(void)
             }
         }
         else if (CMD_CLOSE_DEV == cmd) // 关闭按摩/按摩枕/按摩器
-        { 
+        {
             cur_ctl_heat_status = 0; // 关闭加热
             motor_pwm_disable();     // 关闭驱动电机的PWM输出：
             LED_RED_OFF();
@@ -108,6 +83,7 @@ void speech_scan_process(void)
                 fun_ctl_heat_status(0);
             }
         }
+#if 1
         else if (CMD_CLOSE_HEAT == cmd) // 关闭加热
         {
             if (0 != cur_ctl_heat_status)
@@ -137,8 +113,59 @@ void speech_scan_process(void)
                 fun_ctl_heat_status(2);
             }
         }
+#else // 下面的语句块会更占空间
+        else if (cmd >= CMD_CLOSE_HEAT && cmd <= CMD_HEAT_SECOND)
+        {
+            if (0 != cur_ctl_heat_status)
+            {
+                // switch (cmd)
+                // {
+                // case CMD_CLOSE_HEAT:       // 关闭加热
+                //                            // 如果加热已经开启
+                //     interrupt_led_blink(); // 打断当前正在闪烁的功能
+                //     fun_ctl_close_heat();
+                //     delay_ms(100);
+                //     cur_sel_led = CUR_SEL_LED_GREEN;
+                //     cur_ctl_led_blink_cnt = 1;
+                //     flag_ctl_led_blink = 1;
+                //     break;
+
+                // case CMD_HEAT_FIRST: // 加热一档
+                //     fun_ctl_heat_status(1);
+                //     break;
+
+                // case CMD_HEAT_SECOND: // 加热二档
+                //     fun_ctl_heat_status(2);
+                //     break;
+                // }
+
+                if (CMD_CLOSE_HEAT == cmd) // 关闭加热
+                {
+                    // 如果加热已经开启
+                    // flag_ctl_led_blink = 0; // 打断当前正在闪烁的功能
+                    // delay_ms(1);            // 等待定时器中断内部清空闪烁功能对应的标志和变量，否则打断闪灯的效果会变差
+                    interrupt_led_blink();
+                    fun_ctl_close_heat();
+                    delay_ms(100);
+                    cur_sel_led = CUR_SEL_LED_GREEN;
+                    cur_ctl_led_blink_cnt = 1;
+                    flag_ctl_led_blink = 1;
+                }
+                else if (CMD_HEAT_FIRST == cmd) // 加热一档
+                {
+                    fun_ctl_heat_status(1);
+                }
+                // else if (CMD_HEAT_SECOND == cmd) // 加热二档
+                else // 加热二档
+                {
+                    fun_ctl_heat_status(2);
+                }
+            }
+        }
+#endif
         else if (cur_motor_status) /* 接下来都是与电机有关的操作，需要电机在运作的情况下，再做处理，否则不会进入 */
         {
+#if 0
             if (CMD_INTENSITY_FIRST == cmd) // 力度一档
             {
                 fun_ctl_motor_status(1);
@@ -156,91 +183,35 @@ void speech_scan_process(void)
                 // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
                 flag_ctl_turn_dir = 1;
                 // 给另外一个标志位置一，让定时器清除自动换方向的计时
-                flag_is_turn_dir_by_speech = 1;  
-                interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能 
-                // 如果不处于低电量报警状态，才使能LED闪烁功能：
-                if (0 == flag_ctl_low_bat_alarm)
-                {
-                    if (0 == cur_ctl_heat_status)
-                    {
-                        // 如果没有打开加热，让绿灯闪烁
-                        LED_RED_OFF();
-                        LED_GREEN_ON();
-                        cur_sel_led = CUR_SEL_LED_GREEN;
-                    }
-                    else
-                    {
-                        // 如果打开了加热，让红灯闪烁
-                        LED_GREEN_OFF();
-                        LED_RED_ON();
-                        cur_sel_led = CUR_SEL_LED_RED;
-                    }
+                flag_is_turn_dir_by_speech = 1;
+                interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
+                fun_enable_led_blink(1); // 使能LED闪烁，指定LED闪烁一次
+            }
+#endif
 
-                    cur_ctl_led_blink_cnt = 1; // 指定led闪烁次数
-                    flag_ctl_led_blink = 1;    // 打开LED闪烁的功能
-                }
-            }
-        }
-
-#if 0
-        else if (CMD_INTENSITY_FIRST == cmd) // 力度一档
-        {
-            if (0 != cur_motor_status)
-            { 
-                fun_ctl_motor_status(1);
-            }
-        }
-        else if (CMD_INTENSITY_SECOND == cmd) // 力度二档
-        {
-            if (0 != cur_motor_status)
-            { 
-                fun_ctl_motor_status(2);
-            }
-        }
-        else if (CMD_INTENSITY_THIRD == cmd) // 力度三档
-        {
-            if (0 != cur_motor_status)
-            { 
-                fun_ctl_motor_status(3);
-            }
-        }
-        else if (CMD_CHANGE_DIR == cmd) // 换个方向
-        {
-            // if (0 != cur_motor_status)
-            if (cur_motor_status) // 电机还在运行，才执行下面语句块
+            switch (cmd)
             {
+            case CMD_INTENSITY_FIRST: // 力度一档
+                fun_ctl_motor_status(1);
+                break;
+
+            case CMD_INTENSITY_SECOND: // 力度二档
+                fun_ctl_motor_status(2);
+                break;
+
+            case CMD_INTENSITY_THIRD: // 力度三档
+                fun_ctl_motor_status(3);
+                break;
+
+            case CMD_CHANGE_DIR: // 换个方向
                 // 标志位置一，让换方向的操作在主函数执行，因为换方向要间隔500ms
                 flag_ctl_turn_dir = 1;
-
                 // 给另外一个标志位置一，让定时器清除自动换方向的计时
                 flag_is_turn_dir_by_speech = 1;
-
-                // 让灯光闪烁一次
-                interrupt_led_blink(); // 打断当前正在执行的LED闪烁功能
-
-                // 如果不处于低电量报警状态，才使能LED闪烁功能：
-                if (0 == flag_ctl_low_bat_alarm)
-                {
-                    if (0 == cur_ctl_heat_status)
-                    {
-                        // 如果没有打开加热，让绿灯闪烁
-                        LED_RED_OFF();
-                        LED_GREEN_ON();
-                        cur_sel_led = CUR_SEL_LED_GREEN;
-                    }
-                    else
-                    {
-                        // 如果打开了加热，让红灯闪烁
-                        LED_GREEN_OFF();
-                        LED_RED_ON();
-                        cur_sel_led = CUR_SEL_LED_RED;
-                    }
-
-                    cur_ctl_led_blink_cnt = 1; // 指定led闪烁次数
-                    flag_ctl_led_blink = 1;    // 打开LED闪烁的功能
-                }
+                interrupt_led_blink();   // 打断当前正在执行的LED闪烁功能
+                fun_enable_led_blink(1); // 使能LED闪烁，指定LED闪烁一次
+                break;
             }
         }
-#endif
     }
 }

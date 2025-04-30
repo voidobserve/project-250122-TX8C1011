@@ -1,5 +1,7 @@
 #include "adc.h"
 
+// volatile u16 adc_val = 0;
+
 // void adc_config(void)
 // {
 //     // P04 AIN4 检测充电口传过来的ad值

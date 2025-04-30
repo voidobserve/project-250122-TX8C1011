@@ -85,4 +85,7 @@
 // 关闭按摩指令后，无操作自动关机的时，单位：ms
 #define NO_OPERATION_SHUT_DOWN_TIMES_MS (120000)
 
+// 使能LED闪烁功能(有多个地方调用相同的代码块，为了节省程序空间，将其整合到一起)
+extern void fun_enable_led_blink(u8 blink_times);
+
 #endif

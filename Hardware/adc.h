@@ -13,6 +13,8 @@ enum
     // ADC_CHANNEL_KEY_SCAN, // 测试用， 检测ad按键
 };
 
+// extern volatile u16 adc_val; 
+
 // void adc_config(void);
 void adc_sel_channel(u8 adc_channel);
 // u16 adc_get_val_once(void);

@@ -107,28 +107,30 @@ void motor_pwm_disable(void)
 //     // cur_motor_dir = 1;    // 表示电机正转
 // }
 
+// 根据 STMR1_PRE 的值来计算占空比：
+#define __MOTOR_LEVEL_1 (1395)          // 一档 86.8% 占空比
+#define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
+#define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
+const u16 motor_level_buf[] = {
+    __MOTOR_LEVEL_1,
+    __MOTOR_LEVEL_2,
+    __MOTOR_LEVEL_3,
+};
+
 /**
  * @brief 修改电机转速（函数内部只修改占空比，不开/关pwm输出）
  *
  * @param adjust_motor_status 要调节的电机挡位
- *          0 -- 关闭电机 0%占空比
+ *        
  *          1 -- 一档 86.8% 占空比
  *          2 -- 二档 92.8% 占空比
  *          3 -- 三档 100% 占空比
  *          其余参数值不做处理
  */
-// 根据 STMR1_PRE 的值来计算占空比：
-#define __MOTOR_LEVEL_1 (1395)          // 一档 86.8% 占空比
-#define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
-#define __MOTOR_LEVEL_3 (STMR1_PRE + 1) // 三档 100% 占空比
 void alter_motor_speed(u8 adjust_motor_status)
 {
-    // if (0 == adjust_motor_status)
-    // {
-    //     // T0DATA = 0;
-    //     // T1DATA = 0;
-    // }
-    // else if (1 == adjust_motor_status)
+#if 0 // 未优化程序空间之前的程序：
+
     if (1 == adjust_motor_status)
     {
         STMR1_CMPAH = __MOTOR_LEVEL_1 / 256;
@@ -150,6 +152,22 @@ void alter_motor_speed(u8 adjust_motor_status)
         STMR1_CMPBH = __MOTOR_LEVEL_3 / 256;
         STMR1_CMPBL = __MOTOR_LEVEL_3 % 256;
     }
+
+#endif // 未优化程序空间之前的程序
+
+    // 不是 1 - 3 档，不做处理
+    if (adjust_motor_status == 0 || adjust_motor_status > 3)
+    {
+        return;
+    }
+
+    // adjust_motor_status 在 1~3档 ，才会进入到这里
+    adjust_motor_status--; // 与数组的下标对齐
+
+    STMR1_CMPAH = motor_level_buf[adjust_motor_status] / 256;
+    STMR1_CMPAL = motor_level_buf[adjust_motor_status] % 256;
+    STMR1_CMPBH = motor_level_buf[adjust_motor_status] / 256;
+    STMR1_CMPBL = motor_level_buf[adjust_motor_status] % 256;
 }
 
 // 电机过流检测和相关处理

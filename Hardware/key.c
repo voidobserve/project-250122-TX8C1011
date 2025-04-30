@@ -213,7 +213,7 @@ void key_event_handle(void)
         }
         else /* 如果语音IC不在工作，可能是从低功耗下唤醒 */
         {
-            if (flag_is_disable_to_open)
+            if (flag_is_disable_to_open) // 如果是低电量不允许开机
             {
                 // 等待松手后，回到低功耗
                 while (0 == P07)
