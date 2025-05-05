@@ -2,6 +2,9 @@
 
 extern void user_config(void);
 
+/*
+    低功耗，测试时，没有焊上语音IC，低功耗期间，整个板的功耗为14uA
+*/
 void low_power(void)
 {
     // 如果是长按关机，下面的判断会导致无法进入低功耗

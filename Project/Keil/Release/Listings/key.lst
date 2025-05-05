@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   KEY                                                               04/29/2025 14:56:38 PAGE 1   
+C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY
@@ -62,7 +62,7 @@ line level    source
   48          // static volatile u8 press_cnt = 0; // 按键按下的时间计数 
   49          static volatile bit flag_is_key_mode_hold; // 标志位，按键是否按住，没有松手
   50          static volatile u8 last_key_id;
-C51 COMPILER V9.60.7.0   KEY                                                               04/29/2025 14:56:38 PAGE 2   
+C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 2   
 
   51          static volatile u8 press_cnt; // 按键按下的时间计数
   52          
@@ -126,7 +126,7 @@ line level    source
  110   1          //     // 防止计数溢出
  111   1          //     filter_cnt++;
  112   1          //     return;
-C51 COMPILER V9.60.7.0   KEY                                                               04/29/2025 14:56:38 PAGE 3   
+C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 3   
 
  113   1          // }
  114   1      
@@ -190,7 +190,7 @@ line level    source
  172   6                          }
  173   5                      }
  174   4                  }
-C51 COMPILER V9.60.7.0   KEY                                                               04/29/2025 14:56:38 PAGE 4   
+C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 4   
 
  175   3                  else
  176   3                  {
@@ -254,7 +254,7 @@ line level    source
  234   2              {
  235   3                  if (0 == cur_motor_status)
  236   3                  {
-C51 COMPILER V9.60.7.0   KEY                                                               04/29/2025 14:56:38 PAGE 5   
+C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 5   
 
  237   4                      // motor_forward();
  238   4                      motor_pwm_b_enable(); // 电机正向转动

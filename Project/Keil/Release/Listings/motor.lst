@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/29/2025 14:56:37 PAGE 1   
+C51 COMPILER V9.60.7.0   MOTOR                                                             05/05/2025 11:30:18 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   47          //     P0_MD0 &= ~0xF0;
   48          //     P0_MD0 |= 0xA0;
   49          //     // P0_AF0 &= ~0xF0;
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/29/2025 14:56:37 PAGE 2   
+C51 COMPILER V9.60.7.0   MOTOR                                                             05/05/2025 11:30:18 PAGE 2   
 
   50          //     STMR1_CR |= 0x01; // 使能高级定时器
   51          // }
@@ -126,7 +126,7 @@ line level    source
  108          // }
  109          
  110          // 根据 STMR1_PRE 的值来计算占空比：
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/29/2025 14:56:37 PAGE 3   
+C51 COMPILER V9.60.7.0   MOTOR                                                             05/05/2025 11:30:18 PAGE 3   
 
  111          #define __MOTOR_LEVEL_1 (1395)          // 一档 86.8% 占空比
  112          #define __MOTOR_LEVEL_2 (1492)          // 二档 92.8% 占空比
@@ -190,7 +190,7 @@ line level    source
  170   1          STMR1_CMPBL = motor_level_buf[adjust_motor_status] % 256;
  171   1      }
  172          
-C51 COMPILER V9.60.7.0   MOTOR                                                             04/29/2025 14:56:37 PAGE 4   
+C51 COMPILER V9.60.7.0   MOTOR                                                             05/05/2025 11:30:18 PAGE 4   
 
  173          // 电机过流检测和相关处理
  174          void motor_over_current_detect_handle(void)

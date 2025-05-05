@@ -522,7 +522,7 @@ void charge_scan_handle(void)
         u16 tmp_bat_val = adc_bat_val;
         static u8 tmp_val_cnt = 0;
         u32 tmp_val;
-        static u8 tmp_val_l[8] = 0;
+        static u8 tmp_val_l[8] = 0; // 用来存放计算得到的pwm占空比值，最后再一起计算平均值
 
         // last_pwm_val = TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
         // max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的值
@@ -530,7 +530,7 @@ void charge_scan_handle(void)
         if (adc_bat_val <= 2752) // 如果检测电池电压小于 6.5V
         {
             // tmp_bat_val = (adc_bat_val + 37);
-            tmp_bat_val += 37;
+            tmp_bat_val += 37; // 0.8升到0.93
         }
         else if (adc_bat_val <= 2964) // 如果检测电池电压小于 7.0V
         {
@@ -559,16 +559,23 @@ void charge_scan_handle(void)
         // tmp_bat_val += 150; //
         // tmp_bat_val += 300; //
         // tmp_bat_val += 600; //
-        tmp_bat_val += 900; //
+        tmp_bat_val += 900; // 1A-1.1A ========================82khz
 
-        if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流
+        // 164KHz:
+        // tmp_bat_val += 1050; // 700-800mA
+        // tmp_bat_val += 1100; // 1A - 1.1A，但是这个频率是164KHz，MOS会先发热
+
+        if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流（实际测试是在8.25V附近）
         {
-            tmp_bat_val -= 40;
+            // tmp_bat_val -= 40;
+            // tmp_bat_val -= 100; // 约1.1A
+            // tmp_bat_val -= 300; // 约0.97A
+            tmp_bat_val -= 600; // 约0.8A，8.26V--728mA，8.31--791mA
         }
 
-        tmp_val = max_pwm_val - ((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val;
+        tmp_val = max_pwm_val - (u8)(((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val);
 
-        if (tmp_val >= max_pwm_val)
+        if ((u8)tmp_val >= max_pwm_val)
         {
             // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（可能是电池电压过小），按0处理
             tmp_val = 0;
@@ -577,7 +584,7 @@ void charge_scan_handle(void)
         // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
         tmp_val_cnt++;
         tmp_val_cnt &= 0x07;
-        tmp_val_l[tmp_val_cnt] = (tmp_val_l[tmp_val_cnt] + tmp_val) >> 1;
+        tmp_val_l[tmp_val_cnt] = ((u16)(tmp_val_l[tmp_val_cnt]) + tmp_val) >> 1;
         tmp_val = 0;
         for (i = 0; i < 8; i++)
         {

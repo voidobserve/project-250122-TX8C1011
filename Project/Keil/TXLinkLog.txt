@@ -1,56 +1,56 @@
-[04-30 09:25:36]Log start
-[04-30 09:25:36]Serial init start!
-[04-30 09:25:36]Serial close ok!
-[04-30 09:25:36]Serial init start!
-[04-30 09:25:37]Download driver ok!
-[04-30 09:25:37]uart_txm8c1010_set_driver:0x0
-[04-30 09:25:37]user uart set driver ok!
-[04-30 09:25:37]TXLink ready ok!
-[04-30 09:25:37]TXLink init ok!
-[04-30 09:25:37]Serial close ok!
-[04-30 09:25:37]load_debug_init_api chip id:1011
-[04-30 09:25:37]sys_info_init! 
-[04-30 09:25:37]AG_Init: 0x30a
-[04-30 09:25:37]AG_Init: 0x30b
-[04-30 09:25:37]AG_Init: 0x30f
-[04-30 09:25:37]AG_Init: 0x310
-[04-30 09:25:37]AG_Init: 0x311
-[04-30 09:25:37]AG_Init: 0x312
-[04-30 09:25:37]AG_Init: 0x100
-[04-30 09:25:37]InitMem: 0x0
-[04-30 09:25:37]Serial init start!
-[04-30 09:25:37]chip_init_api
-[04-30 09:25:37]TXLink chip init ok!
-[04-30 09:25:37]AG_Init: 0x201
-[04-30 09:25:37]AG_Init: 0x202
-[04-30 09:25:37]AG_Init: 0x203
-[04-30 09:25:37]AG_Init: 0x204
-[04-30 09:25:37]AG_Init: 0x205
-[04-30 09:25:37]AG_Init: 0x206
-[04-30 09:25:37]AG_Init: 0x207
-[04-30 09:25:37]AG_Init: 0x313
-[04-30 09:25:37]Serial init start!
-[04-30 09:25:37]EraseFlash: 0x0
-[04-30 09:25:37]TXLink chip erase ok!
-[04-30 09:25:37]uart_txm8c1010_sector_erase sector_num:0x20
-[04-30 09:25:37]uart_txm8c1010_sector_erase sector_num:0x21
-[04-30 09:25:37]AG_Init: 0x314
-[04-30 09:25:37]FlashLoad: 0x0
-[04-30 09:25:37]InitProgress: Loading...
-[04-30 09:25:37]WriteToFlash: 0xff008000
-[04-30 09:25:37]WriteToFlash: 0xff008006
-[04-30 09:25:38]WriteToFlash: 0xff008806
-[04-30 09:25:38]WriteToFlash: 0xff009006
-[04-30 09:25:39]InitProgress: Verifying...
-[04-30 09:25:39]VerifyFlash nAdr: 0xff008000
-[04-30 09:25:39]VerifyFlash nAdr: 0xff008006
-[04-30 09:25:39]VerifyFlash nAdr: 0xff008806
-[04-30 09:25:39]VerifyFlash nAdr: 0xff009006
-[04-30 09:25:39]chip_reset_api
-[04-30 09:25:39]Serial close ok!
-[04-30 09:25:39]AG_Init: 0x40c
-[04-30 09:25:39]CloseAllDlg: 0x0
-[04-30 09:25:39]StopTarget: 0x0
-[04-30 09:25:39]FreeCache: 0x0
-[04-30 09:25:39]StopTarget: 0x0
-[04-30 09:25:39]FreeCache: 0x0
+[05-05 16:30:50]Log start
+[05-05 16:30:50]Serial init start!
+[05-05 16:30:50]Serial close ok!
+[05-05 16:30:50]Serial init start!
+[05-05 16:30:50]Download driver ok!
+[05-05 16:30:50]uart_txm8c1010_set_driver:0x0
+[05-05 16:30:50]user uart set driver ok!
+[05-05 16:30:50]TXLink ready ok!
+[05-05 16:30:50]TXLink init ok!
+[05-05 16:30:50]Serial close ok!
+[05-05 16:30:50]load_debug_init_api chip id:1011
+[05-05 16:30:50]sys_info_init! 
+[05-05 16:30:50]AG_Init: 0x30a
+[05-05 16:30:50]AG_Init: 0x30b
+[05-05 16:30:50]AG_Init: 0x30f
+[05-05 16:30:50]AG_Init: 0x310
+[05-05 16:30:50]AG_Init: 0x311
+[05-05 16:30:50]AG_Init: 0x312
+[05-05 16:30:50]AG_Init: 0x100
+[05-05 16:30:50]InitMem: 0x0
+[05-05 16:30:50]Serial init start!
+[05-05 16:30:50]chip_init_api
+[05-05 16:30:50]TXLink chip init ok!
+[05-05 16:30:50]AG_Init: 0x201
+[05-05 16:30:50]AG_Init: 0x202
+[05-05 16:30:50]AG_Init: 0x203
+[05-05 16:30:50]AG_Init: 0x204
+[05-05 16:30:50]AG_Init: 0x205
+[05-05 16:30:50]AG_Init: 0x206
+[05-05 16:30:50]AG_Init: 0x207
+[05-05 16:30:50]AG_Init: 0x313
+[05-05 16:30:50]Serial init start!
+[05-05 16:30:50]EraseFlash: 0x0
+[05-05 16:30:51]TXLink chip erase ok!
+[05-05 16:30:51]uart_txm8c1010_sector_erase sector_num:0x20
+[05-05 16:30:51]uart_txm8c1010_sector_erase sector_num:0x21
+[05-05 16:30:51]AG_Init: 0x314
+[05-05 16:30:51]FlashLoad: 0x0
+[05-05 16:30:51]InitProgress: Loading...
+[05-05 16:30:51]WriteToFlash: 0xff008000
+[05-05 16:30:51]WriteToFlash: 0xff008006
+[05-05 16:30:51]WriteToFlash: 0xff008806
+[05-05 16:30:52]WriteToFlash: 0xff009006
+[05-05 16:30:52]InitProgress: Verifying...
+[05-05 16:30:52]VerifyFlash nAdr: 0xff008000
+[05-05 16:30:52]VerifyFlash nAdr: 0xff008006
+[05-05 16:30:52]VerifyFlash nAdr: 0xff008806
+[05-05 16:30:52]VerifyFlash nAdr: 0xff009006
+[05-05 16:30:52]chip_reset_api
+[05-05 16:30:52]Serial close ok!
+[05-05 16:30:52]AG_Init: 0x40c
+[05-05 16:30:52]CloseAllDlg: 0x0
+[05-05 16:30:52]StopTarget: 0x0
+[05-05 16:30:52]FreeCache: 0x0
+[05-05 16:30:52]StopTarget: 0x0
+[05-05 16:30:52]FreeCache: 0x0

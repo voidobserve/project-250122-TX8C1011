@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 1   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CHARGE
@@ -62,7 +62,7 @@ line level    source
   40          
   41          // 充电扫描与检测
   42          /**
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 2   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 2   
 
   43           * @brief    充电、电池的扫描和相关处理
   44                       如果一上电检测到电池为空，不能调用该函数
@@ -126,7 +126,7 @@ line level    source
   97   3                  {
   98   4                      // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
   99   4                      flag_tim_scan_bat_maybe_full = 1;
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 3   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 3   
 
  100   4                  }
  101   3                  else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
@@ -190,7 +190,7 @@ line level    source
              -�器
  154   2              {
  155   3                  // 如果在充电时，检测到拔出了充电线
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 4   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 4   
 
  156   3                  flag_is_in_charging = 0;
  157   3      
@@ -254,7 +254,7 @@ line level    source
  212   3                  // }
  213   3                  // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
  214   3                  if (flag_tim_set_bat_is_low &&
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 5   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 5   
 
  215   3                      0 == flag_ctl_low_bat_alarm &&
  216   3                      0 == flag_is_enter_low_power &&
@@ -318,7 +318,7 @@ line level    source
  271   2      #if 0 // 使用计算的方式来调节充电电流
               
                       u8 i = 0;                             // 循环计数值
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 6   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 6   
 
                       const u8 max_pwm_val = TMR2_PRL + 1;  // 临时存放最大占空比对应的值
                       volatile u8 last_pwm_val = TMR2_PWML; // 记录之前的pwm占空比的值
@@ -382,7 +382,7 @@ line level    source
                           // tmp_bat_val -= (30); /* 7.17--0.97 */
                       }
               #endif
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 7   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 7   
 
                       // else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
                       // else
@@ -446,7 +446,7 @@ line level    source
                           // tmp_bat_val += 200; //
                           // tmp_bat_val -= ((u32)adc_bat_val * 360 / 1000);
               
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 8   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 8   
 
                           // tmp_bat_val -= 45;
                           // tmp_bat_val -= 55;
@@ -510,7 +510,7 @@ line level    source
                           // for (i = 0; i < 80; i++) //
                           for (i = 0; i < 120; i++) // ===================
                           // for (i = 0; i < 125; i++) //
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 9   
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 9   
 
                           // for (i = 0; i < 150; i++) //
                           // for (i = 0; i < 300; i++) //
@@ -574,7 +574,7 @@ line level    source
               
                       // 充电时，每隔一段时间再调整一次PWM占空比，否则充电电流跳动会很厉�
              -�
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 10  
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 10  
 
                       // delay_ms(100);
               
@@ -587,7 +587,8 @@ line level    source
  522   2              u16 tmp_bat_val = adc_bat_val;
  523   2              static u8 tmp_val_cnt = 0;
  524   2              u32 tmp_val;
- 525   2              static u8 tmp_val_l[8] = 0;
+ 525   2              static u8 tmp_val_l[8] = 0; // 用来存放计算得到的pwm占空比值，最后再一起计算�
+             -��均值
  526   2      
  527   2              // last_pwm_val = TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
  528   2              // max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的�
@@ -625,97 +626,105 @@ line level    source
  559   2              // tmp_bat_val += 150; //
  560   2              // tmp_bat_val += 300; //
  561   2              // tmp_bat_val += 600; //
- 562   2              tmp_bat_val += 900; //
+ 562   2              tmp_bat_val += 900; // ========================82khz
  563   2      
- 564   2              if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流
- 565   2              {
- 566   3                  tmp_bat_val -= 40;
- 567   3              }
- 568   2      
- 569   2              tmp_val = max_pwm_val - ((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val;
- 570   2      
- 571   2              if (tmp_val >= max_pwm_val)
- 572   2              {
- 573   3                  // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
+ 564   2              // 164KHz:
+ 565   2              // tmp_bat_val += 1050; // 700-800mA
+ 566   2              // tmp_bat_val += 1100; // 1A - 1.1A，但是这个频率是164KHz，MOS会先发热
+ 567   2      
+ 568   2              if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流（实际测试是�
+             -��8.25V附近）
+ 569   2              {
+ 570   3                  // tmp_bat_val -= 40;
+ 571   3                  // tmp_bat_val -= 100; // 约1.1A
+ 572   3                  // tmp_bat_val -= 300; // 约0.97A
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 11  
+
+ 573   3                  tmp_bat_val -= 600; // 约0.8A，8.26V--728mA，8.31--791mA
+ 574   3              }
+ 575   2      
+ 576   2              tmp_val = max_pwm_val - (u8)(((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val);
+ 577   2      
+ 578   2              if ((u8)tmp_val >= max_pwm_val)
+ 579   2              {
+ 580   3                  // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
              -�能是电池电压过小），按0处理
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 11  
+ 581   3                  tmp_val = 0;
+ 582   3              }
+ 583   2      
+ 584   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
+ 585   2              tmp_val_cnt++;
+ 586   2              tmp_val_cnt &= 0x07;
+ 587   2              tmp_val_l[tmp_val_cnt] = ((u16)(tmp_val_l[tmp_val_cnt]) + tmp_val) >> 1;
+ 588   2              tmp_val = 0;
+ 589   2              for (i = 0; i < 8; i++)
+ 590   2              {
+ 591   3                  tmp_val += tmp_val_l[i];
+ 592   3              }
+ 593   2              tmp_val >>= 3;
+ 594   2      
+ 595   2              // {
+ 596   2              //     /*
+ 597   2              //         如果差值过大，则快速调节，如果差值过小，则慢速调节，
+ 598   2              //         防止电流突变，导致不同的板子最终充电电流不一致
+ 599   2              //     */
+ 600   2              //     static u8 cnt = 0;
+ 601   2              //     cnt++;
+ 602   2      
+ 603   2              //     if (tmp_val > last_pwm_val)
+ 604   2              //     {
+ 605   2              //         if ((tmp_val - last_pwm_val) > 2 || cnt >= 10)
+ 606   2              //         {
+ 607   2              //             last_pwm_val++;
+ 608   2              //             cnt = 0;
+ 609   2              //         }
+ 610   2              //     }
+ 611   2              //     else if (tmp_val < last_pwm_val)
+ 612   2              //     {
+ 613   2              //         if ((last_pwm_val - tmp_val) > 2 || cnt >= 10)
+ 614   2              //         {
+ 615   2              //             last_pwm_val--;
+ 616   2              //             cnt = 0;
+ 617   2              //         }
+ 618   2              //     }
+ 619   2              // }
+ 620   2      
+ 621   2              if (flag_is_adjust_current_time_comes)
+ 622   2              {
+ 623   3                  flag_is_adjust_current_time_comes = 0;
+ 624   3                  if ((u8)tmp_val > last_pwm_val)
+ 625   3                  // if (tmp_val > last_pwm_val)
+ 626   3                  {
+ 627   4                      // last_pwm_val = last_pwm_val + 1;
+ 628   4                      last_pwm_val++;
+ 629   4                  }
+ 630   3                  else if ((u8)tmp_val < last_pwm_val)
+ 631   3                  // else if (tmp_val < last_pwm_val)
+ 632   3                  {
+ 633   4                      // last_pwm_val = last_pwm_val - 1;
+C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 12  
 
- 574   3                  tmp_val = 0;
- 575   3              }
- 576   2      
- 577   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
- 578   2              tmp_val_cnt++;
- 579   2              tmp_val_cnt &= 0x07;
- 580   2              tmp_val_l[tmp_val_cnt] = (tmp_val_l[tmp_val_cnt] + tmp_val) >> 1;
- 581   2              tmp_val = 0;
- 582   2              for (i = 0; i < 8; i++)
- 583   2              {
- 584   3                  tmp_val += tmp_val_l[i];
- 585   3              }
- 586   2              tmp_val >>= 3;
- 587   2      
- 588   2              // {
- 589   2              //     /*
- 590   2              //         如果差值过大，则快速调节，如果差值过小，则慢速调节，
- 591   2              //         防止电流突变，导致不同的板子最终充电电流不一致
- 592   2              //     */
- 593   2              //     static u8 cnt = 0;
- 594   2              //     cnt++;
- 595   2      
- 596   2              //     if (tmp_val > last_pwm_val)
- 597   2              //     {
- 598   2              //         if ((tmp_val - last_pwm_val) > 2 || cnt >= 10)
- 599   2              //         {
- 600   2              //             last_pwm_val++;
- 601   2              //             cnt = 0;
- 602   2              //         }
- 603   2              //     }
- 604   2              //     else if (tmp_val < last_pwm_val)
- 605   2              //     {
- 606   2              //         if ((last_pwm_val - tmp_val) > 2 || cnt >= 10)
- 607   2              //         {
- 608   2              //             last_pwm_val--;
- 609   2              //             cnt = 0;
- 610   2              //         }
- 611   2              //     }
- 612   2              // }
- 613   2      
- 614   2              if (flag_is_adjust_current_time_comes)
- 615   2              {
- 616   3                  flag_is_adjust_current_time_comes = 0;
- 617   3                  if ((u8)tmp_val > last_pwm_val)
- 618   3                  // if (tmp_val > last_pwm_val)
- 619   3                  {
- 620   4                      // last_pwm_val = last_pwm_val + 1;
- 621   4                      last_pwm_val++;
- 622   4                  }
- 623   3                  else if ((u8)tmp_val < last_pwm_val)
- 624   3                  // else if (tmp_val < last_pwm_val)
- 625   3                  {
- 626   4                      // last_pwm_val = last_pwm_val - 1;
- 627   4                      last_pwm_val--;
- 628   4                  }
- 629   3              }
- 630   2      
- 631   2              // T2DATA = last_pwm_val;
- 632   2      
- 633   2              // printf("last_pwm_val %u\n",last_pwm_val);
- 634   2              TMR2_PWML = last_pwm_val;
- 635   2              // TMR2_PWML = last_pwm_val % 256;
-C51 COMPILER V9.60.7.0   CHARGE                                                            04/30/2025 09:25:19 PAGE 12  
-
- 636   2              // TMR2_PWMH = last_pwm_val / 256;
- 637   2              TMR2_PWMH = 0;
- 638   2      
- 639   2      #endif
- 640   2      
- 641   2          } // if (flag_is_in_charging)
- 642   1      #endif // 充电电流控制
- 643   1      }
+ 634   4                      last_pwm_val--;
+ 635   4                  }
+ 636   3              }
+ 637   2      
+ 638   2              // T2DATA = last_pwm_val;
+ 639   2      
+ 640   2              // printf("last_pwm_val %u\n",last_pwm_val);
+ 641   2              TMR2_PWML = last_pwm_val;
+ 642   2              // TMR2_PWML = last_pwm_val % 256;
+ 643   2              // TMR2_PWMH = last_pwm_val / 256;
+ 644   2              TMR2_PWMH = 0;
+ 645   2      
+ 646   2      #endif
+ 647   2      
+ 648   2          } // if (flag_is_in_charging)
+ 649   1      #endif // 充电电流控制
+ 650   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    687    ----
+   CODE SIZE        =    670    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -26,7 +26,9 @@
 #define ADCDETECT_CHARING_THRESHOLD 2048 // 检测是否充电的adc值
 
 // 充电时，检测到电池满电时对应的ad值
-#define ADCDETECT_BAT_FULL (3557) //  8.4V对应的ad值
+// #define ADCDETECT_BAT_FULL (3557) //  8.4V对应的ad值（实际测得在8.30V）
+#define ADCDETECT_BAT_FULL (3599) //  8.5V对应的ad值（实际测得在8.38V）
+// #define ADCDETECT_BAT_FULL (3620) // 实际测得在8.38V，会触发电池的过充保护）
 #define ADCDETECT_BAT_NULL_EX (280)
 
 // 快满电时对应的电压ad值，现在使用8.1V

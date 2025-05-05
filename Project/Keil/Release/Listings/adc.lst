@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ADC                                                               04/29/2025 14:56:38 PAGE 1   
+C51 COMPILER V9.60.7.0   ADC                                                               05/05/2025 11:30:18 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
@@ -62,7 +62,7 @@ line level    source
   48   1          //     break;
   49   1          // case ADC_CHANNEL_MOTOR:
   50   1          //     // P06 AIN6 检测电机是否堵转
-C51 COMPILER V9.60.7.0   ADC                                                               04/29/2025 14:56:38 PAGE 2   
+C51 COMPILER V9.60.7.0   ADC                                                               05/05/2025 11:30:18 PAGE 2   
 
   51   1          //     ADC_CHS0 = 0x06; // 软件触发，P06通路
   52   1          //     break;
@@ -126,7 +126,7 @@ line level    source
  109   2              g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
  110   2      
  111   2              // g_temp_value = adc_get_val_once();
-C51 COMPILER V9.60.7.0   ADC                                                               04/29/2025 14:56:38 PAGE 3   
+C51 COMPILER V9.60.7.0   ADC                                                               05/05/2025 11:30:18 PAGE 3   
 
  112   2      
  113   2              if (i < 2)
