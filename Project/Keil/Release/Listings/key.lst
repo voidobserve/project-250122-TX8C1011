@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 1   
+C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY
@@ -10,8 +10,8 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\key.c OPTIMIZE(9,
 line level    source
 
    1          #include "key.h"
-*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
-             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\99-������Ŀ\2025-01-22-project250122-����-��Ħ��������-SX
+             -384\code\project-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
    2          
    3          // ===================================================
    4          // 按键相关配置                                      //
@@ -59,10 +59,10 @@ line level    source
   45          
   46          // static volatile bit flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
   47          // static volatile u8 last_key_id = KEY_ID_NONE;
-  48          // static volatile u8 press_cnt = 0; // 按键按下的时间计数 
+  48          // static volatile u8 press_cnt = 0; // 按键按下的时间计数
   49          static volatile bit flag_is_key_mode_hold; // 标志位，按键是否按住，没有松手
   50          static volatile u8 last_key_id;
-C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 2   
+C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 2   
 
   51          static volatile u8 press_cnt; // 按键按下的时间计数
   52          
@@ -101,7 +101,7 @@ line level    source
   85   1          {
   86   2              cur_key_id = KEY_ID_MODE;
   87   2          }
-  88   1          else if (0 == P10)
+  88   1          else if (0 == P10) // 加热 按键
   89   1          {
   90   2              cur_key_id = KEY_ID_HEAT;
   91   2          }
@@ -111,7 +111,7 @@ line level    source
   95   2          }
   96   1      #endif
   97   1      
-  98   1          // 消抖/滤波
+  98   1          // // 消抖/滤波
   99   1          // if (cur_key_id != filter_key_id)
  100   1          // {
  101   1          //     // 如果有按键按下/松开
@@ -126,7 +126,7 @@ line level    source
  110   1          //     // 防止计数溢出
  111   1          //     filter_cnt++;
  112   1          //     return;
-C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 3   
+C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 3   
 
  113   1          // }
  114   1      
@@ -136,7 +136,7 @@ line level    source
  118   2              if (last_key_id == KEY_ID_NONE)
  119   2              {
  120   3                  // 如果有按键按下，清除按键按下的时间计数
- 121   3                  press_cnt = 0;
+ 121   3                  // press_cnt = 0;
  122   3              }
  123   2              else if (cur_key_id == KEY_ID_NONE)
  124   2              {
@@ -158,133 +158,155 @@ line level    source
  140   3                  else
  141   3                  {
  142   4                      // 长按、长按持续之后松手
- 143   4                      if (KEY_ID_MODE == last_key_id)
+ 143   4                      // if (KEY_ID_MODE == last_key_id)
  144   4                      {
  145   5                          flag_is_key_mode_hold = 0;
  146   5                      }
  147   4                  }
  148   3              }
- 149   2          }
- 150   1          else if (cur_key_id != KEY_ID_NONE)
- 151   1          {
- 152   2              // 如果按键按住不放
- 153   2              if (press_cnt < 255)
- 154   2                  press_cnt++;
- 155   2      
- 156   2              if (KEY_ID_MODE == cur_key_id)
- 157   2              {
- 158   3                  // if (flag_is_dev_open)
- 159   3                  // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
- 160   3                  if (cur_motor_status || cur_ctl_heat_status)
- 161   3                  {
- 162   4                      if (press_cnt >= 200) // 2000ms
- 163   4                      {
- 164   5                          if (flag_is_key_mode_hold)
- 165   5                          {
- 166   6                              // 如果该按键还未松手，不执行操作
- 167   6                          }
- 168   5                          else
- 169   5                          {
- 170   6                              key_event = KEY_EVENT_MODE_HOLD;
- 171   6                              flag_is_key_mode_hold = 1;
- 172   6                          }
- 173   5                      }
- 174   4                  }
-C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 4   
+ 149   2      
+ 150   2              // 按键刚按下或按键松开，都清除按键按下的时间计数
+ 151   2              press_cnt = 0;
+ 152   2          }
+ 153   1          else if (cur_key_id != KEY_ID_NONE)
+ 154   1          {
+ 155   2              // 如果按键按住不放
+ 156   2              if (press_cnt < 255)
+ 157   2                  press_cnt++;
+ 158   2      
+ 159   2              if (KEY_ID_MODE == cur_key_id)
+ 160   2              {
+ 161   3                  // printf("mode press\n"); 
+ 162   3                  // printf("press cnt: %bu\n", (u8)press_cnt);
+ 163   3                  // printf("cur_motor_status %bu\n", cur_motor_status);
+ 164   3                  // printf("cur_ctl_heat_status %bu\n", cur_ctl_heat_status);
+ 165   3                  // printf("flag_is_key_mode_hold %bu\n", (u8)flag_is_key_mode_hold);
+ 166   3      
+ 167   3                  // if (flag_is_dev_open)
+ 168   3                  // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
+ 169   3                  if (cur_motor_status || cur_ctl_heat_status)
+ 170   3                  {
+ 171   4                      if (press_cnt >= 200) // 2000ms
+ 172   4                      {
+ 173   5                          if (flag_is_key_mode_hold)
+ 174   5                          {
+C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 4   
 
- 175   3                  else
- 176   3                  {
- 177   4                      // 如果当前设备是关闭的
- 178   4                      if (press_cnt >= 200) // 2000ms
- 179   4                      {
- 180   5                          if (flag_is_key_mode_hold)
- 181   5                          {
- 182   6                              // 如果该按键还未松手，不执行操作
- 183   6                          }
- 184   5                          else
- 185   5                          {
- 186   6                              key_event = KEY_EVENT_MODE_HOLD;
- 187   6                              flag_is_key_mode_hold = 1;
- 188   6                          }
- 189   5                      }
- 190   4                  }
- 191   3              }
- 192   2          }
- 193   1      
- 194   1          last_key_id = cur_key_id;
- 195   1      }
- 196          
- 197          // 按键事件处理
- 198          void key_event_handle(void)
- 199          {
- 200   1          if (flag_is_in_charging)
- 201   1          {
- 202   2              key_event = KEY_EVENT_NONE;
- 203   2              return; // 充电时不处理按键事件
- 204   2          }
- 205   1      
- 206   1          if (KEY_EVENT_MODE_HOLD == key_event) /* 开机/模式按键长按 */
- 207   1          {
- 208   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
- 209   2              {
- 210   3                  // 关机：
- 211   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
- 212   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
- 213   3              }
- 214   2              else /* 如果语音IC不在工作，可能是从低功耗下唤醒 */
- 215   2              {
- 216   3                  if (flag_is_disable_to_open) // 如果是低电量不允许开机
- 217   3                  {
- 218   4                      // 等待松手后，回到低功耗
- 219   4                      while (0 == P07)
- 220   4                          ;
- 221   4                      flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
- 222   4                      flag_is_enter_low_power = 1; // 允许进入低功耗
- 223   4                  }
- 224   3                  else
- 225   3                  {
- 226   4                      SPEECH_POWER_ENABLE();
- 227   4                      fun_ctl_power_on();
- 228   4                  }
- 229   3              }
- 230   2          }
- 231   1          else if (KEY_EVENT_MODE_CLICK == key_event) /* 开机/模式按键短按 */
- 232   1          {
- 233   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
- 234   2              {
- 235   3                  if (0 == cur_motor_status)
- 236   3                  {
-C51 COMPILER V9.60.7.0   KEY                                                               05/05/2025 11:30:18 PAGE 5   
+ 175   6                              // 如果该按键还未松手，不执行操作
+ 176   6                          }
+ 177   5                          else
+ 178   5                          {
+ 179   6                              key_event = KEY_EVENT_MODE_HOLD;
+ 180   6                              flag_is_key_mode_hold = 1;
+ 181   6      
+ 182   6                              // printf("dev open\n");
+ 183   6                              // printf("mode hold\n");
+ 184   6                          }
+ 185   5                      }
+ 186   4                  }
+ 187   3                  else
+ 188   3                  {
+ 189   4                      // 如果当前设备是关闭的
+ 190   4                      if (press_cnt >= 200) // 2000ms
+ 191   4                      {
+ 192   5                          if (flag_is_key_mode_hold)
+ 193   5                          {
+ 194   6                              // 如果该按键还未松手，不执行操作
+ 195   6                          }
+ 196   5                          else
+ 197   5                          {
+ 198   6                              key_event = KEY_EVENT_MODE_HOLD;
+ 199   6                              flag_is_key_mode_hold = 1;
+ 200   6      
+ 201   6                              // printf("dev close\n"); 
+ 202   6                              // printf("mode hold\n"); 
+ 203   6                          }
+ 204   5                      }
+ 205   4                  }
+ 206   3              }
+ 207   2          }
+ 208   1      
+ 209   1          last_key_id = cur_key_id;
+ 210   1      }
+ 211          
+ 212          // 按键事件处理
+ 213          void key_event_handle(void)
+ 214          {
+ 215   1          if (flag_is_in_charging)
+ 216   1          {
+ 217   2              key_event = KEY_EVENT_NONE;
+ 218   2              return; // 充电时不处理按键事件
+ 219   2          }
+ 220   1      
+ 221   1          if (KEY_EVENT_MODE_HOLD == key_event) /* 开机/模式按键长按 */
+ 222   1          {
+ 223   2              // printf("key event hold handle\n");
+ 224   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
+ 225   2              {
+ 226   3                  // 关机：
+ 227   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+ 228   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
+ 229   3      
+ 230   3                  // printf("handle close\n");
+ 231   3              }
+ 232   2              else /* 如果语音IC不在工作，可能是从低功耗下唤醒 */
+ 233   2              {
+ 234   3                  if (flag_is_disable_to_open) // 如果是低电量不允许开机
+ 235   3                  {
+ 236   4                      // 等待松手后，回到低功耗
+C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 5   
 
- 237   4                      // motor_forward();
- 238   4                      motor_pwm_b_enable(); // 电机正向转动
- 239   4                  }
- 240   3                  // 参数填0，根据全局变量 cur_motor_status 的状态来自动调节
- 241   3                  fun_ctl_motor_status(0);
- 242   3              }
- 243   2              else /* 如果语音IC不在工作 */
- 244   2              {
- 245   3                  // 这里可以回到低功耗，关机
- 246   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
- 247   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
- 248   3              }
- 249   2          }
- 250   1          else if (KEY_EVENT_HEAT_CLICK == key_event) /* 加热按键短按 */
- 251   1          {
- 252   2              // if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
- 253   2              {
- 254   3                  // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
- 255   3                  fun_ctl_heat_status(0);
- 256   3              }
- 257   2          }
- 258   1      
- 259   1          // 处理完成后，清除按键事件
- 260   1          key_event = KEY_EVENT_NONE;
- 261   1      }
+ 237   4                      while (0 == P07)
+ 238   4                          ;
+ 239   4                      flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+ 240   4                      flag_is_enter_low_power = 1; // 允许进入低功耗
+ 241   4      
+ 242   4                      // printf("handle low power\n");
+ 243   4                  }
+ 244   3                  else
+ 245   3                  {
+ 246   4                      SPEECH_POWER_ENABLE();
+ 247   4                      fun_ctl_power_on();
+ 248   4      
+ 249   4                      // printf("handle open\n");
+ 250   4                  }
+ 251   3              }
+ 252   2          }
+ 253   1          else if (KEY_EVENT_MODE_CLICK == key_event) /* 开机/模式按键短按 */
+ 254   1          {
+ 255   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
+ 256   2              {
+ 257   3                  if (0 == cur_motor_status)
+ 258   3                  {
+ 259   4                      // motor_forward();
+ 260   4                      motor_pwm_b_enable(); // 电机正向转动
+ 261   4                  }
+ 262   3                  // 参数填0，根据全局变量 cur_motor_status 的状态来自动调节
+ 263   3                  fun_ctl_motor_status(0);
+ 264   3              }
+ 265   2              else /* 如果语音IC不在工作 */
+ 266   2              {
+ 267   3                  // 这里可以回到低功耗，关机
+ 268   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+ 269   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
+ 270   3              }
+ 271   2          }
+ 272   1          else if (KEY_EVENT_HEAT_CLICK == key_event) /* 加热按键短按 */
+ 273   1          {
+ 274   2              // if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
+ 275   2              {
+ 276   3                  // 参数填0，根据全局变量 cur_ctl_heat_status 的状态来自动调节
+ 277   3                  fun_ctl_heat_status(0);
+ 278   3              }
+ 279   2          }
+ 280   1      
+ 281   1          // 处理完成后，清除按键事件
+ 282   1          key_event = KEY_EVENT_NONE;
+ 283   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    217    ----
+   CODE SIZE        =    209    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

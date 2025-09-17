@@ -29,7 +29,7 @@ enum
 };
 extern volatile u8 cur_ctl_led_blink_cnt; // 记录当前要控制灯光闪烁的次数
 
-void interrupt_led_blink(void); 
+void interrupt_led_blink(void);
 // void led_config(void);
 void led_red_on(void);
 void led_red_off(void);
@@ -46,26 +46,26 @@ void led_green_off(void);
             led_red_on(); \
         } while (0);      \
     }
-#define LED_RED_OFF()        \
+#define LED_RED_OFF()      \
+    {                      \
+        do                 \
+        {                  \
+            led_red_off(); \
+        } while (0);       \
+    }
+#define LED_GREEN_ON()      \
+    {                       \
+        do                  \
+        {                   \
+            led_green_on(); \
+        } while (0);        \
+    }
+#define LED_GREEN_OFF()      \
     {                        \
         do                   \
         {                    \
-            led_red_off(); \
-        } while (0);         \
-    }
-#define LED_GREEN_ON()         \
-    {                          \
-        do                     \
-        {                      \
-            led_green_on(); \
-        } while (0);           \
-    }
-#define LED_GREEN_OFF()        \
-    {                          \
-        do                     \
-        {                      \
             led_green_off(); \
-        } while (0);           \
+        } while (0);         \
     }
 
 #endif

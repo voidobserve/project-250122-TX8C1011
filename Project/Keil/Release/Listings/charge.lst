@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 1   
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CHARGE
@@ -10,8 +10,8 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\App\charge.c OPTIMIZE(9,SI
 line level    source
 
    1          #include "charge.h"
-*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\2025-01-22-project250122-����-��Ħ��������-SX384\code\pro
-             -ject-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
+*** WARNING C322 IN LINE 71 OF \BaiduSyncdisk\A_WorkSt\Aworkst\99-������Ŀ\2025-01-22-project250122-����-��Ħ��������-SX
+             -384\code\project-250122-TX8C1011\Libraries\Include\debug.h: unknown identifier
    2          #include "tx8c101x.h"
    3          
    4          #if USE_MY_DEBUG
@@ -62,7 +62,7 @@ line level    source
   40          
   41          // 充电扫描与检测
   42          /**
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 2   
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 2   
 
   43           * @brief    充电、电池的扫描和相关处理
   44                       如果一上电检测到电池为空，不能调用该函数
@@ -72,254 +72,273 @@ line level    source
   48           */
   49          void charge_scan_handle(void)
   50          {
-  51   1          volatile u16 adc_bat_val = 0;      // 存放检测到的电池电压的adc值
-  52   1          volatile u16 adc_charging_val = 0; // 存放检测到的充电电压的adc值
-  53   1          static u8 over_charging_cnt = 0;   // 存放过充计数
-  54   1      
-  55   1          adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
-  56   1          adc_bat_val = adc_get_val();      // 更新电池对应的ad值
-  57   1      
-  58   1          adc_sel_channel(ADC_CHANNEL_CHARGE); // 切换到检测充电的电压检测引脚(检测到的充电�
+  51   1      #if 1
+  52   1          volatile u16 adc_bat_val = 0;      // 存放检测到的电池电压的adc值
+  53   1          volatile u16 adc_charging_val = 0; // 存放检测到的充电电压的adc值
+  54   1          static u8 over_charging_cnt = 0;   // 存放过充计数
+  55   1      
+  56   1          adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
+  57   1          adc_bat_val = adc_get_val();      // 更新电池对应的ad值
+  58   1      
+  59   1          adc_sel_channel(ADC_CHANNEL_CHARGE); // 切换到检测充电的电压检测引脚(检测到的充电�
              -��压 == USB-C口电压 / 2)
-  59   1          adc_charging_val = adc_get_val();    // 更新当前检测到的充电电压对应的ad值
-  60   1      
-  61   1          // printf("bat val %u\n", adc_bat_val);
-  62   1          // printf("charge val %u\n", adc_charging_val);
-  63   1      
-  64   1          // 低电量不允许开机
-  65   1          if (adc_bat_val < LOW_BAT_ALARM_AD_VAL)
-  66   1          {
-  67   2              flag_is_disable_to_open = 1;
-  68   2          }
-  69   1          // else if (adc_bat_val > (LOW_BAT_ALARM_AD_VAL + 15))
-  70   1          else
-  71   1          {
-  72   2              flag_is_disable_to_open = 0;
-  73   2              flag_tim_scan_maybe_low_bat = 0;
-  74   2          }
-  75   1      
-  76   1          if (flag_is_in_charging)
-  77   1          {
-  78   2              // 如果正在充电，检测电池是否充满电
-  79   2      
-  80   2      #if 1 // 检测在充电时，电池是否充满电，并做相应的处理
-  81   2      
-  82   2              if (0 == flag_bat_is_full)
-  83   2              {
-  84   3                  // 如果正在充电，且电池未充满电，检测电视是否快充满电 或是 电池�
+  60   1          adc_charging_val = adc_get_val();    // 更新当前检测到的充电电压对应的ad值
+  61   1      
+  62   1          // printf("bat val %u\n", adc_bat_val);
+  63   1          // printf("charge val %u\n", adc_charging_val);
+  64   1      
+  65   1          // 低电量不允许开机
+  66   1          if (adc_bat_val < LOW_BAT_ALARM_AD_VAL)
+  67   1          {
+  68   2              flag_is_disable_to_open = 1;
+  69   2          }
+  70   1          // else if (adc_bat_val > (LOW_BAT_ALARM_AD_VAL + 15))
+  71   1          else
+  72   1          {
+  73   2              flag_is_disable_to_open = 0;
+  74   2              flag_tim_scan_maybe_low_bat = 0;
+  75   2          }
+  76   1      
+  77   1          if (flag_is_in_charging)
+  78   1          {
+  79   2              // 如果正在充电，检测电池是否充满电
+  80   2      
+  81   2      #if 1 // 检测在充电时，电池是否充满电，并做相应的处理
+  82   2      
+  83   2              if (0 == flag_bat_is_full)
+  84   2              {
+  85   3                  // 如果正在充电，且电池未充满电，检测电视是否快充满电 或是 电池�
              -�满电
-  85   3      
-  86   3                  // 如果检测到充满电（可能触发了电池保护板的过充保护），直接输出0
+  86   3      
+  87   3      #if 0
+                          // 如果检测到充满电（可能触发了电池保护板的过充保护），直接输出0
              -%的PWM
-  87   3                  if (adc_bat_val >= (ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX))
-  88   3                  {
-  89   4                      // 如果检测到的ad值比 满电的ad值 还要多
-  90   4                      // PWM占空比设置为0，让占空比重新开始递增，电流从零开始逐渐增�
+                          if (adc_bat_val >= (ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX))
+                          {
+                              // 如果检测到的ad值比 满电的ad值 还要多
+                              // PWM占空比设置为0，让占空比重新开始递增，电流从零开始逐渐增�
              -�
-  91   4                      TMR2_PWML = 0; // 占空比 0%
-  92   4                      TMR2_PWMH = 0;
-  93   4                      over_charging_cnt++; // 过充检测计数加一
-  94   4                      // flag_tim_scan_bat_maybe_full = 1; // (可以不用给这个标志位置一，这里只�
+                              TMR2_PWML = 0; // 占空比 0%
+                              TMR2_PWMH = 0;
+                              over_charging_cnt++; // 过充检测计数加一
+                              // flag_tim_scan_bat_maybe_full = 1; // (可以不用给这个标志位置一，这里只�
              -��测试时使用)
-  95   4                  }
-  96   3                  else if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
-  97   3                  {
-  98   4                      // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
-  99   4                      flag_tim_scan_bat_maybe_full = 1;
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 3   
+                          }
+                          else if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
+                          {
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 3   
 
- 100   4                  }
- 101   3                  else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
- 102   3                  {
- 103   4                      // 如果电池快充满电
- 104   4                      flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
- 105   4                  }
- 106   3                  else
- 107   3                  {
- 108   4                      // 如果检测到的ad值小于满电阈值
- 109   4                      // 清空对应的标志位，让定时器不检测是否满电
- 110   4                      flag_tim_scan_bat_maybe_full = 0;
- 111   4                      flag_tim_scan_bat_maybe_near_full = 0;
- 112   4                  }
- 113   3      
- 114   3                  if (flag_tim_set_bat_is_near_full && 0 == flag_bat_is_near_full)
- 115   3                  {
- 116   4                      // 如果电池接近满电，关闭充电时的呼吸灯，点亮绿灯，但是不关闭
+                              // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
+                              flag_tim_scan_bat_maybe_full = 1;
+                          }
+                          else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
+                          {
+                              // 如果电池快充满电
+                              flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
+                          }
+                          else
+                          {
+                              // 如果检测到的ad值小于满电阈值
+                              // 清空对应的标志位，让定时器不检测是否满电
+                              flag_tim_scan_bat_maybe_full = 0;
+                              flag_tim_scan_bat_maybe_near_full = 0;
+                          }
+              #endif
+ 116   3      
+ 117   3                  // if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
+ 118   3                  if (P01 == 1) // 如果充电IC的状态是已经停止充电
+ 119   3                  {
+ 120   4                      // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
+ 121   4                      flag_tim_scan_bat_maybe_full = 1;
+ 122   4                  }
+ 123   3                  else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
+ 124   3                  {
+ 125   4                      // 如果电池快充满电
+ 126   4                      flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
+ 127   4                  }
+ 128   3                  else
+ 129   3                  {
+ 130   4                      // 如果检测到的ad值小于满电阈值
+ 131   4                      // 清空对应的标志位，让定时器不检测是否满电
+ 132   4                      flag_tim_scan_bat_maybe_full = 0;
+ 133   4                      flag_tim_scan_bat_maybe_near_full = 0;
+ 134   4                  }
+ 135   3      
+ 136   3                  if (flag_tim_set_bat_is_near_full && 0 == flag_bat_is_near_full)
+ 137   3                  {
+ 138   4                      // 如果电池接近满电，关闭充电时的呼吸灯，点亮绿灯，但是不关闭
              -控制充电的PWM
- 117   4                      flag_bat_is_near_full = 1;
- 118   4                      delay_ms(1);    // 必须要等待定时器关闭充电时闪烁的呼吸灯
- 119   4                      LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
- 120   4                      LED_GREEN_ON(); // 快充满电时，让绿灯常亮
- 121   4                  }
- 122   3      
- 123   3                  if (flag_tim_set_bat_is_full || (over_charging_cnt >= 8))
- 124   3                  // if (flag_tim_set_bat_is_full) // 测试时使用到的条件
- 125   3                  {
- 126   4                      // 如果定时器检测了一段时间(5s)，都是充满电的状态，或着是累计�
+ 139   4                      flag_bat_is_near_full = 1;
+ 140   4                      delay_ms(1);    // 必须要等待定时器关闭充电时闪烁的呼吸灯
+ 141   4                      LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
+ 142   4                      LED_GREEN_ON(); // 快充满电时，让绿灯常亮
+ 143   4                  }
+ 144   3      
+ 145   3                  if (flag_tim_set_bat_is_full || (over_charging_cnt >= 8))
+ 146   3                  {
+ 147   4                      // 如果定时器检测了一段时间(5s)，都是充满电的状态，或着是累计�
              -�过充，说明电池充满电
- 127   4                      over_charging_cnt = 0; // 清除过充计数
- 128   4                      flag_bat_is_full = 1;  // 表示电池被充满电
- 129   4                      tmr2_pwm_disable();    // 关闭控制升压电路的pwm
- 130   4                      TMR2_PWML = 0;         // 占空比 0%
- 131   4                      TMR2_PWMH = 0;         //
- 132   4                      // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清�
-             -�）
- 133   4                      // delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
- 134   4                      LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
- 135   4                      LED_GREEN_ON(); // 充满电时，让绿灯常亮
- 136   4                  }
- 137   3              } // if (0 == flag_bat_is_full)
- 138   2      
- 139   2      #endif // 检测在充电时，电池是否充满电，并做相应的处理
- 140   2      
- 141   2      #if 1 // (这个功能要放在该语句块的最后)检测在充电时，是否拔出了充电线，并�
-             -�相应的处理
- 142   2            // 如果正在充电，检测是否拔出了充电线
- 143   2              if (adc_charging_val < ADCDETECT_CHARING_THRESHOLD)
- 144   2              {
- 145   3                  // 给对应的标志位置一，如果连续 xx ms都是这个状态，说明拔出了充电�
-             -��
- 146   3                  flag_tim_scan_maybe_not_charge = 1;
- 147   3              }
- 148   2              else
- 149   2              {
- 150   3                  flag_tim_scan_maybe_not_charge = 0;
- 151   3              }
- 152   2      
- 153   2              if (0 == flag_tim_set_is_in_charging) // 如果定时器连续 50 ms 都是检测到拔出了充�
-             -�器
- 154   2              {
- 155   3                  // 如果在充电时，检测到拔出了充电线
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 4   
+ 148   4                      over_charging_cnt = 0; // 清除过充计数
+ 149   4                      flag_bat_is_full = 1;  // 表示电池被充满电
+ 150   4                      // tmr2_pwm_disable();    // 关闭控制升压电路的pwm
+ 151   4                      // TMR2_PWML = 0;         // 占空比 0%
+ 152   4                      // TMR2_PWMH = 0;         //
+ 153   4                      LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
+ 154   4                      LED_GREEN_ON(); // 充满电时，让绿灯常亮
+ 155   4                  }
+ 156   3              } // if (0 == flag_bat_is_full)
+ 157   2      
+ 158   2      #endif // 检测在充电时，电池是否充满电，并做相应的处理
+ 159   2      
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 4   
 
- 156   3                  flag_is_in_charging = 0;
- 157   3      
- 158   3                  // 清空充电时使用的标志位和变量：
- 159   3                  flag_tim_scan_bat_maybe_full = 0;
- 160   3                  flag_tim_scan_bat_maybe_near_full = 0;
- 161   3                  // flag_tim_set_bat_is_full = 0; // 可以不用清零这个变量，定时器后续会自动�
+ 160   2      #if 1 // (这个功能要放在该语句块的最后)检测在充电时，是否拔出了充电线，并�
+             -�相应的处理
+ 161   2            // 如果正在充电，检测是否拔出了充电线
+ 162   2              if (adc_charging_val < ADCDETECT_CHARING_THRESHOLD)
+ 163   2              {
+ 164   3                  // 给对应的标志位置一，如果连续 xx ms都是这个状态，说明拔出了充电�
+             -��
+ 165   3                  flag_tim_scan_maybe_not_charge = 1;
+ 166   3              }
+ 167   2              else
+ 168   2              {
+ 169   3                  flag_tim_scan_maybe_not_charge = 0;
+ 170   3              }
+ 171   2      
+ 172   2              if (0 == flag_tim_set_is_in_charging) // 如果定时器连续 xx ms 都是检测到拔出了充�
+             -�器
+ 173   2              {
+ 174   3                  // 如果在充电时，检测到拔出了充电线
+ 175   3                  flag_is_in_charging = 0;
+ 176   3      
+ 177   3                  // 清空充电时使用的标志位和变量：
+ 178   3                  flag_tim_scan_bat_maybe_full = 0;
+ 179   3                  flag_tim_scan_bat_maybe_near_full = 0;
+ 180   3                  // flag_tim_set_bat_is_full = 0; // 可以不用清零这个变量，定时器后续会自动�
              -��零
- 162   3                  flag_bat_is_near_full = 0;
- 163   3                  flag_bat_is_full = 0;
- 164   3                  over_charging_cnt = 0; // 清除过充计数
- 165   3      
- 166   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
- 167   3      
- 168   3                  // 可以交给低功耗函数来关闭PWM：
- 169   3                  // tmr2_pwm_disable(); // 关闭控制充电的PWM输出
- 170   3                  delay_ms(1); // 等待定时器清空相应的变量和标志位
- 171   3                               // 可以交给低功耗函数来关灯：
- 172   3                               // LED_GREEN_OFF();
- 173   3                               // LED_RED_OFF();
- 174   3      
- 175   3      #if USE_MY_DEBUG
+ 181   3                  flag_bat_is_near_full = 0;
+ 182   3                  flag_bat_is_full = 0;
+ 183   3                  over_charging_cnt = 0; // 清除过充计数
+ 184   3      
+ 185   3                  flag_is_enter_low_power = 1; // 允许进入低功耗
+ 186   3      
+ 187   3                  // 可以交给低功耗函数来关闭PWM：
+ 188   3                  // tmr2_pwm_disable(); // 关闭控制充电的PWM输出
+ 189   3                  delay_ms(1); // 等待定时器清空相应的变量和标志位
+ 190   3                               // 可以交给低功耗函数来关灯：
+ 191   3                               // LED_GREEN_OFF();
+ 192   3                               // LED_RED_OFF();
+ 193   3      
+ 194   3      #if USE_MY_DEBUG
                           printf("uncharging\n");
               #endif // #if USE_MY_DEBUG
- 178   3      
- 179   3                  // return; // 退出函数，防止再执行下面的功能
- 180   3              }
- 181   2      #endif // 检测在充电时，是否拔出了充电线，并做相应的处理
- 182   2      
- 183   2          } // if (flag_is_in_charging)
- 184   1          else // 如果不在充电
- 185   1          {
- 186   2      
- 187   2      #if 1 // 在设备工作时，检测是否处于低电量，并进行相应处理
- 188   2      
- 189   2              // if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
- 190   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作，说明没有进入低�
+ 197   3      
+ 198   3                  // return; // 退出函数，防止再执行下面的功能
+ 199   3              }
+ 200   2      #endif // 检测在充电时，是否拔出了充电线，并做相应的处理
+ 201   2      
+ 202   2          } // if (flag_is_in_charging)
+ 203   1          else // 如果不在充电
+ 204   1          {
+ 205   2      
+ 206   2      #if 1 // 在设备工作时，检测是否处于低电量，并进行相应处理
+ 207   2      
+ 208   2              // if (0 != cur_motor_status || 0 != cur_ctl_heat_status)
+ 209   2              if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作，说明没有进入低�
              -�耗 */
- 191   2              {
- 192   3                  // 如果设备在工作
- 193   3                  if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
- 194   3                  {
- 195   4                      // 如果电池电压 小于等于 低电量报警对应的电压
- 196   4                      flag_tim_scan_maybe_low_bat = 1;
- 197   4                      // flag_tim_scan_maybe_shut_down = 0; // 当前电池电压正处于 关机电压 ~ 低电
-             -量之间，还没到要关机的情况
- 198   4                  }
- 199   3                  else
- 200   3                  {
- 201   4                      // 如果电池电压 大于 低电量报警对应的电压
- 202   4                      flag_tim_scan_maybe_low_bat = 0;
- 203   4                      // flag_tim_scan_maybe_shut_down = 0;
- 204   4                  }
- 205   3      
- 206   3                  // 如果连续一段时间检测到电池电压低于关机电压
- 207   3                  // if (flag_tim_set_shut_down)
- 208   3                  // {
- 209   3                  //     flag_ctl_dev_close = 1;
- 210   3                  //     // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(在低功耗函数内关闭)
- 211   3                  //     flag_is_enter_low_power = 1; // 允许进入低功耗
- 212   3                  // }
- 213   3                  // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
- 214   3                  if (flag_tim_set_bat_is_low &&
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 5   
+ 210   2              {
+ 211   3                  // 如果设备在工作
+ 212   3                  if (adc_bat_val <= LOW_BAT_ALARM_AD_VAL)
+ 213   3                  {
+ 214   4                      // 如果电池电压 小于等于 低电量报警对应的电压
+ 215   4                      flag_tim_scan_maybe_low_bat = 1;
+ 216   4                      // flag_tim_scan_maybe_shut_down = 0; // 当前电池电压正处于 关机电压 ~ 低电
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 5   
 
- 215   3                      0 == flag_ctl_low_bat_alarm &&
- 216   3                      0 == flag_is_enter_low_power &&
- 217   3                      0 == flag_tim_scan_maybe_motor_stalling) /* 如果电机未堵转 */
- 218   3                  {
- 219   4                      // 如果连续一段时间检测到电池电压处于低电量，并且没有打开低电
+             -量之间，还没到要关机的情况
+ 217   4                  }
+ 218   3                  else
+ 219   3                  {
+ 220   4                      // 如果电池电压 大于 低电量报警对应的电压
+ 221   4                      flag_tim_scan_maybe_low_bat = 0;
+ 222   4                      // flag_tim_scan_maybe_shut_down = 0;
+ 223   4                  }
+ 224   3      
+ 225   3                  // 如果连续一段时间检测到电池电压低于关机电压
+ 226   3                  // if (flag_tim_set_shut_down)
+ 227   3                  // {
+ 228   3                  //     flag_ctl_dev_close = 1;
+ 229   3                  //     // SPEECH_POWER_DISABLE(); // 关闭语音IC的电源(在低功耗函数内关闭)
+ 230   3                  //     flag_is_enter_low_power = 1; // 允许进入低功耗
+ 231   3                  // }
+ 232   3                  // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
+ 233   3                  if (flag_tim_set_bat_is_low && /* 连续一段时间，电池都处于低电量 */
+ 234   3                      0 == flag_ctl_low_bat_alarm && /* 目前没有开启低电量报警 */
+ 235   3                      0 == flag_is_enter_low_power && /* 目前没有要进入低功耗 */
+ 236   3                      0 == flag_tim_scan_maybe_motor_stalling) /* 如果电机未堵转 */
+ 237   3                  {
+ 238   4                      // 如果连续一段时间检测到电池电压处于低电量，并且没有打开低电
              -量报警
- 220   4                      interrupt_led_blink(); // 关闭LED闪烁
- 221   4                      LED_GREEN_OFF();
- 222   4                      LED_RED_OFF();
- 223   4                      flag_ctl_low_bat_alarm = 1; // 使能低电量报警
- 224   4                  }
- 225   3              }
- 226   2      #endif // 在设备工作时，检测是否处于低电量，并进行相应处理
- 227   2      
- 228   2      #if 1 // 检测不在充电时，是否有插入充电线，并做相应的处理
- 229   2            // 如果不在充电，检测是否插入了充电线
- 230   2              if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
- 231   2              {
- 232   3                  // 给对应的标志位置一，如果累计 50 ms 都是这个状态，说明插入了充电
+ 239   4                      interrupt_led_blink(); // 关闭LED闪烁
+ 240   4                      LED_GREEN_OFF();
+ 241   4                      LED_RED_OFF();
+ 242   4                      flag_ctl_low_bat_alarm = 1; // 使能低电量报警
+ 243   4                  }
+ 244   3              }
+ 245   2      #endif // 在设备工作时，检测是否处于低电量，并进行相应处理
+ 246   2      
+ 247   2      #if 1 // 检测不在充电时，是否有插入充电线，并做相应的处理
+ 248   2            // 如果不在充电，检测是否插入了充电线
+ 249   2              // if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
+ 250   2              if (P01 == 0 && adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
+ 251   2              {
+ 252   3                  // 给对应的标志位置一，如果累计 50 ms 都是这个状态，说明插入了充电
              -器
- 233   3                  flag_tim_scan_maybe_in_charging = 1;
- 234   3              }
- 235   2              else
- 236   2              {
- 237   3                  flag_tim_scan_maybe_in_charging = 0;
- 238   3              }
- 239   2      
- 240   2              if (flag_tim_set_is_in_charging) // 如果定时器累计 50 ms都是检测到插入了充电器
- 241   2              {
- 242   3                  // 确认是插入充电线后，无论处于什么状态，都变为关机状态
- 243   3                  flag_is_in_charging = 1;
- 244   3      
- 245   3                  // 清空不充电时使用的变量和标志位
- 246   3                  flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电量
- 247   3                  flag_ctl_low_bat_alarm = 0;      // 关闭低电量报警
- 248   3      
- 249   3      #if USE_MY_DEBUG
+ 253   3                  flag_tim_scan_maybe_in_charging = 1;
+ 254   3              }
+ 255   2              else
+ 256   2              {
+ 257   3                  flag_tim_scan_maybe_in_charging = 0;
+ 258   3              }
+ 259   2      
+ 260   2              if (flag_tim_set_is_in_charging) // 如果定时器累计 xx ms都是检测到插入了充电器
+ 261   2              {
+ 262   3                  // 确认是插入充电线后，无论处于什么状态，都变为关机状态
+ 263   3                  flag_is_in_charging = 1;
+ 264   3      
+ 265   3                  // 清空不充电时使用的变量和标志位
+ 266   3                  flag_tim_scan_maybe_low_bat = 0; // 表示不处于低电量
+ 267   3                  flag_ctl_low_bat_alarm = 0;      // 关闭低电量报警
+ 268   3      
+ 269   3      #if USE_MY_DEBUG
                           printf("charging\n");
               #endif // #if USE_MY_DEBUG
- 252   3      
- 253   3                  // 在测试时关闭
- 254   3                  tmr2_pwm_enable();           // 使能PWM输出
- 255   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
- 256   3                  flag_is_enter_low_power = 0; // 不进入低功耗
- 257   3      
- 258   3                  // flag_ctl_led_blink = 0; // 打断当前的灯光闪烁效果
- 259   3                  // delay_ms(1);
- 260   3                  interrupt_led_blink();
- 261   3                  LED_GREEN_OFF(); // 关闭绿灯(如果等到主循环扫描到再关闭绿灯，第1ms会出�
+ 272   3      
+ 273   3                  // 在测试时关闭
+ 274   3                  // tmr2_pwm_enable();           // 使能PWM输出
+ 275   3                  flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 6   
+
+ 276   3                  flag_is_enter_low_power = 0; // 不进入低功耗
+ 277   3      
+ 278   3                  // flag_ctl_led_blink = 0; // 打断当前的灯光闪烁效果
+ 279   3                  // delay_ms(1);
+ 280   3                  interrupt_led_blink();
+ 281   3                  LED_GREEN_OFF(); // 关闭绿灯(如果等到主循环扫描到再关闭绿灯，第1ms会出�
              -��红灯和绿灯一起点亮的情况)
- 262   3              }
- 263   2      #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
- 264   2          }
- 265   1      
- 266   1      #if 1 // 充电电流控制
- 267   1      
- 268   1          // if (flag_is_in_charging && 0 == flag_bat_is_full)
- 269   1          if (flag_is_in_charging)
- 270   1          {
- 271   2      #if 0 // 使用计算的方式来调节充电电流
+ 282   3              }
+ 283   2      #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
+ 284   2          }
+ 285   1      
+ 286   1      #if 0 // 充电电流控制
+              
+                  // if (flag_is_in_charging && 0 == flag_bat_is_full)
+                  if (flag_is_in_charging)
+                  {
+              #if 0 // 使用计算的方式来调节充电电流
               
                       u8 i = 0;                             // 循环计数值
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 6   
-
                       const u8 max_pwm_val = TMR2_PRL + 1;  // 临时存放最大占空比对应的值
                       volatile u8 last_pwm_val = TMR2_PWML; // 记录之前的pwm占空比的值
                       volatile u16 tmp_val;                 // 临时存放需要调节的占空比对应的值
@@ -363,6 +382,8 @@ line level    source
                           // tmp_bat_val = (adc_bat_val + (40)); /*  6.6--0.93 */
                           tmp_bat_val += (20); /*  */
                           // tmp_bat_val += (40); /*  */
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 7   
+
               
                           // tmp_bat_val += (200); /*  */
                           // tmp_bat_val += (400); /*  */
@@ -382,8 +403,6 @@ line level    source
                           // tmp_bat_val -= (30); /* 7.17--0.97 */
                       }
               #endif
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 7   
-
                       // else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
                       // else
                       // {
@@ -427,6 +446,8 @@ line level    source
                       //     {
                       //         tmp_bat_val -= (tmp - 79); /*  */
                       //         // tmp_bat_val += (tmp - 79); /* 这里的计算还有问题，电流会到2.3A */
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 8   
+
                       //     }
                       //     else
                       //     {
@@ -446,8 +467,6 @@ line level    source
                           // tmp_bat_val += 200; //
                           // tmp_bat_val -= ((u32)adc_bat_val * 360 / 1000);
               
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 8   
-
                           // tmp_bat_val -= 45;
                           // tmp_bat_val -= 55;
               
@@ -491,6 +510,8 @@ line level    source
                       // tmp_bat_val += 200;
                       // tmp_bat_val += 350;
                       // tmp_bat_val += 400;
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 9   
+
                       // tmp_bat_val += 500;
                       // tmp_bat_val += 600;
                       // tmp_bat_val += 800;
@@ -510,8 +531,6 @@ line level    source
                           // for (i = 0; i < 80; i++) //
                           for (i = 0; i < 120; i++) // ===================
                           // for (i = 0; i < 125; i++) //
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 9   
-
                           // for (i = 0; i < 150; i++) //
                           // for (i = 0; i < 300; i++) //
                           // for (i = 0; i < 1000; i++) //
@@ -555,6 +574,8 @@ line level    source
                       tmp_val >>= 3;
               
                       if ((u8)tmp_val > last_pwm_val)
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 10  
+
                       {
                           // last_pwm_val = last_pwm_val + 1;
                           last_pwm_val++;
@@ -574,161 +595,161 @@ line level    source
               
                       // 充电时，每隔一段时间再调整一次PWM占空比，否则充电电流跳动会很厉�
              -�
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 10  
-
                       // delay_ms(100);
               
               #endif // 使用计算的方式来调节充电电流
- 517   2      
- 518   2      #if 1
- 519   2              u8 i = 0;
- 520   2              u8 last_pwm_val = TMR2_PWML;     // 读出上一次PWM占空比对应的值
- 521   2              const u8 max_pwm_val = TMR2_PRL; // 读出PWM占空比设定的、最大的值
- 522   2              u16 tmp_bat_val = adc_bat_val;
- 523   2              static u8 tmp_val_cnt = 0;
- 524   2              u32 tmp_val;
- 525   2              static u8 tmp_val_l[8] = 0; // 用来存放计算得到的pwm占空比值，最后再一起计算�
+              
+              #if 1
+                      u8 i = 0;
+                      u8 last_pwm_val = TMR2_PWML;     // 读出上一次PWM占空比对应的值
+                      const u8 max_pwm_val = TMR2_PRL; // 读出PWM占空比设定的、最大的值
+                      u16 tmp_bat_val = adc_bat_val;
+                      static u8 tmp_val_cnt = 0;
+                      u32 tmp_val;
+                      static u8 tmp_val_l[8] = 0; // 用来存放计算得到的pwm占空比值，最后再一起计算�
              -��均值
- 526   2      
- 527   2              // last_pwm_val = TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
- 528   2              // max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的�
+              
+                      // last_pwm_val = TMR2_PWML + ((u16)TMR2_PWMH << 7);  // 读出上一次PWM占空比对应的值
+                      // max_pwm_val = TMR2_PRL + ((u16)TMR2_PRH << 7) + 1; // 读出PWM占空比设定的、最大的�
              -�
- 529   2      
- 530   2              if (adc_bat_val <= 2752) // 如果检测电池电压小于 6.5V
- 531   2              {
- 532   3                  // tmp_bat_val = (adc_bat_val + 37);
- 533   3                  tmp_bat_val += 37;
- 534   3              }
- 535   2              else if (adc_bat_val <= 2964) // 如果检测电池电压小于 7.0V
- 536   2              {
- 537   3                  // tmp_bat_val = (adc_bat_val + 27);
- 538   3                  tmp_bat_val += 27; // +=27，最后再+=95，只有0.22A
- 539   3                  // tmp_bat_val += 127;
- 540   3              }
- 541   2              else if (adc_bat_val <= 3091) // 如果检测电池电压小于 7.3V
- 542   2              {
- 543   3                  // tmp_bat_val = (adc_bat_val + 16);
- 544   3                  tmp_bat_val += 16;
- 545   3              }
- 546   2              else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
- 547   2              {
- 548   3                  // tmp_bat_val = (adc_bat_val + 0);
- 549   3              }
- 550   2              else // 如果在充电时检测到电池电压大于
- 551   2              {
- 552   3                  // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522);
- 553   3                  tmp_bat_val -= ((u32)adc_bat_val * 157 / 1000 - 506);
- 554   3              }
- 555   2      
- 556   2              // tmp_bat_val += 55; //
- 557   2              // tmp_bat_val += 75; //
- 558   2              // tmp_bat_val += 95; // 移植过来后，原本是加95
- 559   2              // tmp_bat_val += 150; //
- 560   2              // tmp_bat_val += 300; //
- 561   2              // tmp_bat_val += 600; //
- 562   2              tmp_bat_val += 900; // ========================82khz
- 563   2      
- 564   2              // 164KHz:
- 565   2              // tmp_bat_val += 1050; // 700-800mA
- 566   2              // tmp_bat_val += 1100; // 1A - 1.1A，但是这个频率是164KHz，MOS会先发热
- 567   2      
- 568   2              if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流（实际测试是�
+              
+                      if (adc_bat_val <= 2752) // 如果检测电池电压小于 6.5V
+                      {
+                          // tmp_bat_val = (adc_bat_val + 37);
+                          tmp_bat_val += 37; // 0.8升到0.93
+                      }
+                      else if (adc_bat_val <= 2964) // 如果检测电池电压小于 7.0V
+                      {
+                          // tmp_bat_val = (adc_bat_val + 27);
+                          tmp_bat_val += 27; // +=27，最后再+=95，只有0.22A
+                          // tmp_bat_val += 127;
+                      }
+                      else if (adc_bat_val <= 3091) // 如果检测电池电压小于 7.3V
+                      {
+                          // tmp_bat_val = (adc_bat_val + 16);
+                          tmp_bat_val += 16;
+                      }
+                      else if (adc_bat_val <= 3227) // 如果检测电池电压小于 7.62V
+                      {
+                          // tmp_bat_val = (adc_bat_val + 0);
+                      }
+                      else // 如果在充电时检测到电池电压大于
+                      {
+                          // tmp_bat_val = (u32)adc_bat_val - ((u32)adc_bat_val * 157 / 1000 - 522);
+                          tmp_bat_val -= ((u32)adc_bat_val * 157 / 1000 - 506);
+                      }
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 11  
+
+              
+                      // tmp_bat_val += 55; //
+                      // tmp_bat_val += 75; //
+                      // tmp_bat_val += 95; // 移植过来后，原本是加95
+                      // tmp_bat_val += 150; //
+                      // tmp_bat_val += 300; //
+                      // tmp_bat_val += 600; //
+                      tmp_bat_val += 900; // 1A-1.1A ========================82khz
+              
+                      // 164KHz:
+                      // tmp_bat_val += 1050; // 700-800mA
+                      // tmp_bat_val += 1100; // 1A - 1.1A，但是这个频率是164KHz，MOS会先发热
+              
+                      if (adc_bat_val >= 3515) // 如果电池电压大于 8.3V ，降低充电电流（实际测试是�
              -��8.25V附近）
- 569   2              {
- 570   3                  // tmp_bat_val -= 40;
- 571   3                  // tmp_bat_val -= 100; // 约1.1A
- 572   3                  // tmp_bat_val -= 300; // 约0.97A
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 11  
-
- 573   3                  tmp_bat_val -= 600; // 约0.8A，8.26V--728mA，8.31--791mA
- 574   3              }
- 575   2      
- 576   2              tmp_val = max_pwm_val - (u8)(((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val);
- 577   2      
- 578   2              if ((u8)tmp_val >= max_pwm_val)
- 579   2              {
- 580   3                  // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
+                      {
+                          // tmp_bat_val -= 40;
+                          // tmp_bat_val -= 100; // 约1.1A
+                          // tmp_bat_val -= 300; // 约0.97A
+                          tmp_bat_val -= 600; // 约0.8A，8.26V--728mA，8.31--791mA
+                      }
+              
+                      tmp_val = max_pwm_val - (u8)(((u32)adc_charging_val * max_pwm_val * 94 / 147) / tmp_bat_val);
+              
+                      if ((u8)tmp_val >= max_pwm_val)
+                      {
+                          // 如果PWM占空比对应的值 大于 最大占空比对应的值，说明计算溢出（�
              -�能是电池电压过小），按0处理
- 581   3                  tmp_val = 0;
- 582   3              }
- 583   2      
- 584   2              // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
- 585   2              tmp_val_cnt++;
- 586   2              tmp_val_cnt &= 0x07;
- 587   2              tmp_val_l[tmp_val_cnt] = ((u16)(tmp_val_l[tmp_val_cnt]) + tmp_val) >> 1;
- 588   2              tmp_val = 0;
- 589   2              for (i = 0; i < 8; i++)
- 590   2              {
- 591   3                  tmp_val += tmp_val_l[i];
- 592   3              }
- 593   2              tmp_val >>= 3;
- 594   2      
- 595   2              // {
- 596   2              //     /*
- 597   2              //         如果差值过大，则快速调节，如果差值过小，则慢速调节，
- 598   2              //         防止电流突变，导致不同的板子最终充电电流不一致
- 599   2              //     */
- 600   2              //     static u8 cnt = 0;
- 601   2              //     cnt++;
- 602   2      
- 603   2              //     if (tmp_val > last_pwm_val)
- 604   2              //     {
- 605   2              //         if ((tmp_val - last_pwm_val) > 2 || cnt >= 10)
- 606   2              //         {
- 607   2              //             last_pwm_val++;
- 608   2              //             cnt = 0;
- 609   2              //         }
- 610   2              //     }
- 611   2              //     else if (tmp_val < last_pwm_val)
- 612   2              //     {
- 613   2              //         if ((last_pwm_val - tmp_val) > 2 || cnt >= 10)
- 614   2              //         {
- 615   2              //             last_pwm_val--;
- 616   2              //             cnt = 0;
- 617   2              //         }
- 618   2              //     }
- 619   2              // }
- 620   2      
- 621   2              if (flag_is_adjust_current_time_comes)
- 622   2              {
- 623   3                  flag_is_adjust_current_time_comes = 0;
- 624   3                  if ((u8)tmp_val > last_pwm_val)
- 625   3                  // if (tmp_val > last_pwm_val)
- 626   3                  {
- 627   4                      // last_pwm_val = last_pwm_val + 1;
- 628   4                      last_pwm_val++;
- 629   4                  }
- 630   3                  else if ((u8)tmp_val < last_pwm_val)
- 631   3                  // else if (tmp_val < last_pwm_val)
- 632   3                  {
- 633   4                      // last_pwm_val = last_pwm_val - 1;
-C51 COMPILER V9.60.7.0   CHARGE                                                            05/05/2025 11:30:18 PAGE 12  
+                          tmp_val = 0;
+                      }
+              
+                      // 滤波操作，一开始tmp_val会很小，采集多次后趋于一个平均值：
+                      tmp_val_cnt++;
+                      tmp_val_cnt &= 0x07;
+                      tmp_val_l[tmp_val_cnt] = ((u16)(tmp_val_l[tmp_val_cnt]) + tmp_val) >> 1;
+                      tmp_val = 0;
+                      for (i = 0; i < 8; i++)
+                      {
+                          tmp_val += tmp_val_l[i];
+                      }
+                      tmp_val >>= 3;
+              
+                      // {
+                      //     /*
+                      //         如果差值过大，则快速调节，如果差值过小，则慢速调节，
+                      //         防止电流突变，导致不同的板子最终充电电流不一致
+                      //     */
+                      //     static u8 cnt = 0;
+                      //     cnt++;
+              
+                      //     if (tmp_val > last_pwm_val)
+                      //     {
+                      //         if ((tmp_val - last_pwm_val) > 2 || cnt >= 10)
+                      //         {
+                      //             last_pwm_val++;
+                      //             cnt = 0;
+                      //         }
+                      //     }
+                      //     else if (tmp_val < last_pwm_val)
+                      //     {
+                      //         if ((last_pwm_val - tmp_val) > 2 || cnt >= 10)
+                      //         {
+C51 COMPILER V9.60.7.0   CHARGE                                                            09/17/2025 17:16:20 PAGE 12  
 
- 634   4                      last_pwm_val--;
- 635   4                  }
- 636   3              }
- 637   2      
- 638   2              // T2DATA = last_pwm_val;
- 639   2      
- 640   2              // printf("last_pwm_val %u\n",last_pwm_val);
- 641   2              TMR2_PWML = last_pwm_val;
- 642   2              // TMR2_PWML = last_pwm_val % 256;
- 643   2              // TMR2_PWMH = last_pwm_val / 256;
- 644   2              TMR2_PWMH = 0;
- 645   2      
- 646   2      #endif
- 647   2      
- 648   2          } // if (flag_is_in_charging)
- 649   1      #endif // 充电电流控制
- 650   1      }
+                      //             last_pwm_val--;
+                      //             cnt = 0;
+                      //         }
+                      //     }
+                      // }
+              
+                      if (flag_is_adjust_current_time_comes)
+                      {
+                          flag_is_adjust_current_time_comes = 0;
+                          if ((u8)tmp_val > last_pwm_val)
+                          // if (tmp_val > last_pwm_val)
+                          {
+                              // last_pwm_val = last_pwm_val + 1;
+                              last_pwm_val++;
+                          }
+                          else if ((u8)tmp_val < last_pwm_val)
+                          // else if (tmp_val < last_pwm_val)
+                          {
+                              // last_pwm_val = last_pwm_val - 1;
+                              last_pwm_val--;
+                          }
+                      }
+              
+                      // T2DATA = last_pwm_val;
+              
+                      // printf("last_pwm_val %u\n",last_pwm_val);
+                      TMR2_PWML = last_pwm_val;
+                      // TMR2_PWML = last_pwm_val % 256;
+                      // TMR2_PWMH = last_pwm_val / 256;
+                      TMR2_PWMH = 0;
+              
+              #endif
+              
+                  } // if (flag_is_in_charging)
+              #endif // 充电电流控制
+ 670   1      
+ 671   1      #endif
+ 672   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    670    ----
+   CODE SIZE        =    242    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     10      13
+   DATA SIZE        =      1       4
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

@@ -367,7 +367,13 @@ void user_config(void)
     // 上拉：
     // P0_PU |= 0x01 << 7;
     // P1_PU |= 0x01;
-    P0_PU = 0x80; // P07 上拉
+    // P0_PU = 0x80; // P07 上拉
+
+    P0_PU = (0x01 << 7) | /* P07 上拉 */
+            (0x01 << 1);  /* P01 上拉 */
+
+    // P0_PU = (0x01 << 7); /* P07 上拉 */
+
     P1_PU = 0x01; // P10 上拉
 
     /*
@@ -376,7 +382,13 @@ void user_config(void)
         P01 多功能IO模式
         P00 多功能IO模式
     */
-    P0_MD0 = 0xAA;
+    // P0_MD0 = 0xAA;
+
+    P0_MD0 = (0x02 << 6) | /* P03 多功能IO模式 */
+             (0x02 << 4) | /* P02 多功能IO模式 */
+             (0x02 << 0);  /* P00 多功能IO模式 */
+    /* P01，对应的寄存器配置为0x00，对应输入模式 */
+
     /*
         P07 输入模式 检测开机/模式切换的引脚
         P06 模拟模式 检测电机是否堵转
@@ -400,7 +412,7 @@ void user_config(void)
     /*
         P03 复用为 STMR1_PWMA
         P02 复用为 STMR1_PWMB
-        P01 复用为 TMR2_PWM
+        // P01 复用为 TMR2_PWM（P01改为检测充电IC的状态）
         P00 复用为 UART1_RX
     */
     P0_AF0 = 0x01;
@@ -451,18 +463,15 @@ void user_config(void)
     TMR0_CONH = 0xA0;                                                           // 使能计数中断
     TMR0_CONL = (((0x7 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x1 & 0x3) << 0)); // 128分频，系统时钟，count模式
 
-    // 控制升压的PWM
-    TMR2_PRL = TMR2_CNT_TIME % 256; // 周期值
-    TMR2_PRH = TMR2_CNT_TIME / 256;
-    // 占空比配置：（不能去掉，否则刚上电/充电时可能会是随机值，而不是0）
-    TMR2_PWML = 0; // 占空比 0%
-    TMR2_PWMH = 0;
-    // TMR2_CNTL = 0x00; // 清除计数值
-    // TMR2_CNTH = 0x00;
-    // TMR2_CONL = (((0x0 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 0分频，系统时钟，PWM模式 （164 KHz）
-    TMR2_CONL = (((0x1 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 2分频，系统时钟，PWM模式 （82 KHz）
-    // 关闭定时器2
-    tmr2_pwm_disable();
+    // // 控制升压的PWM
+    // TMR2_PRL = TMR2_CNT_TIME % 256; // 周期值
+    // TMR2_PRH = TMR2_CNT_TIME / 256;
+    // // 占空比配置：（不能去掉，否则刚上电/充电时可能会是随机值，而不是0）
+    // TMR2_PWML = 0; // 占空比 0%
+    // TMR2_PWMH = 0;
+    // TMR2_CONL = (((0x1 & 0x7) << 5) | ((0x7 & 0x7) << 2) | ((0x2 & 0x3) << 0)); // 2分频，系统时钟，PWM模式 （82 KHz）
+    // // 关闭定时器2
+    // tmr2_pwm_disable();
 
     AIP_CON2 |= 0xC0; // 使能ADC中CMP使能信号和CMP校准功能
     AIP_CON4 |= 0x01; // 使能ADC偏置电流，参考电压选择内部2.4V(Note: 使用内部参考时，芯片需在5V电压供电下)
@@ -514,13 +523,14 @@ void main(void)
     IO_MAP &= ~0x03; // 关闭HCK和HDA引脚的调试功能（解除映射）
     WDT_KEY = 0xBB;
 
-    // 初始化打印
+    user_config();
+    SPEECH_CTL_PIN = SPEECH_CTL_PIN_CLOSE; // 第一次上电，给一个初始值，防止第一次上电长按时，无法开机
+
+// 初始化打印
 #if USE_MY_DEBUG
     debug_init();
     printf("TXM8C101x_SDK main start\n");
 #endif //  #if USE_MY_DEBUG
-
-    user_config();
 
 #if 1
     // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
@@ -531,7 +541,7 @@ void main(void)
     // LED_RED_OFF();
 #endif
 
-#if 1 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
+#if 0 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
 
     /*
         如果打开PWM后，检测电池的电压比满电还要高，说明没有接入电池，
@@ -578,10 +588,13 @@ void main(void)
         }
     }
 
+    // SPEECH_POWER_ENABLE();
+    // fun_ctl_power_on();
+
     while (1)
     {
 
-#if 1 // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
+#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
@@ -652,7 +665,7 @@ void main(void)
             // 如果要关闭设备
             flag_ctl_dev_close = 0;
 
-            if (flag_is_in_charging)
+            // if (flag_is_in_charging) // 这里可能需要处理一下
             {
                 // 如果正在充电，直接关闭语音IC的电源
                 SPEECH_POWER_DISABLE();
@@ -711,7 +724,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                 {
                     // 正在充电，并且检测到可能有充电器断开，进行计时
                     not_charge_ms_cnt++;
-                    if (not_charge_ms_cnt >= 250)
+                    // if (not_charge_ms_cnt >= 250)
+                    if (not_charge_ms_cnt >= 50)
                     {
                         not_charge_ms_cnt = 0;
                         flag_tim_set_is_in_charging = 0;
@@ -730,7 +744,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                 {
                     // 没有在充电，但是检测到有充电器插入，进行计时，确认充电器是否真的插入：
                     charging_ms_cnt++;
-                    if (charging_ms_cnt >= 250)
+                    // if (charging_ms_cnt >= 250)
+                    if (charging_ms_cnt >= 50) // 50ms
                     {
                         charging_ms_cnt = 0;
                         flag_tim_set_is_in_charging = 1;
@@ -1251,18 +1266,14 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
 
 #endif // 控制呼吸灯效果
 
-#if 0 // 充电时，只让红灯闪烁
-
-#endif // 充电时，只让红灯闪烁
-
-#if 1 // 控制充电时，每次调整电流的时间
+#if 0  // 控制充电时，每次调整电流的时间
         {
             static u16 cnt = 0;
 
             if (flag_is_in_charging)
             {
                 cnt++;
-                if (cnt >= 300)
+                if (cnt >= 500)
                 {
                     cnt = 0;
                     flag_is_adjust_current_time_comes = 1; // 表示调节电流的时间已经到来

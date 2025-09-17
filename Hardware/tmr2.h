@@ -8,7 +8,7 @@
 // TMR2_CNT_TIME == 195~196
 
 // void tmr2_pwm_config(void);
-void tmr2_pwm_enable(void);
-void tmr2_pwm_disable(void);
+// void tmr2_pwm_enable(void);
+// void tmr2_pwm_disable(void);
 
 #endif

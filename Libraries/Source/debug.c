@@ -84,8 +84,6 @@ char putchar(char c)
  */
 void debug_init(void)
 {
-    u8 i = 0;
-
     // UART0 IO : TX--P13(AF3)
     P1_MD0 &= ~0xC0;
     P1_MD0 |= 0x80;

@@ -1,56 +1,54 @@
-[05-05 16:30:50]Log start
-[05-05 16:30:50]Serial init start!
-[05-05 16:30:50]Serial close ok!
-[05-05 16:30:50]Serial init start!
-[05-05 16:30:50]Download driver ok!
-[05-05 16:30:50]uart_txm8c1010_set_driver:0x0
-[05-05 16:30:50]user uart set driver ok!
-[05-05 16:30:50]TXLink ready ok!
-[05-05 16:30:50]TXLink init ok!
-[05-05 16:30:50]Serial close ok!
-[05-05 16:30:50]load_debug_init_api chip id:1011
-[05-05 16:30:50]sys_info_init! 
-[05-05 16:30:50]AG_Init: 0x30a
-[05-05 16:30:50]AG_Init: 0x30b
-[05-05 16:30:50]AG_Init: 0x30f
-[05-05 16:30:50]AG_Init: 0x310
-[05-05 16:30:50]AG_Init: 0x311
-[05-05 16:30:50]AG_Init: 0x312
-[05-05 16:30:50]AG_Init: 0x100
-[05-05 16:30:50]InitMem: 0x0
-[05-05 16:30:50]Serial init start!
-[05-05 16:30:50]chip_init_api
-[05-05 16:30:50]TXLink chip init ok!
-[05-05 16:30:50]AG_Init: 0x201
-[05-05 16:30:50]AG_Init: 0x202
-[05-05 16:30:50]AG_Init: 0x203
-[05-05 16:30:50]AG_Init: 0x204
-[05-05 16:30:50]AG_Init: 0x205
-[05-05 16:30:50]AG_Init: 0x206
-[05-05 16:30:50]AG_Init: 0x207
-[05-05 16:30:50]AG_Init: 0x313
-[05-05 16:30:50]Serial init start!
-[05-05 16:30:50]EraseFlash: 0x0
-[05-05 16:30:51]TXLink chip erase ok!
-[05-05 16:30:51]uart_txm8c1010_sector_erase sector_num:0x20
-[05-05 16:30:51]uart_txm8c1010_sector_erase sector_num:0x21
-[05-05 16:30:51]AG_Init: 0x314
-[05-05 16:30:51]FlashLoad: 0x0
-[05-05 16:30:51]InitProgress: Loading...
-[05-05 16:30:51]WriteToFlash: 0xff008000
-[05-05 16:30:51]WriteToFlash: 0xff008006
-[05-05 16:30:51]WriteToFlash: 0xff008806
-[05-05 16:30:52]WriteToFlash: 0xff009006
-[05-05 16:30:52]InitProgress: Verifying...
-[05-05 16:30:52]VerifyFlash nAdr: 0xff008000
-[05-05 16:30:52]VerifyFlash nAdr: 0xff008006
-[05-05 16:30:52]VerifyFlash nAdr: 0xff008806
-[05-05 16:30:52]VerifyFlash nAdr: 0xff009006
-[05-05 16:30:52]chip_reset_api
-[05-05 16:30:52]Serial close ok!
-[05-05 16:30:52]AG_Init: 0x40c
-[05-05 16:30:52]CloseAllDlg: 0x0
-[05-05 16:30:52]StopTarget: 0x0
-[05-05 16:30:52]FreeCache: 0x0
-[05-05 16:30:52]StopTarget: 0x0
-[05-05 16:30:52]FreeCache: 0x0
+[09-17 17:30:25]Log start
+[09-17 17:30:25]Serial init start!
+[09-17 17:30:25]Serial close ok!
+[09-17 17:30:25]Serial init start!
+[09-17 17:30:25]Download driver ok!
+[09-17 17:30:25]uart_txm8c1010_set_driver:0x0
+[09-17 17:30:25]user uart set driver ok!
+[09-17 17:30:25]TXLink ready ok!
+[09-17 17:30:26]TXLink init ok!
+[09-17 17:30:26]Serial close ok!
+[09-17 17:30:26]load_debug_init_api chip id:1011
+[09-17 17:30:26]sys_info_init! 
+[09-17 17:30:26]AG_Init: 0x30a
+[09-17 17:30:26]AG_Init: 0x30b
+[09-17 17:30:26]AG_Init: 0x30f
+[09-17 17:30:26]AG_Init: 0x310
+[09-17 17:30:26]AG_Init: 0x311
+[09-17 17:30:26]AG_Init: 0x312
+[09-17 17:30:26]AG_Init: 0x100
+[09-17 17:30:26]InitMem: 0x0
+[09-17 17:30:26]Serial init start!
+[09-17 17:30:26]chip_init_api
+[09-17 17:30:26]TXLink chip init ok!
+[09-17 17:30:26]AG_Init: 0x201
+[09-17 17:30:26]AG_Init: 0x202
+[09-17 17:30:26]AG_Init: 0x203
+[09-17 17:30:26]AG_Init: 0x204
+[09-17 17:30:26]AG_Init: 0x205
+[09-17 17:30:26]AG_Init: 0x206
+[09-17 17:30:26]AG_Init: 0x207
+[09-17 17:30:26]AG_Init: 0x313
+[09-17 17:30:26]Serial init start!
+[09-17 17:30:26]EraseFlash: 0x0
+[09-17 17:30:26]TXLink chip erase ok!
+[09-17 17:30:26]uart_txm8c1010_sector_erase sector_num:0x20
+[09-17 17:30:26]uart_txm8c1010_sector_erase sector_num:0x21
+[09-17 17:30:26]AG_Init: 0x314
+[09-17 17:30:26]FlashLoad: 0x0
+[09-17 17:30:26]InitProgress: Loading...
+[09-17 17:30:26]WriteToFlash: 0xff008000
+[09-17 17:30:26]WriteToFlash: 0xff008006
+[09-17 17:30:27]WriteToFlash: 0xff008806
+[09-17 17:30:28]InitProgress: Verifying...
+[09-17 17:30:28]VerifyFlash nAdr: 0xff008000
+[09-17 17:30:28]VerifyFlash nAdr: 0xff008006
+[09-17 17:30:29]VerifyFlash nAdr: 0xff008806
+[09-17 17:30:29]chip_reset_api
+[09-17 17:30:29]Serial close ok!
+[09-17 17:30:29]AG_Init: 0x40c
+[09-17 17:30:29]CloseAllDlg: 0x0
+[09-17 17:30:29]StopTarget: 0x0
+[09-17 17:30:29]FreeCache: 0x0
+[09-17 17:30:29]StopTarget: 0x0
+[09-17 17:30:29]FreeCache: 0x0

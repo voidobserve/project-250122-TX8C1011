@@ -45,7 +45,7 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
 // static volatile bit flag_is_key_mode_hold = 0; // 标志位，按键是否按住，没有松手
 // static volatile u8 last_key_id = KEY_ID_NONE;
-// static volatile u8 press_cnt = 0; // 按键按下的时间计数 
+// static volatile u8 press_cnt = 0; // 按键按下的时间计数
 static volatile bit flag_is_key_mode_hold; // 标志位，按键是否按住，没有松手
 static volatile u8 last_key_id;
 static volatile u8 press_cnt; // 按键按下的时间计数
@@ -85,7 +85,7 @@ void key_scan_10ms_isr(void)
     {
         cur_key_id = KEY_ID_MODE;
     }
-    else if (0 == P10)
+    else if (0 == P10) // 加热 按键
     {
         cur_key_id = KEY_ID_HEAT;
     }
@@ -95,7 +95,7 @@ void key_scan_10ms_isr(void)
     }
 #endif
 
-    // 消抖/滤波
+    // // 消抖/滤波
     // if (cur_key_id != filter_key_id)
     // {
     //     // 如果有按键按下/松开
@@ -118,7 +118,7 @@ void key_scan_10ms_isr(void)
         if (last_key_id == KEY_ID_NONE)
         {
             // 如果有按键按下，清除按键按下的时间计数
-            press_cnt = 0;
+            // press_cnt = 0;
         }
         else if (cur_key_id == KEY_ID_NONE)
         {
@@ -140,12 +140,15 @@ void key_scan_10ms_isr(void)
             else
             {
                 // 长按、长按持续之后松手
-                if (KEY_ID_MODE == last_key_id)
+                // if (KEY_ID_MODE == last_key_id)
                 {
                     flag_is_key_mode_hold = 0;
                 }
             }
         }
+
+        // 按键刚按下或按键松开，都清除按键按下的时间计数
+        press_cnt = 0;
     }
     else if (cur_key_id != KEY_ID_NONE)
     {
@@ -155,6 +158,12 @@ void key_scan_10ms_isr(void)
 
         if (KEY_ID_MODE == cur_key_id)
         {
+            // printf("mode press\n"); 
+            // printf("press cnt: %bu\n", (u8)press_cnt);
+            // printf("cur_motor_status %bu\n", cur_motor_status);
+            // printf("cur_ctl_heat_status %bu\n", cur_ctl_heat_status);
+            // printf("flag_is_key_mode_hold %bu\n", (u8)flag_is_key_mode_hold);
+
             // if (flag_is_dev_open)
             // 当前记录电机和加热状态的变量，只要有一个不为0，说明设备在工作
             if (cur_motor_status || cur_ctl_heat_status)
@@ -169,6 +178,9 @@ void key_scan_10ms_isr(void)
                     {
                         key_event = KEY_EVENT_MODE_HOLD;
                         flag_is_key_mode_hold = 1;
+
+                        // printf("dev open\n");
+                        // printf("mode hold\n");
                     }
                 }
             }
@@ -185,6 +197,9 @@ void key_scan_10ms_isr(void)
                     {
                         key_event = KEY_EVENT_MODE_HOLD;
                         flag_is_key_mode_hold = 1;
+
+                        // printf("dev close\n"); 
+                        // printf("mode hold\n"); 
                     }
                 }
             }
@@ -205,11 +220,14 @@ void key_event_handle(void)
 
     if (KEY_EVENT_MODE_HOLD == key_event) /* 开机/模式按键长按 */
     {
+        // printf("key event hold handle\n");
         if (SPEECH_CTL_PIN_OPEN == SPEECH_CTL_PIN) /* 如果语音IC还在工作 */
         {
             // 关机：
             flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
             flag_is_enter_low_power = 1; // 允许进入低功耗
+
+            // printf("handle close\n");
         }
         else /* 如果语音IC不在工作，可能是从低功耗下唤醒 */
         {
@@ -220,11 +238,15 @@ void key_event_handle(void)
                     ;
                 flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
                 flag_is_enter_low_power = 1; // 允许进入低功耗
+
+                // printf("handle low power\n");
             }
             else
             {
                 SPEECH_POWER_ENABLE();
                 fun_ctl_power_on();
+
+                // printf("handle open\n");
             }
         }
     }

@@ -48,6 +48,7 @@ extern volatile bit flag_is_adjust_current_time_comes;
  */
 void charge_scan_handle(void)
 {
+#if 1
     volatile u16 adc_bat_val = 0;      // 存放检测到的电池电压的adc值
     volatile u16 adc_charging_val = 0; // 存放检测到的充电电压的adc值
     static u8 over_charging_cnt = 0;   // 存放过充计数
@@ -83,6 +84,7 @@ void charge_scan_handle(void)
         {
             // 如果正在充电，且电池未充满电，检测电视是否快充满电 或是 电池充满电
 
+#if 0
             // 如果检测到充满电（可能触发了电池保护板的过充保护），直接输出0%的PWM
             if (adc_bat_val >= (ADCDETECT_BAT_FULL + ADCDETECT_BAT_NULL_EX))
             {
@@ -110,6 +112,26 @@ void charge_scan_handle(void)
                 flag_tim_scan_bat_maybe_full = 0;
                 flag_tim_scan_bat_maybe_near_full = 0;
             }
+#endif
+
+            // if (adc_bat_val >= ADCDETECT_BAT_FULL) // 检测电池是否满电
+            if (P01 == 1) // 如果充电IC的状态是已经停止充电
+            {
+                // 给对应的标志位置一，让定时器来检测是否持续一段时间都是满电
+                flag_tim_scan_bat_maybe_full = 1;
+            }
+            else if (adc_bat_val >= ADCVAL_NEAR_FULL_CHAGE) // 检测到有一次电池快充满电
+            {
+                // 如果电池快充满电
+                flag_tim_scan_bat_maybe_near_full = 1; // 表示电池快充满电
+            }
+            else
+            {
+                // 如果检测到的ad值小于满电阈值
+                // 清空对应的标志位，让定时器不检测是否满电
+                flag_tim_scan_bat_maybe_full = 0;
+                flag_tim_scan_bat_maybe_near_full = 0;
+            }
 
             if (flag_tim_set_bat_is_near_full && 0 == flag_bat_is_near_full)
             {
@@ -121,16 +143,13 @@ void charge_scan_handle(void)
             }
 
             if (flag_tim_set_bat_is_full || (over_charging_cnt >= 8))
-            // if (flag_tim_set_bat_is_full) // 测试时使用到的条件
             {
                 // 如果定时器检测了一段时间(5s)，都是充满电的状态，或着是累计有过充，说明电池充满电
                 over_charging_cnt = 0; // 清除过充计数
                 flag_bat_is_full = 1;  // 表示电池被充满电
-                tmr2_pwm_disable();    // 关闭控制升压电路的pwm
-                TMR2_PWML = 0;         // 占空比 0%
-                TMR2_PWMH = 0;         //
-                // flag_is_in_charging = 0; // 不能给这个标志位清零（交给充电扫描来清零）
-                // delay_ms(1);    // 可能要等待定时器关闭充电时闪烁的呼吸灯
+                // tmr2_pwm_disable();    // 关闭控制升压电路的pwm
+                // TMR2_PWML = 0;         // 占空比 0%
+                // TMR2_PWMH = 0;         //
                 LED_RED_OFF();  // 关闭充电时闪烁的呼吸灯
                 LED_GREEN_ON(); // 充满电时，让绿灯常亮
             }
@@ -150,7 +169,7 @@ void charge_scan_handle(void)
             flag_tim_scan_maybe_not_charge = 0;
         }
 
-        if (0 == flag_tim_set_is_in_charging) // 如果定时器连续 50 ms 都是检测到拔出了充电器
+        if (0 == flag_tim_set_is_in_charging) // 如果定时器连续 xx ms 都是检测到拔出了充电器
         {
             // 如果在充电时，检测到拔出了充电线
             flag_is_in_charging = 0;
@@ -211,9 +230,9 @@ void charge_scan_handle(void)
             //     flag_is_enter_low_power = 1; // 允许进入低功耗
             // }
             // else if (flag_tim_set_bat_is_low && 0 == flag_ctl_low_bat_alarm)
-            if (flag_tim_set_bat_is_low &&
-                0 == flag_ctl_low_bat_alarm &&
-                0 == flag_is_enter_low_power &&
+            if (flag_tim_set_bat_is_low && /* 连续一段时间，电池都处于低电量 */
+                0 == flag_ctl_low_bat_alarm && /* 目前没有开启低电量报警 */
+                0 == flag_is_enter_low_power && /* 目前没有要进入低功耗 */
                 0 == flag_tim_scan_maybe_motor_stalling) /* 如果电机未堵转 */
             {
                 // 如果连续一段时间检测到电池电压处于低电量，并且没有打开低电量报警
@@ -227,7 +246,8 @@ void charge_scan_handle(void)
 
 #if 1 // 检测不在充电时，是否有插入充电线，并做相应的处理
       // 如果不在充电，检测是否插入了充电线
-        if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
+        // if (adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
+        if (P01 == 0 && adc_charging_val >= ADCDETECT_CHARING_THRESHOLD)
         {
             // 给对应的标志位置一，如果累计 50 ms 都是这个状态，说明插入了充电器
             flag_tim_scan_maybe_in_charging = 1;
@@ -237,7 +257,7 @@ void charge_scan_handle(void)
             flag_tim_scan_maybe_in_charging = 0;
         }
 
-        if (flag_tim_set_is_in_charging) // 如果定时器累计 50 ms都是检测到插入了充电器
+        if (flag_tim_set_is_in_charging) // 如果定时器累计 xx ms都是检测到插入了充电器
         {
             // 确认是插入充电线后，无论处于什么状态，都变为关机状态
             flag_is_in_charging = 1;
@@ -251,7 +271,7 @@ void charge_scan_handle(void)
 #endif // #if USE_MY_DEBUG
 
             // 在测试时关闭
-            tmr2_pwm_enable();           // 使能PWM输出
+            // tmr2_pwm_enable();           // 使能PWM输出
             flag_ctl_dev_close = 1;      // 控制标志位置一，让主函数扫描到，并关机
             flag_is_enter_low_power = 0; // 不进入低功耗
 
@@ -263,7 +283,7 @@ void charge_scan_handle(void)
 #endif // 检测不在充电时，是否有插入充电线，并做相应的处理
     }
 
-#if 1 // 充电电流控制
+#if 0 // 充电电流控制
 
     // if (flag_is_in_charging && 0 == flag_bat_is_full)
     if (flag_is_in_charging)
@@ -647,4 +667,6 @@ void charge_scan_handle(void)
 
     } // if (flag_is_in_charging)
 #endif // 充电电流控制
+
+#endif
 }
