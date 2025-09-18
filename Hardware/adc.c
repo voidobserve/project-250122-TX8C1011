@@ -76,19 +76,19 @@ void adc_sel_channel(u8 adc_channel)
     delay_ms(1);     // 切换adc检测的引脚后，要延时一段时间，等待adc稳定，防止意料之外的检测结果
 }
 
-// // 获取adc单次转换后的值
-// u16 adc_get_val_once(void)
-// {
-//     u16 g_temp_value = 0;
+// 获取adc单次转换后的值
+u16 adc_get_val_once(void)
+{
+    u16 g_temp_value = 0;
 
-//     ADC_CFG0 |= 0x01; // 触发ADC0转换
-//     while (!(ADC_STA & 0x02))
-//         ;                                          // 等待转换完成
-//     ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
-//     g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+    ADC_CFG0 |= 0x01; // 触发ADC0转换
+    while (!(ADC_STA & 0x02))
+        ;                                          // 等待转换完成
+    ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+    g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
 
-//     return g_temp_value;
-// }
+    return g_temp_value;
+}
 
 // 获取adc采集+滤波后的值
 u16 adc_get_val(void)

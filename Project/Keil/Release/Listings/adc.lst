@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ADC                                                               09/17/2025 17:16:19 PAGE 1   
+C51 COMPILER V9.60.7.0   ADC                                                               09/18/2025 13:44:16 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ADC
@@ -62,7 +62,7 @@ line level    source
   48   1          //     break;
   49   1          // case ADC_CHANNEL_MOTOR:
   50   1          //     // P06 AIN6 检测电机是否堵转
-C51 COMPILER V9.60.7.0   ADC                                                               09/17/2025 17:16:19 PAGE 2   
+C51 COMPILER V9.60.7.0   ADC                                                               09/18/2025 13:44:16 PAGE 2   
 
   51   1          //     ADC_CHS0 = 0x06; // 软件触发，P06通路
   52   1          //     break;
@@ -93,19 +93,19 @@ line level    source
              -��之外的检测结果
   77   1      }
   78          
-  79          // // 获取adc单次转换后的值
-  80          // u16 adc_get_val_once(void)
-  81          // {
-  82          //     u16 g_temp_value = 0;
-  83          
-  84          //     ADC_CFG0 |= 0x01; // 触发ADC0转换
-  85          //     while (!(ADC_STA & 0x02))
-  86          //         ;                                          // 等待转换完成
-  87          //     ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
-  88          //     g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
-  89          
-  90          //     return g_temp_value;
-  91          // }
+  79          // 获取adc单次转换后的值
+  80          u16 adc_get_val_once(void)
+  81          {
+  82   1          u16 g_temp_value = 0;
+  83   1      
+  84   1          ADC_CFG0 |= 0x01; // 触发ADC0转换
+  85   1          while (!(ADC_STA & 0x02))
+  86   1              ;                                          // 等待转换完成
+  87   1          ADC_STA = 0x02;                                // 清除ADC0转换完成标志位
+  88   1          g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
+  89   1      
+  90   1          return g_temp_value;
+  91   1      }
   92          
   93          // 获取adc采集+滤波后的值
   94          u16 adc_get_val(void)
@@ -126,7 +126,7 @@ line level    source
  109   2              g_temp_value = (ADC_DATAH0 << 4) | ADC_DATAL0; // 读取ADC0的值
  110   2      
  111   2              // g_temp_value = adc_get_val_once();
-C51 COMPILER V9.60.7.0   ADC                                                               09/17/2025 17:16:19 PAGE 3   
+C51 COMPILER V9.60.7.0   ADC                                                               09/18/2025 13:44:16 PAGE 3   
 
  112   2      
  113   2              if (i < 2)
@@ -148,7 +148,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    221    ----
+   CODE SIZE        =    247    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

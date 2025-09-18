@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 1   
+C51 COMPILER V9.60.7.0   KEY                                                               09/18/2025 13:44:16 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY
@@ -62,7 +62,7 @@ line level    source
   48          // static volatile u8 press_cnt = 0; // 按键按下的时间计数
   49          static volatile bit flag_is_key_mode_hold; // 标志位，按键是否按住，没有松手
   50          static volatile u8 last_key_id;
-C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 2   
+C51 COMPILER V9.60.7.0   KEY                                                               09/18/2025 13:44:16 PAGE 2   
 
   51          static volatile u8 press_cnt; // 按键按下的时间计数
   52          
@@ -126,7 +126,7 @@ line level    source
  110   1          //     // 防止计数溢出
  111   1          //     filter_cnt++;
  112   1          //     return;
-C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 3   
+C51 COMPILER V9.60.7.0   KEY                                                               09/18/2025 13:44:16 PAGE 3   
 
  113   1          // }
  114   1      
@@ -190,7 +190,7 @@ line level    source
  172   4                      {
  173   5                          if (flag_is_key_mode_hold)
  174   5                          {
-C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 4   
+C51 COMPILER V9.60.7.0   KEY                                                               09/18/2025 13:44:16 PAGE 4   
 
  175   6                              // 如果该按键还未松手，不执行操作
  176   6                          }
@@ -254,7 +254,7 @@ line level    source
  234   3                  if (flag_is_disable_to_open) // 如果是低电量不允许开机
  235   3                  {
  236   4                      // 等待松手后，回到低功耗
-C51 COMPILER V9.60.7.0   KEY                                                               09/17/2025 17:16:20 PAGE 5   
+C51 COMPILER V9.60.7.0   KEY                                                               09/18/2025 13:44:16 PAGE 5   
 
  237   4                      while (0 == P07)
  238   4                          ;

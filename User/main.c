@@ -74,6 +74,9 @@ volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 
 volatile bit flag_is_adjust_current_time_comes; // 标志位，调节电流时间是否到来
 
+// #define SAMPLES_NUMS (10)
+// volatile u16 samples_buff[SAMPLES_NUMS];
+
 #endif // 不给全局变量赋值，默认就是0
 
 #if 1
@@ -532,13 +535,57 @@ void main(void)
     printf("TXM8C101x_SDK main start\n");
 #endif //  #if USE_MY_DEBUG
 
-#if 1
-    // 由于芯片下载之后会没有反应，这里用绿色灯作为指示：
+    delay_ms(200); // 等待上电后稳定，特别是安装电池时，如果电池电压有波动，会导致下面检测电池是否正确安装误检测
+
+#if 0
+    // 由于芯片下载之后会没有反应，这里用绿色灯作为指示（实际不需要这些功能）：
     LED_GREEN_ON();
     // LED_RED_ON();
     delay_ms(1000);
     LED_GREEN_OFF();
     // LED_RED_OFF();
+#endif
+
+#if 1 // 刚上电时，检测电池有没有正确安装
+
+    // LED_GREEN_ON();
+    adc_sel_channel(ADC_CHANNEL_BAT); // 切换到检测电池降压后的电压的检测引脚
+    {
+        u16 i;
+        u16 adc_val;
+        u16 max_adc_val = 0;
+        u16 min_adc_val = 4095;
+        // for (i = 0; i < 1000 * 20; i++) // 检测时间太短，会检测不到或是误检测
+        for (i = 0; i < 1000 * 10; i++) // 检测时间太短，会检测不到或是误检测
+        // for (i = 0; i < 1000; i++) // 检测时间太短，检测不到
+        {
+            adc_val = adc_get_val_once();
+            if (max_adc_val < adc_val)
+            {
+                max_adc_val = adc_val;
+            }
+
+            if (min_adc_val > adc_val)
+            {
+                min_adc_val = adc_val;
+            }
+        }
+
+        // #define VAL (1000 * (330 / (1000 + 330)) / 2400 * 4096)
+        /*
+            前提条件：
+            电池电压检测脚外部：330 K 下拉， 1M 上拉，
+            adc使用 2.4 V 参考电压
+        */
+        if ((max_adc_val - min_adc_val) >
+            (u16)((u32)500 * 4096 * 330 / (1000 + 330) / 2400)) /* 如果这段检测时间内，电池两端的电压差大于 xx V，则认为电池为空 */
+        {
+            flag_bat_is_empty = 1;
+        }
+    }
+
+    // LED_GREEN_OFF();
+
 #endif
 
 #if 0 // 上电时检测电池是否正确安装(测试通过)(占用58个字节):
@@ -594,14 +641,14 @@ void main(void)
     while (1)
     {
 
-#if 0  // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
+#if 1 // (测试通过)上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电(占用25个字节)
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
             LED_RED_ON();
-            delay_ms(200);
+            delay_ms(500);
             LED_RED_OFF();
-            delay_ms(200);
+            delay_ms(500);
             continue;
         }
 #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
@@ -725,7 +772,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                     // 正在充电，并且检测到可能有充电器断开，进行计时
                     not_charge_ms_cnt++;
                     // if (not_charge_ms_cnt >= 250)
-                    if (not_charge_ms_cnt >= 50)
+                    if (not_charge_ms_cnt >= 50) // 实际测试会有1~2s
+                    // if (not_charge_ms_cnt >= 5)
                     {
                         not_charge_ms_cnt = 0;
                         flag_tim_set_is_in_charging = 0;
@@ -745,7 +793,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                     // 没有在充电，但是检测到有充电器插入，进行计时，确认充电器是否真的插入：
                     charging_ms_cnt++;
                     // if (charging_ms_cnt >= 250)
-                    if (charging_ms_cnt >= 50) // 50ms
+                    if (charging_ms_cnt >= 50) // 50ms      // 实际测试会有1~2s
+                    // if (charging_ms_cnt >= 5) // ms
                     {
                         charging_ms_cnt = 0;
                         flag_tim_set_is_in_charging = 1;
@@ -970,7 +1019,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         } // 自动换方向
 #endif // 控制电机自动换方向
 
-#if 1 // 检测是否快充满电
+#if 0 // 检测是否快充满电
 
         {
             static volatile u16 bat_is_near_full_ms_cnt = 0;
@@ -982,7 +1031,8 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                 {
                     // 正在充电，且检测到快充满电，进行计时
                     bat_is_near_full_ms_cnt++;
-                    if (bat_is_near_full_ms_cnt >= 5000) // xx ms
+                    // if (bat_is_near_full_ms_cnt >= 5000) // xx ms
+                    if (bat_is_near_full_ms_cnt >= 500) // xx ms
                     {
                         bat_is_near_full_ms_cnt = 0;
                         flag_tim_set_bat_is_near_full = 1;
@@ -1012,6 +1062,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
                     // 正在充电，并且有检测到电池满电，进行累计：
                     bat_is_full_ms_cnt++;
                     if (bat_is_full_ms_cnt >= 5000) // xx ms
+                    // if (bat_is_full_ms_cnt >= 500) // xx ms // 改成检测充电IC的状态之后，这里的检测时间太短可能会有问题
                     {
                         bat_is_full_ms_cnt = 0;
                         flag_tim_set_bat_is_full = 1;
