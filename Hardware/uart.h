@@ -23,12 +23,12 @@ enum
     CMD_OPEN_DEV,         // 打开按摩/按摩枕/按摩器
     CMD_OPEN_HEAT,        // 打开加热
     CMD_CLOSE_HEAT,       // 关闭加热
-    CMD_HEAT_FIRST,       // 加热一档
-    CMD_HEAT_SECOND,      // 加热二档
     CMD_CHANGE_DIR,       // 换个方向
     CMD_INTENSITY_FIRST,  // 力度一档
     CMD_INTENSITY_SECOND, // 力度二档
     CMD_INTENSITY_THIRD,  // 力度三档
+    CMD_HEAT_FIRST,       // 加热一档
+    CMD_HEAT_SECOND,      // 加热二档
     CMD_CLOSE_DEV,        // 关闭按摩/按摩枕/按摩器
 };
 

@@ -1,9 +1,54 @@
-[09-18 16:54:14]Log start
-[09-18 16:54:14]Serial init start!
-[09-18 16:54:14]Serial close ok!
-[09-18 16:54:14]Serial init start!
-[09-18 16:54:14]Download driver ok!
-[09-18 16:54:14]uart_txm8c1010_set_driver:0x0
-[09-18 16:54:14]user uart set driver ok!
-[09-18 16:54:14]TXLink ready ok!
-[09-18 16:54:14]TXLink init failed!
+[09-27 16:14:11]Log start
+[09-27 16:14:11]Serial init start!
+[09-27 16:14:11]Serial close ok!
+[09-27 16:14:11]Serial init start!
+[09-27 16:14:11]Download driver ok!
+[09-27 16:14:11]uart_txm8c1010_set_driver:0x0
+[09-27 16:14:11]user uart set driver ok!
+[09-27 16:14:11]TXLink ready ok!
+[09-27 16:14:11]TXLink init ok!
+[09-27 16:14:11]Serial close ok!
+[09-27 16:14:11]load_debug_init_api chip id:1011
+[09-27 16:14:11]sys_info_init! 
+[09-27 16:14:11]AG_Init: 0x30a
+[09-27 16:14:11]AG_Init: 0x30b
+[09-27 16:14:11]AG_Init: 0x30f
+[09-27 16:14:11]AG_Init: 0x310
+[09-27 16:14:11]AG_Init: 0x311
+[09-27 16:14:11]AG_Init: 0x312
+[09-27 16:14:11]AG_Init: 0x100
+[09-27 16:14:11]InitMem: 0x0
+[09-27 16:14:11]Serial init start!
+[09-27 16:14:12]chip_init_api
+[09-27 16:14:12]TXLink chip init ok!
+[09-27 16:14:12]AG_Init: 0x201
+[09-27 16:14:12]AG_Init: 0x202
+[09-27 16:14:12]AG_Init: 0x203
+[09-27 16:14:12]AG_Init: 0x204
+[09-27 16:14:12]AG_Init: 0x205
+[09-27 16:14:12]AG_Init: 0x206
+[09-27 16:14:12]AG_Init: 0x207
+[09-27 16:14:12]AG_Init: 0x313
+[09-27 16:14:12]Serial init start!
+[09-27 16:14:12]EraseFlash: 0x0
+[09-27 16:14:12]TXLink chip erase ok!
+[09-27 16:14:12]uart_txm8c1010_sector_erase sector_num:0x20
+[09-27 16:14:12]uart_txm8c1010_sector_erase sector_num:0x21
+[09-27 16:14:12]AG_Init: 0x314
+[09-27 16:14:12]FlashLoad: 0x0
+[09-27 16:14:12]InitProgress: Loading...
+[09-27 16:14:12]WriteToFlash: 0xff008000
+[09-27 16:14:12]WriteToFlash: 0xff008006
+[09-27 16:14:13]WriteToFlash: 0xff008806
+[09-27 16:14:14]InitProgress: Verifying...
+[09-27 16:14:14]VerifyFlash nAdr: 0xff008000
+[09-27 16:14:14]VerifyFlash nAdr: 0xff008006
+[09-27 16:14:14]VerifyFlash nAdr: 0xff008806
+[09-27 16:14:15]chip_reset_api
+[09-27 16:14:15]Serial close ok!
+[09-27 16:14:15]AG_Init: 0x40c
+[09-27 16:14:15]CloseAllDlg: 0x0
+[09-27 16:14:15]StopTarget: 0x0
+[09-27 16:14:15]FreeCache: 0x0
+[09-27 16:14:15]StopTarget: 0x0
+[09-27 16:14:15]FreeCache: 0x0

@@ -6,6 +6,8 @@ extern volatile bit flag_tim_set_bat_is_low; // 由定时器置位/复位的，�
 extern volatile bit flag_ctl_led_blink;      // 控制标志位，是否控制指示灯闪烁
 extern volatile bit flag_ctl_turn_dir;       // 控制标志位，是否更换电机的方向
 
+extern volatile bit flag_is_in_charging; // 是否处于充电的标志位
+
 /*
     标志位，是否通过语音来切换方向.
     用在定时器中断中，判断自动换方向，如果这个标志位置一，
@@ -35,6 +37,14 @@ extern void fun_ctl_heat_status(u8 adjust_heat_status);
 
 void speech_scan_process(void)
 {
+    if (flag_is_in_charging || flag_ctl_low_bat_alarm)
+    {
+        // 充电期间，直接返回
+        // 如果当前处于低电量报警，直接返回
+        flag_is_recv_ctl = 0; // 清空标志位，不处理相关信息
+        return;
+    }
+
     if (flag_is_recv_ctl) // 如果接收到了正确的控制命令
     {
         volatile u8 cmd = recv_ctl; // 从缓冲区取出控制命名

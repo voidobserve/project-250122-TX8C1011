@@ -29,6 +29,8 @@ extern volatile bit flag_is_in_charging;
 extern volatile bit flag_is_enter_low_power; // 标志位，是否要进入低功耗
 extern volatile bit flag_is_disable_to_open; // 标志位，是否不使能开机(低电量不允许开机)
 
+extern volatile bit flag_ctl_low_bat_alarm; // 控制标志位，是否使能低电量报警
+
 extern void fun_ctl_motor_status(u8 adjust_motor_status);
 extern void fun_ctl_power_on(void);
 extern void fun_ctl_power_off(void);
@@ -158,7 +160,7 @@ void key_scan_10ms_isr(void)
 
         if (KEY_ID_MODE == cur_key_id)
         {
-            // printf("mode press\n"); 
+            // printf("mode press\n");
             // printf("press cnt: %bu\n", (u8)press_cnt);
             // printf("cur_motor_status %bu\n", cur_motor_status);
             // printf("cur_ctl_heat_status %bu\n", cur_ctl_heat_status);
@@ -198,8 +200,8 @@ void key_scan_10ms_isr(void)
                         key_event = KEY_EVENT_MODE_HOLD;
                         flag_is_key_mode_hold = 1;
 
-                        // printf("dev close\n"); 
-                        // printf("mode hold\n"); 
+                        // printf("dev close\n");
+                        // printf("mode hold\n");
                     }
                 }
             }
@@ -212,10 +214,12 @@ void key_scan_10ms_isr(void)
 // 按键事件处理
 void key_event_handle(void)
 {
-    if (flag_is_in_charging)
+    if (flag_is_in_charging || flag_ctl_low_bat_alarm)
     {
+        // 充电时不处理按键事件
+        // 处于低电量报警时，不处理按键事件
         key_event = KEY_EVENT_NONE;
-        return; // 充电时不处理按键事件
+        return;
     }
 
     if (KEY_EVENT_MODE_HOLD == key_event) /* 开机/模式按键长按 */

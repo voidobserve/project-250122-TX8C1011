@@ -645,10 +645,12 @@ void main(void)
         if (flag_bat_is_empty)
         {
             // 没有放入电池，控制LED闪烁，直到重新上电
-            LED_RED_ON();
-            delay_ms(500);
-            LED_RED_OFF();
-            delay_ms(500);
+            // LED_RED_ON();
+            LED_GREEN_ON();
+            delay_ms(300);
+            // LED_RED_OFF();
+            LED_GREEN_OFF();
+            delay_ms(300);
             continue;
         }
 #endif // 上电时，如果检测到电池没有安装，让LED闪烁，直到重新上电
@@ -1237,7 +1239,7 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         }
 #endif // 控制语音IC关机后，无操作而关机
 
-#if 1 // 控制呼吸灯效果
+#if 0 // 控制呼吸灯效果
 
         {
             // 0 -- 初始状态
@@ -1316,6 +1318,37 @@ void TMR0_IRQHandler(void) interrupt TMR0_IRQn
         }
 
 #endif // 控制呼吸灯效果
+
+#if 1 // 充电时，控制红灯闪烁，而不是用呼吸灯
+
+        {
+            static u16 blink_cnt;
+            if (flag_is_in_charging &&
+                (0 == flag_bat_is_near_full) &&
+                (0 == flag_bat_is_full))
+            {
+                blink_cnt++;
+
+                if (blink_cnt < 300) // 0 ~ 299
+                {
+                    LED_RED_ON();
+                }
+                else if (blink_cnt < 600 - 1) // 300 ~ 599
+                {
+                    LED_RED_OFF();
+                }
+                else
+                {
+                    blink_cnt = 0;
+                }
+            }
+            else
+            {
+                blink_cnt = 0;
+            }
+        }
+
+#endif // 充电时，控制红灯闪烁，而不是用呼吸灯
 
 #if 0  // 控制充电时，每次调整电流的时间
         {
